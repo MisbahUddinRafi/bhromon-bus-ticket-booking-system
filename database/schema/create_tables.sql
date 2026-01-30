@@ -121,6 +121,7 @@ CREATE TABLE SCHEDULE (
 -- Table: SCHEDULE_SEAT
 CREATE TABLE SCHEDULE_SEAT (
     schedule_id INT NOT NULL,
+    bus_id INT NOT NULL,
     seat_number VARCHAR(10) NOT NULL,
     schedule_seat_status schedule_seat_status_enum NOT NULL,
 
@@ -129,7 +130,11 @@ CREATE TABLE SCHEDULE_SEAT (
     CONSTRAINT fk_schedule_seat_schedule
         FOREIGN KEY (schedule_id)
         REFERENCES SCHEDULE(schedule_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE, 
+    
+    CONSTRAINT fk_schedule_seat_bus_seat
+        FOREIGN KEY (bus_id, seat_number)
+        REFERENCES BUS_SEAT(bus_id, seat_number)
 );
 
 
@@ -148,10 +153,7 @@ CREATE TABLE BOOKING (
 
     CONSTRAINT fk_booking_schedule
         FOREIGN KEY (schedule_id)
-        REFERENCES SCHEDULE(schedule_id), 
-
-    CONSTRAINT uq_booking_schedule
-        UNIQUE (booking_id, schedule_id)
+        REFERENCES SCHEDULE(schedule_id)
 );
 
 
@@ -171,10 +173,7 @@ CREATE TABLE BOOKED_SEAT (
         ON DELETE CASCADE,
 
     FOREIGN KEY (schedule_id, seat_number)
-        REFERENCES schedule_seat(schedule_id, seat_number), 
-
-    FOREIGN KEY (booking_id, schedule_id)
-        REFERENCES BOOKING(booking_id, schedule_id)
+        REFERENCES schedule_seat(schedule_id, seat_number)
 );
 
 
