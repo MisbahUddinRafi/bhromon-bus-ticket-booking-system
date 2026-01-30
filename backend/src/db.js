@@ -1,11 +1,11 @@
 const { Pool } = require("pg");
-require("dotenv").config();
+require("dotenv").config({ path: "./backend/.env" });
 
 const pool = new Pool({
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
+  port: Number(process.env.DB_PORT),
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: String(process.env.DB_PASSWORD), // FORCE STRING
   database: process.env.DB_NAME,
 });
 
