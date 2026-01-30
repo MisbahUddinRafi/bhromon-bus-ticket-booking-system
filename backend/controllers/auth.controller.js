@@ -1,48 +1,67 @@
 const pool = require("../src/db");
 
-
-
+/* =========================
+   Helper: Normalize Phone
+   Removes all whitespace
+========================= */
+function normalizePhone(phone) {
+  return phone.replace(/\s+/g, "");
+}
 
 /*
 SIGNUP LOGIC (NO HASHING):
-1. Get name, email & password from request
-2. Check if email exists
-3. Insert new user
-4. Respond
-
+1. Get name, email, phone, password, role
+2. Normalize phone number
+3. Validate inputs
+4. Check if email OR phone already exists
+5. Insert new user
+6. Respond
 */
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    let { name, email, phone_number, password, role } = req.body;
 
-    /* 1. Validation */
-    if (!name || !email || !password) {
+    /* 1. Basic validation */
+    if (!name || !email || !phone_number || !password) {
       return res.status(400).json({
-        message: "Name, email, and password are required",
+        message: "Name, email, phone number and password are required",
       });
     }
 
-    /* 2. Check if email exists */
+    /* 2. Normalize phone number (remove spaces) */
+    phone_number = normalizePhone(phone_number);
+
+    /* 3. Validate phone format (11 digits) */
+    if (!/^\d{11}$/.test(phone_number)) {
+      return res.status(400).json({
+        message: "Phone number must contain exactly 11 digits",
+      });
+    }
+
+    /* 4. Check if email or phone already exists */
     const existingUser = await pool.query(
-      "SELECT user_id FROM users WHERE email = $1",
-      [email]
+      `SELECT user_id 
+       FROM users 
+       WHERE email = $1 OR phone_number = $2`,
+      [email, phone_number]
     );
 
     if (existingUser.rows.length > 0) {
       return res.status(409).json({
-        message: "Email already in use",
+        message: "Email or phone number already in use",
       });
     }
 
-    /* 3. Insert new user */
+    /* 5. Insert new user */
     const insertResult = await pool.query(
-      "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING user_id, name, email, role",
-      [name, email, password, role || "user"]
+      `INSERT INTO users (name, email, phone_number, password, role)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING user_id, name, email, phone_number, role`,
+      [name, email, phone_number, password, role || "user"]
     );
 
-
-    /* 4. Success Respond */
+    /* 6. Success response */
     res.status(201).json({
       message: "Signup successful",
       user: insertResult.rows[0],
@@ -55,55 +74,73 @@ exports.signup = async (req, res) => {
   }
 };
 
-
-
-
 /*
 LOGIN LOGIC (NO HASHING):
-1. Get email & password from request
-2. Fetch user by email
-3. Compare plain password
-4. Respond
+1. Get identifier (email OR phone) & password
+2. Normalize phone if used
+3. Fetch user by email OR phone
+4. Compare plain password
+5. Respond
 */
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { identifier, password } = req.body;
 
-    /* Validation */
-    if (!email || !password) {
+    /* 1. Validation */
+    if (!identifier || !password) {
       return res.status(400).json({
-        message: "Email and password are required",
+        message: "Email/Phone and password are required",
       });
     }
 
-    /* Get user */
-    const result = await pool.query(
-      "SELECT user_id, name, email, password, role FROM users WHERE email = $1",
-      [email]
-    );
+    /* 2. Detect phone or email */
+    let query;
+    let value;
+
+    if (/^\d[\d\s]*$/.test(identifier)) {
+      // Looks like phone number
+      value = normalizePhone(identifier);
+
+      if (!/^\d{11}$/.test(value)) {
+        return res.status(400).json({
+          message: "Invalid phone number format",
+        });
+      }
+
+      query = "SELECT * FROM users WHERE phone_number = $1";
+    } else {
+      // Email
+      value = identifier;
+      query = "SELECT * FROM users WHERE email = $1";
+    }
+
+    /* 3. Fetch user */
+    const result = await pool.query(query, [value]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({
-        message: "Invalid email or password",
+        message: "Invalid credentials",
       });
     }
 
     const user = result.rows[0];
 
-    /* Plain password comparison */
+    /* 4. Plain password comparison */
     if (password !== user.password) {
       return res.status(401).json({
-        message: "Invalid email or password",
+        message: "Invalid credentials",
       });
     }
 
-    /* Success */
+    /* 5. Success */
     res.json({
       message: "Login successful (plain test)",
       user: {
         id: user.user_id,
         name: user.name,
+        email: user.email,
+        phone_number: user.phone_number,
         role: user.role,
       },
     });
@@ -114,7 +151,3 @@ exports.login = async (req, res) => {
     });
   }
 };
-
-
-
-
