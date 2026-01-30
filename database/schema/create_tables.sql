@@ -17,9 +17,13 @@ CREATE TABLE USERS (
     user_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    phone_number VARCHAR(20) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role user_role_enum NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT user_phone_number_check 
+    CHECK (phone_number ~ '^[0-9]{11}$')
 );
 
 
@@ -117,6 +121,7 @@ CREATE TABLE SCHEDULE (
 -- Table: SCHEDULE_SEAT
 CREATE TABLE SCHEDULE_SEAT (
     schedule_id INT NOT NULL,
+    bus_id INT NOT NULL,
     seat_number VARCHAR(10) NOT NULL,
     schedule_seat_status schedule_seat_status_enum NOT NULL,
 
@@ -125,7 +130,11 @@ CREATE TABLE SCHEDULE_SEAT (
     CONSTRAINT fk_schedule_seat_schedule
         FOREIGN KEY (schedule_id)
         REFERENCES SCHEDULE(schedule_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE, 
+    
+    CONSTRAINT fk_schedule_seat_bus_seat
+        FOREIGN KEY (bus_id, seat_number)
+        REFERENCES BUS_SEAT(bus_id, seat_number)
 );
 
 
@@ -144,10 +153,7 @@ CREATE TABLE BOOKING (
 
     CONSTRAINT fk_booking_schedule
         FOREIGN KEY (schedule_id)
-        REFERENCES SCHEDULE(schedule_id), 
-
-    CONSTRAINT uq_booking_schedule
-        UNIQUE (booking_id, schedule_id)
+        REFERENCES SCHEDULE(schedule_id)
 );
 
 
@@ -167,10 +173,7 @@ CREATE TABLE BOOKED_SEAT (
         ON DELETE CASCADE,
 
     FOREIGN KEY (schedule_id, seat_number)
-        REFERENCES schedule_seat(schedule_id, seat_number), 
-
-    FOREIGN KEY (booking_id, schedule_id)
-        REFERENCES BOOKING(booking_id, schedule_id)
+        REFERENCES schedule_seat(schedule_id, seat_number)
 );
 
 
