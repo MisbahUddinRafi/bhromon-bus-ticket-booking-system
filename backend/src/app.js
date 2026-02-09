@@ -1,27 +1,27 @@
 const express = require("express");
-const pool = require("./db");
+const cors = require("cors");
 require("dotenv").config({ path: "./backend/.env" });
 
 const authRoutes = require("../routes/auth.routes");
 
 const app = express();
+
+/* =====================
+   MIDDLEWARE
+===================== */
+app.use(cors());              // allow cross-origin requests
 app.use(express.json());
 
-/* Test DB connection */
-app.get("/", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT current_database(), NOW()");
-    res.json({
-      message: "Database connected successfully",
-      database: result.rows[0].current_database,
-      time: result.rows[0].now,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+/* =====================
+   TEST ROUTE
+===================== */
+app.get("/", (req, res) => {
+  res.json({ message: "Server is running" });
 });
 
-/* Login routes */
+/* =====================
+   AUTH ROUTES
+===================== */
 app.use("/api/auth", authRoutes);
 
 app.listen(3000, () => {
