@@ -1,4 +1,5 @@
 const pool = require("../src/db");
+const bcrypt = require("bcrypt"); 
 
 /* =========================
    Helper: Normalize Phone
@@ -8,7 +9,9 @@ function normalizePhone(phone) {
   return phone.replace(/\s+/g, "");
 }
 
-/*
+
+
+/*  ==============================
 SIGNUP LOGIC (NO HASHING):
 1. Get name, email, phone, password, role
 2. Normalize phone number
@@ -16,6 +19,7 @@ SIGNUP LOGIC (NO HASHING):
 4. Check if email OR phone already exists
 5. Insert new user
 6. Respond
+================================
 */
 
 exports.signup = async (req, res) => {
@@ -53,15 +57,19 @@ exports.signup = async (req, res) => {
       });
     }
 
-    /* 5. Insert new user */
+    /* 5. Hash password */
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    /* 6. Insert new user */
     const insertResult = await pool.query(
       `INSERT INTO users (name, email, phone_number, password, role)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING user_id, name, email, phone_number, role`,
-      [name, email, phone_number, password, role || "user"]
+      [name, email, phone_number, hashedPassword, role || "customer"]
     );
 
-    /* 6. Success response */
+    /* 7. Success response */
     res.status(201).json({
       message: "Signup successful",
       user: insertResult.rows[0],
@@ -74,13 +82,16 @@ exports.signup = async (req, res) => {
   }
 };
 
-/*
-LOGIN LOGIC (NO HASHING):
+
+
+/*  ============================================
+LOGIN LOGIC (WITH HASHING):
 1. Get identifier (email OR phone) & password
 2. Normalize phone if used
 3. Fetch user by email OR phone
-4. Compare plain password
+4. Compare hashed password
 5. Respond
+==========================================
 */
 
 exports.login = async (req, res) => {
@@ -126,8 +137,9 @@ exports.login = async (req, res) => {
 
     const user = result.rows[0];
 
-    /* 4. Plain password comparison */
-    if (password !== user.password) {
+    /* 4. password comparison */
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({
         message: "Invalid credentials",
       });
@@ -135,9 +147,9 @@ exports.login = async (req, res) => {
 
     /* 5. Success */
     res.json({
-      message: "Login successful (plain test)",
+      message: "Login successful",
       user: {
-        id: user.user_id,
+        user_id: user.user_id,
         name: user.name,
         email: user.email,
         phone_number: user.phone_number,
