@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config({ path: "./backend/.env" });
 
 const authRoutes = require("../routes/auth.routes");
+const customerRoutes = require("../routes/customer.routes");
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.get("/", (req, res) => {
    AUTH ROUTES
 ===================== */
 app.use("/api/auth", authRoutes);
+app.use("/api/customer", customerRoutes);
+
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

@@ -26,18 +26,19 @@ form.addEventListener("submit", async (e) => {
         }
 
         localStorage.setItem("user", JSON.stringify(result.user));
-
+        console.log(result.user);
         message.textContent = "Login successful!";
         alert(`Welcome, ${result.user.name}!`);
 
-        // /* redirect to dashboard */
-        // if (user.role === "admin") {
-        //     window.location.href = "../adminDashboard.html";
-        // } else if (user.role === "customer") {
-        //     window.location.href = "../customerDashboard.html";
-        // }
+        /* redirect to dashboard */
+        if (result.user.role === "admin") {
+            window.location.href = "../pages/adminDashboard.html";
+        } else if (result.user.role === "customer") {
+            window.location.href = "../pages/customerDashboard.html";
+        }
     } catch (err) {
         message.textContent = "Server error";
+        console.error(err);
     }
 });
 

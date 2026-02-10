@@ -29,6 +29,10 @@ form.addEventListener("submit", async (e) => {
 
         message.textContent = "Signup successful! You can now log in.";
         alert(`Welcome, ${result.user.name}! Please log in.`);
+
+        /* redirect to login page */
+        window.location.href = "../pages/login.html";
+
     } catch (err) {
         message.textContent = "Server error. Please try again later.";  
     }
