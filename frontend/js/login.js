@@ -25,9 +25,24 @@ form.addEventListener("submit", async (e) => {
             return;
         }
 
+        localStorage.setItem("user", JSON.stringify(result.user));
+
         message.textContent = "Login successful!";
         alert(`Welcome, ${result.user.name}!`);
+
+        // /* redirect to dashboard */
+        // if (user.role === "admin") {
+        //     window.location.href = "../adminDashboard.html";
+        // } else if (user.role === "customer") {
+        //     window.location.href = "../customerDashboard.html";
+        // }
     } catch (err) {
         message.textContent = "Server error";
     }
 });
+
+
+
+function backButtonClicked() {
+    window.location.href = "../index.html";
+}

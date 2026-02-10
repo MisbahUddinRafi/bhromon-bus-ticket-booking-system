@@ -33,3 +33,8 @@ form.addEventListener("submit", async (e) => {
         message.textContent = "Server error. Please try again later.";  
     }
 }); 
+
+
+function backButtonClicked() {
+    window.location.href = "../index.html";
+}

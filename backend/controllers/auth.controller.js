@@ -1,13 +1,33 @@
 const pool = require("../src/db");
-const bcrypt = require("bcrypt"); 
+const bcrypt = require("bcrypt");
 
 /* =========================
    Helper: Normalize Phone
    Removes all whitespace
 ========================= */
-function normalizePhone(phone) {
-  return phone.replace(/\s+/g, "");
+function isValidName(name) {
+  return /^[A-Za-z ]{3,50}$/.test(name);
 }
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function normalizeBDPhone(phone) {
+  phone = phone.replace(/\s+/g, "");
+
+  if (phone.startsWith("+880")) {
+    phone = phone.replace("+880", "0");
+  }
+
+  return phone;
+}
+
+function isValidBDPhone(phone) {
+  return /^(012|013|014|015|016|017|018|019)\d{8}$/.test(phone);
+}
+
+
 
 
 
@@ -24,7 +44,7 @@ SIGNUP LOGIC (NO HASHING):
 
 exports.signup = async (req, res) => {
   try {
-    let { name, email, phone_number, password, role } = req.body;
+    let { name, email, phone_number, password } = req.body;
 
     /* 1. Basic validation */
     if (!name || !email || !phone_number || !password) {
@@ -33,17 +53,33 @@ exports.signup = async (req, res) => {
       });
     }
 
-    /* 2. Normalize phone number (remove spaces) */
-    phone_number = normalizePhone(phone_number);
+    /* 2. Trim and Normalize */
+    name = name.trim();
+    email = email.trim().toLowerCase();
+    phone_number = normalizeBDPhone(phone_number);
 
-    /* 3. Validate phone format (11 digits) */
-    if (!/^\d{11}$/.test(phone_number)) {
+    /* 3. Name validation */
+    if (!isValidName(name)) {
       return res.status(400).json({
-        message: "Phone number must contain exactly 11 digits",
+        message: "Name must be 3-50 characters and contain only letters and spaces",
       });
     }
 
-    /* 4. Check if email or phone already exists */
+    /* 4. Email validation */
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        message: "Invalid email format",
+      });
+    }
+
+    /* 5. Bangladesh Phone validation */
+    if (!isValidBDPhone(phone_number)) {
+      return res.status(400).json({
+        message: "Invalid Bangladeshi phone number format",
+      });
+    }
+
+    /* 6. Check if email or phone already exists */
     const existingUser = await pool.query(
       `SELECT user_id 
        FROM users 
@@ -57,19 +93,19 @@ exports.signup = async (req, res) => {
       });
     }
 
-    /* 5. Hash password */
+    /* 7. Hash password */
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    /* 6. Insert new user */
+    /* 8. Insert new user */
     const insertResult = await pool.query(
       `INSERT INTO users (name, email, phone_number, password, role)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING user_id, name, email, phone_number, role`,
-      [name, email, phone_number, hashedPassword, role || "customer"]
+      [name, email, phone_number, hashedPassword, "customer"]           // only "customer" role allowed at signup
     );
 
-    /* 7. Success response */
+    /* 9. Success response */
     res.status(201).json({
       message: "Signup successful",
       user: insertResult.rows[0],
@@ -111,9 +147,9 @@ exports.login = async (req, res) => {
 
     if (/^\d[\d\s]*$/.test(identifier)) {
       // Looks like phone number
-      value = normalizePhone(identifier);
+      value = normalizeBDPhone(identifier);
 
-      if (!/^\d{11}$/.test(value)) {
+      if (!isValidBDPhone(value)) {
         return res.status(400).json({
           message: "Invalid phone number format",
         });
@@ -122,6 +158,11 @@ exports.login = async (req, res) => {
       query = "SELECT * FROM users WHERE phone_number = $1";
     } else {
       // Email
+      if (!isValidEmail(identifier)) {
+        return res.status(400).json({
+          message: "Invalid email format",
+        });
+      }
       value = identifier;
       query = "SELECT * FROM users WHERE email = $1";
     }
