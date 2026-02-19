@@ -13,6 +13,10 @@ function toggleProfile() {
         menu.style.display === 'none' ? 'block' : 'none';
 }
 
+function goToProfile() {
+    window.location.href = '../pages/profile.html';
+}
+
 function logout() {
     localStorage.clear();
     window.location.href = '../index.html';
@@ -175,7 +179,7 @@ async function loadUsers() {
 
     // Add placeholder option
     select.innerHTML = `<option value="" disabled selected>Select user</option>`;
-    
+
     users.forEach(u => {
         select.innerHTML +=
             `<option value="${u.user_id}">${u.name}</option>`;

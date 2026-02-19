@@ -15,6 +15,12 @@ function toggleProfile() {
     menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
 }
 
+
+function goToProfile() {
+    window.location.href = '../pages/profile.html';
+}
+
+
 function logout() {
     localStorage.clear();
     window.location.href = '../index.html';

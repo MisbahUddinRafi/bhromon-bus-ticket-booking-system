@@ -3,6 +3,7 @@
 
 --- necessary enum types
 CREATE TYPE user_role_enum AS ENUM ('admin', 'customer');
+CREATE TYPE user_status_enum AS ENUM ('active', 'deleted');
 CREATE TYPE bus_type_enum AS ENUM ('ac', 'non-ac');
 CREATE TYPE schedule_status_enum AS ENUM ('active', 'cancelled', 'completed');
 CREATE TYPE schedule_seat_status_enum AS ENUM ('available', 'booked', 'cancelled');
@@ -21,6 +22,7 @@ CREATE TABLE USERS (
     password VARCHAR(255) NOT NULL,
     role user_role_enum NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_status user_status_enum NOT NULL DEFAULT 'active',
 
     CONSTRAINT user_phone_number_check 
     CHECK (phone_number ~ '^[0-9]{11}$')

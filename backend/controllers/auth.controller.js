@@ -155,7 +155,7 @@ exports.login = async (req, res) => {
         });
       }
 
-      query = "SELECT * FROM users WHERE phone_number = $1";
+      query = "SELECT * FROM users WHERE phone_number = $1 AND user_status='active'";
     } else {
       // Email
       if (!isValidEmail(identifier)) {
@@ -164,7 +164,7 @@ exports.login = async (req, res) => {
         });
       }
       value = identifier;
-      query = "SELECT * FROM users WHERE email = $1";
+      query = "SELECT * FROM users WHERE email = $1 AND user_status='active'";
     }
 
     /* 3. Fetch user */

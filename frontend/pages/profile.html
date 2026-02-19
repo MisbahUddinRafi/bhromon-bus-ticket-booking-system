@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Profile</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <h1>My Profile</h1>
+    <button onclick="goBack()" class="back-btn">
+        ← Back to Dashboard
+    </button>
+
+    <!-- ================= PROFILE INFO ================= -->
+    <div>
+        <label>Name:</label><br>
+        <input type="text" id="name"><br><br>
+
+        <label>Email:</label><br>
+        <input type="text" id="email" disabled><br><br>
+
+        <label>Phone Number:</label><br>
+        <input type="text" id="phone" disabled><br><br>
+
+        <label>Role:</label><br>
+        <input type="text" id="role" disabled><br><br>
+
+        <button onclick="updateName()">Update Name</button>
+    </div>
+
+    <hr>
+
+    <!-- ================= CHANGE PASSWORD ================= -->
+    <h2>Change Password</h2>
+
+    <div>
+        <label>Old Password:</label><br>
+        <input type="password" id="oldPassword"><br><br>
+
+        <label>New Password:</label><br>
+        <input type="password" id="newPassword"><br><br>
+
+        <button onclick="changePassword()">Change Password</button>
+    </div>
+
+    <hr>
+
+    <!-- ================= DELETE ACCOUNT ================= -->
+    <h2 style="color:red;">Danger Zone</h2>
+
+    <button style="color:white; background-color:red;" onclick="deleteAccount()">
+        Delete Account
+    </button>
+
+    <script src="../js/profile.js"></script>
+
+</body>
+
+</html>
