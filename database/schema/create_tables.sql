@@ -5,7 +5,7 @@
 CREATE TYPE user_role_enum AS ENUM ('admin', 'customer');
 CREATE TYPE bus_type_enum AS ENUM ('ac', 'non-ac');
 CREATE TYPE schedule_status_enum AS ENUM ('active', 'cancelled', 'completed');
-CREATE TYPE schedule_seat_status_enum AS ENUM ('available', 'booked');
+CREATE TYPE schedule_seat_status_enum AS ENUM ('available', 'booked', 'cancelled');
 CREATE TYPE booking_status_enum AS ENUM ('pending', 'confirmed', 'cancelled');
 CREATE TYPE payment_type_enum AS ENUM ('cash', 'card', 'bkash', 'nagad');
 CREATE TYPE payment_reason_enum AS ENUM ('ticket_purchase', 'refund');

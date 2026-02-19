@@ -4,6 +4,9 @@ require("dotenv").config({ path: "./backend/.env" });
 
 const authRoutes = require("../routes/auth.routes");
 const customerRoutes = require("../routes/customer.routes");
+const adminRoutes = require("../routes/admin.routes");
+
+
 
 const app = express();
 
@@ -25,6 +28,7 @@ app.get("/", (req, res) => {
 ===================== */
 app.use("/api/auth", authRoutes);
 app.use("/api/customer", customerRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 app.listen(3000, () => {
