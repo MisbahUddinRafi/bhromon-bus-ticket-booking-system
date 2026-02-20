@@ -9,6 +9,7 @@ router.get('/available-buses/:operatorId/:date', admin.getAvailableBuses);
 router.post('/create-schedule', admin.createSchedule);
 router.get('/active-schedules', admin.getActiveSchedules);
 router.put('/cancel-schedule/:id', admin.cancelSchedule);
+router.get('/past-schedules', admin.getPastSchedules);
 router.get('/users', admin.getUsers);
 router.get('/user-history/:id', admin.getUserHistory);
 router.get('/operator-history/:id', admin.getOperatorHistory);

@@ -1,5 +1,9 @@
-const { Pool } = require("pg");
+const { Pool, types } = require("pg");
 require("dotenv").config({ path: "./backend/.env" });
+
+
+types.setTypeParser(1082, (val) => val); // DATE type as string
+types.setTypeParser(1114, (val) => val); // TIMESTAMP type as string
 
 const pool = new Pool({
   host: process.env.DB_HOST,

@@ -7,6 +7,11 @@ if (!user || user.role !== 'admin') {
     init();
 }
 
+window.addEventListener('pageshow', () => {
+    loadDashboard();
+}); 
+
+
 function toggleProfile() {
     const menu = document.getElementById('profileMenu');
     menu.style.display =
@@ -148,10 +153,12 @@ async function loadActiveSchedules() {
     container.innerHTML = '';
 
     schedules.forEach(s => {
+        console.log(s.journey_date);
         container.innerHTML += `
             <div>
                 ${s.source} → ${s.destination}
                 | ${s.journey_date}
+                | ${s.departure_time}
                 <button onclick="cancelSchedule(${s.schedule_id})">
                     Cancel
                 </button>
@@ -166,6 +173,40 @@ async function cancelSchedule(id) {
     });
     loadActiveSchedules();
 }
+
+
+
+async function loadPastSchedules() {
+    const res = await fetch(`${API}/past-schedules`);
+    const schedules = await res.json();
+
+    const container = document.getElementById('pastSchedules');
+    container.innerHTML = '';
+
+    schedules.forEach(s => {
+        container.innerHTML += `
+            <div>
+                ${s.source} → ${s.destination}
+                | ${s.journey_date}
+                | ${s.departure_time}
+                | ${s.schedule_status}
+            </div>
+        `;
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Load users */
 async function loadUsers() {

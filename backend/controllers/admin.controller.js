@@ -162,14 +162,32 @@ exports.cancelSchedule = async (req, res) => {
 /* =========================
    Get Active Schedules
 ========================= */
+
+const completeExpiredSchedules = async () => {
+    await pool.query(`
+        UPDATE SCHEDULE
+        SET schedule_status = 'completed'
+        WHERE schedule_status = 'active'
+        AND (journey_date + departure_time) < NOW()
+    `);
+};
+
+
 exports.getActiveSchedules = async (req, res) => {
     try {
+        // First, mark past schedules as completed
+        await completeExpiredSchedules();
+
+
+
+
+        // Then fetch active schedules
         const result = await pool.query(`
             SELECT 
                 s.schedule_id,
                 c1.city_name AS source,
                 c2.city_name AS destination,
-                s.journey_date,
+                to_char(s.journey_date, 'YYYY-MM-DD') AS journey_date,
                 s.departure_time,
                 s.price,
                 s.schedule_status,
@@ -185,7 +203,10 @@ exports.getActiveSchedules = async (req, res) => {
             WHERE s.schedule_status = 'active'
             ORDER BY s.journey_date, s.departure_time
         `);
-
+        
+        console.log(result.rows[0].journey_date);
+        console.log(typeof result.rows[0].journey_date);
+        
         res.json(result.rows);
 
     } catch (err) {
@@ -193,6 +214,51 @@ exports.getActiveSchedules = async (req, res) => {
         res.status(500).json({ message: "Error fetching schedules" });
     }
 };
+
+
+
+/* =========================
+    Get Past Schedules
+========================= */
+exports.getPastSchedules = async (req, res) => {
+    try {
+
+        // Make sure expired schedules are marked completed
+        await completeExpiredSchedules();
+
+        const result = await pool.query(`
+            SELECT 
+                s.schedule_id,
+                c1.city_name AS source,
+                c2.city_name AS destination,
+                to_char(s.journey_date, 'YYYY-MM-DD') AS journey_date,
+                s.departure_time,
+                s.price,
+                s.schedule_status,
+                b.bus_number,
+                b.bus_type,
+                bo.operator_name
+            FROM SCHEDULE s
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
+            JOIN BUS b ON s.bus_id = b.bus_id
+            JOIN BUS_OPERATOR bo ON b.operator_id = bo.operator_id
+            WHERE 
+                s.schedule_status IN ('completed', 'cancelled')
+                OR (s.journey_date + s.departure_time) < NOW()
+            ORDER BY s.journey_date DESC, s.departure_time DESC
+        `);
+
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching past schedules" });
+    }
+};
+
+
 
 
 /* =========================

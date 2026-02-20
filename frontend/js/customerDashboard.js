@@ -10,6 +10,11 @@ if (!user || user.role !== 'customer') {
     loadRecentSearches();
 }
 
+
+window.addEventListener('pageshow', () => {
+    loadDashboard();
+});
+
 function toggleProfile() {
     const menu = document.getElementById('profileMenu');
     menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
@@ -25,6 +30,10 @@ function logout() {
     localStorage.clear();
     window.location.href = '../index.html';
 }
+
+
+
+
 
 /* Header */
 async function loadDashboard() {
@@ -115,5 +124,8 @@ async function loadRecentSearches() {
     `;
     });
 }
+
+
+
 
 
