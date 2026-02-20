@@ -15,7 +15,7 @@ exports.getCities = async (req, res) => {
 
 /* Search route & save recent search */
 exports.searchRoute = async (req, res) => {
-    const { fromCityId, toCityId } = req.body;              // ***** eikhane id or name hobe oita sure na
+    const { fromCityId, toCityId, journeyDate } = req.body;              // ***** eikhane id or name hobe oita sure na
     const userId = req.user.user_id;
 
     const routeResult = await db.query(
@@ -31,9 +31,9 @@ exports.searchRoute = async (req, res) => {
     const routeId = routeResult.rows[0].route_id;
 
     await db.query(
-        `INSERT INTO RECENT_SEARCHES (user_id, route_id)
-        VALUES ($1, $2)`,
-        [userId, routeId]
+        `INSERT INTO RECENT_SEARCHES (user_id, route_id, journey_date)
+        VALUES ($1, $2, $3)`,
+        [userId, routeId, journeyDate]
     );
 
     res.json({ message: 'Search saved', routeId });
@@ -162,6 +162,9 @@ exports.getRecentSearches = async (req, res) => {
     SELECT 
       c1.city_name AS from_city,
       c2.city_name AS to_city,
+      c1.city_id AS from_city_id,
+      c2.city_id AS to_city_id,
+      rs.journey_date,
       rs.search_time
     FROM RECENT_SEARCHES rs
     JOIN ROUTE r ON rs.route_id = r.route_id

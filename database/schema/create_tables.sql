@@ -205,6 +205,7 @@ CREATE TABLE RECENT_SEARCHES (
     user_id INT NOT NULL,
     route_id INT NOT NULL,
     search_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    journey_date DATE NOT NULL,
 
     PRIMARY KEY (user_id, search_time),
 

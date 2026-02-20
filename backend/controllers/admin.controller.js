@@ -285,13 +285,96 @@ exports.getUserHistory = async (req, res) => {
    Get Operator Schedule History
 ========================= */
 exports.getOperatorHistory = async (req, res) => {
-    const result = await pool.query(`
-        SELECT s.schedule_id, s.journey_date, s.departure_time,
-               s.schedule_status, b.bus_number, b.bus_type
-        FROM SCHEDULE s
-        JOIN BUS b ON s.bus_id=b.bus_id
-        WHERE b.operator_id=$1
-        ORDER BY s.journey_date DESC, s.departure_time DESC
-    `, [req.params.id]);
-    res.json(result.rows);
+    try {
+        const result = await pool.query(`
+            SELECT 
+                s.schedule_id,
+                s.journey_date,
+                s.departure_time,
+                s.schedule_status,
+                s.price,
+                b.bus_number,
+                b.bus_type,
+                bo.operator_name,
+                c1.city_name AS source_city,
+                c2.city_name AS destination_city
+            FROM SCHEDULE s
+            JOIN BUS b ON s.bus_id = b.bus_id
+            JOIN BUS_OPERATOR bo ON b.operator_id = bo.operator_id
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
+            WHERE bo.operator_id = $1
+            ORDER BY s.journey_date DESC, s.departure_time DESC
+        `, [req.params.id]);
+        
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching operator history" });
+    }
+};
+
+/* =========================
+   Get Schedule Details with Seat Information
+========================= */
+exports.getScheduleDetails = async (req, res) => {
+    try {
+        const scheduleId = req.params.scheduleId;
+
+        // Get schedule details
+        const scheduleResult = await pool.query(`
+            SELECT 
+                s.schedule_id,
+                s.journey_date,
+                s.departure_time,
+                s.schedule_status,
+                s.price,
+                b.bus_number,
+                b.bus_type,
+                bo.operator_name,
+                c1.city_name AS source_city,
+                c2.city_name AS destination_city
+            FROM SCHEDULE s
+            JOIN BUS b ON s.bus_id = b.bus_id
+            JOIN BUS_OPERATOR bo ON b.operator_id = bo.operator_id
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
+            WHERE s.schedule_id = $1
+        `, [scheduleId]);
+
+        if (scheduleResult.rows.length === 0) {
+            return res.status(404).json({ message: "Schedule not found" });
+        }
+
+        const scheduleDetails = scheduleResult.rows[0];
+
+        // Get all seats with booking details
+        const seatsResult = await pool.query(`
+            SELECT 
+                ss.seat_number,
+                ss.schedule_seat_status,
+                bs.passenger_name,
+                bs.passenger_gender,
+                u.name AS buyer_name,
+                u.phone_number,
+                u.email
+            FROM SCHEDULE_SEAT ss
+            LEFT JOIN BOOKED_SEAT bs ON ss.schedule_id = bs.schedule_id AND ss.seat_number = bs.seat_number
+            LEFT JOIN BOOKING b ON bs.booking_id = b.booking_id
+            LEFT JOIN USERS u ON b.user_id = u.user_id
+            WHERE ss.schedule_id = $1
+            ORDER BY ss.seat_number
+        `, [scheduleId]);
+
+        res.json({
+            schedule: scheduleDetails,
+            seats: seatsResult.rows
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching schedule details" });
+    }
 };

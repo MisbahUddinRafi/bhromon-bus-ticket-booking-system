@@ -9,7 +9,7 @@ if (!user || user.role !== 'admin') {
 
 window.addEventListener('pageshow', () => {
     loadDashboard();
-}); 
+});
 
 
 function toggleProfile() {
@@ -93,29 +93,29 @@ async function loadOperators() {
 
 /* Load buses when operator changes */
 document.getElementById('operatorSelect')
-.addEventListener('change', async function () {
+    .addEventListener('change', async function () {
 
-    const operatorId = this.value;
-    const journeyDate = document.getElementById('journeyDate').value;
+        const operatorId = this.value;
+        const journeyDate = document.getElementById('journeyDate').value;
 
-    if (!journeyDate) {
-        alert("Select journey date first");
-        return;
-    }
+        if (!journeyDate) {
+            alert("Select journey date first");
+            return;
+        }
 
-    const res = await fetch(
-        `${API}/available-buses/${operatorId}/${journeyDate}`
-    );
+        const res = await fetch(
+            `${API}/available-buses/${operatorId}/${journeyDate}`
+        );
 
-    const buses = await res.json();
-    const busSelect = document.getElementById('busSelect');
-    busSelect.innerHTML = '';
+        const buses = await res.json();
+        const busSelect = document.getElementById('busSelect');
+        busSelect.innerHTML = '';
 
-    buses.forEach(b => {
-        busSelect.innerHTML +=
-            `<option value="${b.bus_id}">${b.bus_number}</option>`;
+        buses.forEach(b => {
+            busSelect.innerHTML +=
+                `<option value="${b.bus_id}">${b.bus_number}</option>`;
+        });
     });
-});
 
 /* Create Schedule */
 async function createSchedule() {
@@ -237,12 +237,141 @@ async function loadUserHistory() {
         .innerHTML = JSON.stringify(data, null, 2);
 }
 
+
+
+
 /* Operator history */
 async function loadOperatorHistory() {
     const id = operatorHistoryList.value;
     const res = await fetch(`${API}/operator-history/${id}`);
     const data = await res.json();
 
-    document.getElementById('operatorHistory')
-        .innerHTML = JSON.stringify(data, null, 2);
+    const container = document.getElementById('operatorHistory');
+    container.innerHTML = '';
+
+    if (!data.length) {
+        container.innerHTML = `<p>No schedules found for this operator.</p>`;
+        return;
+    }
+
+    data.forEach(schedule => {
+        const card = document.createElement('div');
+        card.className = 'schedule-card';
+        card.innerHTML = `
+            <h4>${schedule.source_city} → ${schedule.destination_city}</h4>
+            <p><span class="label">Bus Number:</span> ${schedule.bus_number}</p>
+            <p><span class="label">Bus Type:</span> ${schedule.bus_type}</p>
+            <p><span class="label">Operator:</span> ${schedule.operator_name}</p>
+            <p><span class="label">Date:</span> ${schedule.journey_date}</p>
+            <p><span class="label">Departure:</span> ${schedule.departure_time}</p>
+            <p><span class="label">Price:</span> ৳${schedule.price}</p>
+            <p><span class="label">Status:</span> <strong>${schedule.schedule_status}</strong></p>
+        `;
+        card.onclick = () => openScheduleModal(schedule.schedule_id);
+        container.appendChild(card);
+    });
+}
+
+/* Open Modal with Schedule Details */
+async function openScheduleModal(scheduleId) {
+    try {
+        const res = await fetch(`${API}/schedule-details/${scheduleId}`);
+        const data = await res.json();
+
+        displayScheduleDetails(data);
+        document.getElementById('scheduleModal').classList.add('show');
+        document.getElementById('scheduleModalOverlay').classList.add('show');
+    } catch (err) {
+        console.error('Error fetching schedule details:', err);
+        alert('Error loading schedule details');
+    }
+}
+
+/* Display Schedule Details */
+function displayScheduleDetails(data) {
+    const schedule = data.schedule;
+    const seats = data.seats;
+
+    // Display schedule details
+    const detailsHTML = `
+        <div class="detail-item">
+            <label>Operator Name</label>
+            <value>${schedule.operator_name}</value>
+        </div>
+        <div class="detail-item">
+            <label>Bus Number</label>
+            <value>${schedule.bus_number}</value>
+        </div>
+        <div class="detail-item">
+            <label>Bus Type</label>
+            <value>${schedule.bus_type}</value>
+        </div>
+        <div class="detail-item">
+            <label>From City</label>
+            <value>${schedule.source_city}</value>
+        </div>
+        <div class="detail-item">
+            <label>To City</label>
+            <value>${schedule.destination_city}</value>
+        </div>
+        <div class="detail-item">
+            <label>Journey Date</label>
+            <value>${schedule.journey_date}</value>
+        </div>
+        <div class="detail-item">
+            <label>Departure Time</label>
+            <value>${schedule.departure_time}</value>
+        </div>
+        <div class="detail-item">
+            <label>Schedule Status</label>
+            <value>${schedule.schedule_status}</value>
+        </div>
+        <div class="detail-item">
+            <label>Ticket Price</label>
+            <value>৳${schedule.price}</value>
+        </div>
+    `;
+
+    document.getElementById('scheduleDetailsContent').innerHTML = detailsHTML;
+
+    // Display seats table
+    displaySeatsTable(seats);
+}
+
+/* Display Seats Table */
+function displaySeatsTable(seats) {
+    const tbody = document.getElementById('seatsTableBody');
+    tbody.innerHTML = '';
+
+    seats.forEach(seat => {
+        const row = document.createElement('tr');
+        
+        // Status badge class
+        let statusClass = '';
+        if (seat.schedule_seat_status === 'available') {
+            statusClass = 'seat-available';
+        } else if (seat.schedule_seat_status === 'booked') {
+            statusClass = 'seat-booked';
+        } else if (seat.schedule_seat_status === 'cancelled') {
+            statusClass = 'seat-cancelled';
+        }
+
+        row.innerHTML = `
+            <td><strong>${seat.seat_number}</strong></td>
+            <td><span class="${statusClass}">${seat.schedule_seat_status}</span></td>
+            <td>${seat.buyer_name ? seat.buyer_name : '<span class="empty-cell">-</span>'}</td>
+            <td>${seat.phone_number ? seat.phone_number : '<span class="empty-cell">-</span>'}</td>
+            <td>${seat.email ? seat.email : '<span class="empty-cell">-</span>'}</td>
+            <td>${seat.passenger_name ? seat.passenger_name : '<span class="empty-cell">-</span>'}</td>
+            <td>${seat.passenger_gender ? seat.passenger_gender : '<span class="empty-cell">-</span>'}</td>
+        `;
+
+        tbody.appendChild(row);
+    });
+}
+
+/* Close Modal */
+function closeScheduleModal() {
+    document.getElementById('scheduleModal').classList.remove('show');
+    document.getElementById('scheduleModalOverlay').classList.remove('show');
 }

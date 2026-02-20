@@ -13,5 +13,6 @@ router.get('/past-schedules', admin.getPastSchedules);
 router.get('/users', admin.getUsers);
 router.get('/user-history/:id', admin.getUserHistory);
 router.get('/operator-history/:id', admin.getOperatorHistory);
+router.get('/schedule-details/:scheduleId', admin.getScheduleDetails);
 
 module.exports = router;

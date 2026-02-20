@@ -25,7 +25,17 @@ window.onload = async () => {
 };
 
 // ================= HEADER =================
-function goDashboard() { window.location.href = '../pages/dashboard.html'; }
+function goDashboard() { 
+    if (user.role === 'customer') {
+        window.location.href = './customerDashboard.html';
+    } else if (user.role === 'admin') {
+        window.location.href = './adminDashboard.html';
+    } else {
+        localStorage.clear();
+        window.location.href = '../index.html';
+    }
+}
+
 function toggleProfile() {
     const menu = document.getElementById('profileMenu');
     menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
@@ -229,3 +239,4 @@ function resetFilters() {
     renderOperatorDropdown();
     loadSchedules();
 }
+

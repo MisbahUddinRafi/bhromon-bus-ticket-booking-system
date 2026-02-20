@@ -4,25 +4,134 @@
 <head>
   <meta charset="UTF-8" />
   <title>Bhromon - Bus Ticket Booking System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: white;
+      padding: 50px;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 42px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    button:first-of-type {
+      background-color: #667eea;
+      color: white;
+    }
+
+    button:first-of-type:hover {
+      background-color: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button:last-of-type {
+      background-color: #f093fb;
+      color: white;
+    }
+
+    button:last-of-type:hover {
+      background-color: #e07be0;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      p {
+        font-size: 14px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Welcome to Bhromon</h1>
+  <div class="container">
+    <h1>Bhromon</h1>
 
-  <p>
-    Bhromon is an online bus ticket booking system.
-    Search routes, book seats, and manage your journeys easily.
-  </p>
+    <p>
+      Bhromon is an online bus ticket booking system.
+      Search routes, book seats, and manage your journeys easily.
+    </p>
 
-  <br>
+    <div class="button-group">
+      <a href="pages/login.html">
+        <button>Login</button>
+      </a>
 
-  <a href="pages/login.html">
-    <button>Login</button>
-  </a>
-
-  <a href="pages/signup.html">
-    <button>Signup</button>
-  </a>
+      <a href="pages/signup.html">
+        <button>Signup</button>
+      </a>
+    </div>
+  </div>
 </body>
 
 </html>

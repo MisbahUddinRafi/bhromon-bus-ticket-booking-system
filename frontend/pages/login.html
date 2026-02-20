@@ -3,19 +3,161 @@
 <head>
   <meta charset="UTF-8" />
   <title>Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 32px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input {
+      padding: 12px 15px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    button[type="submit"] {
+      padding: 12px;
+      background-color: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button[type="button"] {
+      padding: 10px;
+      background-color: #f0f0f0;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button[type="button"]:hover {
+      background-color: #e0e0e0;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    #message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    #message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .form-footer a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
+  <div class="form-container">
+    <h2>Login</h2>
 
-  <form id="loginForm">
-    <input type="text" id="identifier" placeholder="Email or Phone" required /><br><br>
-    <input type="password" id="password" placeholder="Password" required /><br><br>
+    <form id="loginForm">
+      <input type="text" id="identifier" placeholder="📧 Email or Phone" required />
+      <input type="password" id="password" placeholder="🔒 Password" required />
+      <button type="submit">Login</button>
+    </form>
 
-    <button type="submit">Login</button>
-  </form>
+    <button type="button" id="backbutton" onclick="backButtonClicked()">← Back</button>
+    <p id="message"></p>
 
-  <button type="button" id="backbutton" onclick="backButtonClicked()">Back</button>
-  <p id="message"></p>
+    <div class="form-footer">
+      Don't have an account? <a href="signup.html">Sign up here</a>
+    </div>
+  </div>
 
   <script src="../js/login.js"></script>
 </body>

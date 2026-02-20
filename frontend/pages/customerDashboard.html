@@ -3,36 +3,253 @@
 
 <head>
   <title>Customer Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    header h3 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .header-buttons {
+      position: relative;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    header button {
+      background-color: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    header button:hover {
+      background-color: rgba(255,255,255,0.3);
+    }
+
+    #profileMenu {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+      overflow: hidden;
+      min-width: 180px;
+    }
+
+    #profileMenu button {
+      width: 100%;
+      background-color: white;
+      color: #333;
+      border: none;
+      border-bottom: 1px solid #eee;
+      border-radius: 0;
+      padding: 12px 20px;
+      text-align: left;
+    }
+
+    #profileMenu button:last-child {
+      border-bottom: none;
+    }
+
+    #profileMenu button:hover {
+      background-color: #f8f9fa;
+    }
+
+    section {
+      background-color: white;
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h3 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .search-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    select, input[type="date"] {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    select:focus, input[type="date"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    button[type="button"],
+    button.search-btn {
+      padding: 10px 25px;
+      background-color: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    button[type="button"]:hover,
+    button.search-btn:hover {
+      background-color: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    #recentSearches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .search-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      cursor: default;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    .search-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-card h4 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .search-card p {
+      font-size: 13px;
+      opacity: 0.9;
+      margin: 5px 0;
+    }
+
+    .search-card button {
+      background-color: rgba(255,255,255,0.25);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.5);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 12px;
+      width: 100%;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .search-card button:hover {
+      background-color: rgba(255,255,255,0.35);
+      border-color: rgba(255,255,255,0.8);
+      transform: scale(1.02);
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #999;
+      padding: 30px;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .search-group {
+        grid-template-columns: 1fr;
+      }
+
+      #recentSearches {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
   <header>
-    <h3 id="welcomeText"></h3>
-
-    <button onclick="toggleProfile()">Profile</button>
-    <div id="profileMenu" style="display:none;">
-      <button onclick="goToProfile()">My Profile</button>
-      <button onclick="logout()">Logout</button>
+    <h3 id="welcomeText">👤 Welcome</h3>
+    <div class="header-buttons">
+      <button onclick="toggleProfile()">Profile ▼</button>
+      <div id="profileMenu" style="display:none;">
+        <button onclick="goToProfile()">My Profile</button>
+        <button onclick="logout()">Logout</button>
+      </div>
     </div>
   </header>
 
-  <hr>
-
   <section>
-    <h3>Search Ticket</h3>
-
-    <select id="fromCity"></select>
-    <select id="toCity"></select>
-    <input type="date" id="journeyDate">
-
-    <button onclick="searchTicket()">Search Ticket</button>
+    <h3>🔍 Search Ticket</h3>
+    <div class="search-group">
+      <select id="fromCity"></select>
+      <select id="toCity"></select>
+      <input type="date" id="journeyDate">
+      <button class="search-btn" onclick="searchTicket()">Search</button>
+    </div>
   </section>
 
-  <hr>
-
   <section>
-    <h3>Recent Searches</h3>
+    <h3>📋 Recent Searches</h3>
     <div id="recentSearches"></div>
   </section>
 
