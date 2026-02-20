@@ -74,9 +74,10 @@ async function loadCities() {
 async function searchTicket() {
     const fromCityId = document.getElementById('fromCity').value;
     const toCityId = document.getElementById('toCity').value;
+    const journeyDate = document.getElementById('journeyDate').value;
 
-    if (!fromCityId || !toCityId) {
-        alert('Please select both starting and destination cities.');
+    if (!fromCityId || !toCityId || !journeyDate) {
+        alert('Please select both starting and destination cities, and a journey date.');
         return;
     }
 
@@ -100,7 +101,11 @@ async function searchTicket() {
         return;
     }
 
+    // Save search to recent searches
     loadRecentSearches();
+
+    // redirect to schedules page with query params
+    window.location.href = `schedules.html?from=${fromCityId}&to=${toCityId}&date=${journeyDate}`;
 }
 
 

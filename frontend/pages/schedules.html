@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Available Schedules</title>
+
+    <style>
+        .filter-btn {
+            padding: 6px 12px;
+            margin: 3px;
+            cursor: pointer;
+            border: 1px solid black;
+            background: white;
+        }
+
+        .filter-btn.active {
+            background-color: black;
+            color: white;
+        }
+
+        /* Operator Filtering Styles */
+        .operator-section {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .operator-dropdown-btn {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .operator-dropdown-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #operatorDropdown {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        #operatorDropdown label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+
+        #operatorDropdown label:hover {
+            background-color: #f0f0f0;
+        }
+
+        #operatorDropdown input[type="checkbox"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .selected-operators-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            min-height: 30px;
+        }
+
+        .selected-operator-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .selected-operator-badge input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .selected-operator-badge label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .no-operators-message {
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div onclick="goDashboard()" style="cursor:pointer;">
+        LOGO
+    </div>
+
+    <button onclick="toggleProfile()">Profile</button>
+
+    <div id="profileMenu" style="display:none;">
+        <button onclick="goToProfile()">My Profile</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+</header>
+
+<hr>
+
+<section>
+    <h3>Search Again</h3>
+
+    <select id="fromCity"></select>
+    <select id="toCity"></select>
+    <input type="date" id="journeyDate">
+
+    <button onclick="searchAgain()">Search</button>
+</section>
+
+<hr>
+
+<!-- FILTER SECTION -->
+<section>
+    <h3>Filters</h3>
+
+    <!-- Sorting Options -->
+    <div>
+        <strong>Sort By:</strong><br>
+        <label>
+            <input type="radio" name="sortOption"
+                   id="sortPriceLow"
+                   value="price-low" checked>
+            💰 Price: Low to High
+        </label>
+
+        <label>
+            <input type="radio" name="sortOption"
+                   id="sortPriceHigh"
+                   value="price-high">
+            💰 Price: High to Low
+        </label>
+
+        <label>
+            <input type="radio" name="sortOption"
+                   id="sortTimeEarly"
+                   value="time-early">
+            🕐 Departure: Early to Late
+        </label>
+
+        <label>
+            <input type="radio" name="sortOption"
+                   id="sortTimeLate"
+                   value="time-late">
+            🕐 Departure: Late to Early
+        </label>
+    </div>
+
+    <br>
+
+    <!-- Bus Type -->
+    <div>
+        <strong>Bus Type:</strong><br>
+        <label>
+            <input type="checkbox" name="busType" value="ac">
+            AC
+        </label>
+
+        <label>
+            <input type="checkbox" name="busType" value="non-ac">
+            Non-AC
+        </label>
+    </div>
+
+    <br>
+
+    <!-- Operators -->
+    <div class="operator-section">
+        <strong>Bus Operators:</strong><br>
+        <button class="operator-dropdown-btn" onclick="toggleOperatorDropdown()">📋 Select Operators ▼</button>
+
+        <div id="operatorDropdown" style="display:none;"></div>
+    </div>
+
+    <div class="operator-section">
+        <strong>Selected Operators:</strong>
+        <div id="selectedOperators" class="selected-operators-container"></div>
+        <div id="noOperatorsMsg" class="no-operators-message" style="display:none;">No operators selected - showing all schedules</div>
+    </div>
+
+    <br>
+    <button onclick="resetFilters()">Reset Filters</button>
+</section>
+
+<hr>
+
+<section>
+    <h3>Available Schedules</h3>
+    <div id="scheduleContainer"></div>
+</section>
+
+<script src="../js/schedules.js"></script>
+
+</body>
+</html>

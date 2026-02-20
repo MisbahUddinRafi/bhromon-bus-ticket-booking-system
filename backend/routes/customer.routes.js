@@ -7,5 +7,7 @@ router.get('/dashboard', auth, controller.dashboardInfo);
 router.get('/cities', auth, controller.getCities);
 router.post('/search', auth, controller.searchRoute);
 router.get('/recent-searches', auth, controller.getRecentSearches);
+router.get('/schedules', auth, controller.getSchedules);
+
 
 module.exports = router;
