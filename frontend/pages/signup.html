@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — Bhromon</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse at 25% 40%, rgba(82, 121, 111, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 60%, rgba(132, 169, 140, 0.08) 0%, transparent 50%),
+        linear-gradient(160deg, #2F3E46 0%, #354F52 50%, #2F3E46 100%);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      background: var(--sage);
+      bottom: -100px;
+      left: -80px;
+      filter: blur(100px);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    .auth-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(202, 210, 197, 0.07);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(132, 169, 140, 0.15);
+      padding: 48px 40px;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      width: 100%;
+      max-width: 440px;
+      animation: fadeInUp 0.6s var(--ease-out) both;
+    }
+
+    .auth-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--pale-sage);
+    }
+
+    .auth-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .input-group .form-input {
+      padding-left: 42px;
+    }
+
+    .auth-submit {
+      margin-top: 8px;
+    }
+
+    .back-link {
+      display: flex;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .back-link .btn {
+      font-size: 13px;
+      padding: 9px 20px;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      min-height: 20px;
+      font-weight: 500;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    #message:empty {
+      display: none;
+    }
+
+    #message.error {
+      background: rgba(192, 57, 43, 0.12);
+      color: #e74c3c;
+      border: 1px solid rgba(192, 57, 43, 0.2);
+      animation: fadeInUp 0.3s var(--ease-out) both;
+    }
+
+    #message.success {
+      background: rgba(82, 121, 111, 0.12);
+      color: var(--sage);
+      border: 1px solid rgba(82, 121, 111, 0.2);
+      animation: fadeInUp 0.3s var(--ease-out) both;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .auth-footer a {
+      color: var(--sage);
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+      color: var(--pale-sage);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 500px) {
+      .auth-card {
+        padding: 36px 24px;
+      }
+
+      .auth-title {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-card">
+    <h2 class="auth-title">Create Account</h2>
+    <p class="auth-subtitle">Join Bhromon and start your journey</p>
+
+    <form id="signupForm" class="auth-form">
+      <div class="input-group">
+        <span class="input-icon">👤</span>
+        <input type="text" id="name" class="form-input" placeholder="Full Name" required />
+      </div>
+      <div class="input-group">
+        <span class="input-icon">📧</span>
+        <input type="email" id="email" class="form-input" placeholder="Email" required />
+      </div>
+      <div class="input-group">
+        <span class="input-icon">📱</span>
+        <input type="text" id="phone" class="form-input" placeholder="Phone Number" required />
+      </div>
+      <div class="input-group">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="password" class="form-input" placeholder="Password" required />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block auth-submit">Create Account</button>
+    </form>
+
+    <div class="back-link">
+      <button type="button" class="btn btn-secondary btn-sm" id="backbutton" onclick="backButtonClicked()">←
+        Back</button>
+    </div>
+
+    <p id="message"></p>
+
+    <div class="auth-footer">
+      Already have an account? <a href="login.html">Log in here</a>
+    </div>
+  </div>
+
+  <script src="../js/signup.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Available Schedules — Bhromon</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        body {
+            padding: 24px;
+            padding-top: 80px;
+            background: var(--pale-sage);
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(82, 121, 111, 0.06) 0%, transparent 50%);
+            min-height: 100vh;
+            color: var(--charcoal);
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--dark-teal), var(--charcoal));
+            color: var(--pale-sage);
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+            animation: slideInDown 0.5s var(--ease-out) both;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+        }
+
+        header div:first-child {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: opacity 0.3s;
+        }
+
+        header div:first-child:hover {
+            opacity: 0.8;
+        }
+
+        .header-buttons {
+            position: relative;
+            z-index: 1000;
+        }
+
+        header button {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--pale-sage);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        header button:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        #profileMenu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            z-index: 10000;
+            overflow: hidden;
+            min-width: 190px;
+            border: 1px solid rgba(82, 121, 111, 0.1);
+            animation: slideInDown 0.25s var(--ease-out) both;
+        }
+
+        #profileMenu button {
+            width: 100%;
+            background: #fff;
+            color: var(--charcoal);
+            border: none;
+            border-bottom: 1px solid rgba(82, 121, 111, 0.08);
+            border-radius: 0;
+            padding: 13px 20px;
+            text-align: left;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        #profileMenu button:last-child {
+            border-bottom: none;
+        }
+
+        #profileMenu button:hover {
+            background: rgba(132, 169, 140, 0.08);
+            color: var(--forest);
+        }
+
+
+        .profile-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--pale-sage);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 10px 20px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.3s var(--ease-out);
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 14px;
+        }
+
+        .profile-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+        }
+
+
+        /* ── Sections ── */
+        section {
+            background: #fff;
+            padding: 28px;
+            margin-bottom: 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(82, 121, 111, 0.08);
+            box-shadow: var(--shadow-sm);
+            animation: fadeInUp 0.5s var(--ease-out) both;
+        }
+
+        section:first-of-type {
+            margin-top: 20px;
+            scroll-margin-top: 100px;
+        }
+
+        section {
+            scroll-margin-top: 100px;
+        }
+
+        section:nth-of-type(2) {
+            animation-delay: 0.08s;
+        }
+
+        section:nth-of-type(3) {
+            animation-delay: 0.16s;
+        }
+
+        h3 {
+            font-family: var(--font-display);
+            color: var(--charcoal);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--sage);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Form Elements ── */
+        select,
+        input[type="date"],
+        input[type="time"],
+        input[type="number"] {
+            padding: 12px 14px;
+            margin: 5px;
+            border: 1.5px solid rgba(82, 121, 111, 0.2);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: var(--font-body);
+            transition: all 0.3s var(--ease-out);
+            background: #fff;
+            color: var(--charcoal);
+            outline: none;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--forest);
+            box-shadow: 0 0 0 4px rgba(82, 121, 111, 0.1);
+        }
+
+        /* ── Buttons ── */
+        button {
+            padding: 11px 22px;
+            margin: 5px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.35s var(--ease-out);
+            font-family: var(--font-display);
+            font-weight: 600;
+        }
+
+        button:not(.filter-btn):not(.operator-dropdown-btn) {
+            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+            color: var(--pale-sage);
+        }
+
+        button:not(.filter-btn):not(.operator-dropdown-btn):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(82, 121, 111, 0.35);
+        }
+
+        /* ── Operator Filter ── */
+        .operator-section {
+            margin: 15px 0;
+            padding: 18px;
+            background: rgba(202, 210, 197, 0.25);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(82, 121, 111, 0.1);
+        }
+
+        .operator-dropdown-btn {
+            padding: 9px 16px;
+            background: var(--forest) !important;
+            color: var(--pale-sage) !important;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .operator-dropdown-btn:hover {
+            background: var(--dark-teal) !important;
+            transform: translateY(-1px);
+        }
+
+        #operatorDropdown {
+            background: #fff;
+            border: 1px solid rgba(82, 121, 111, 0.15);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-top: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        #operatorDropdown label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--charcoal);
+        }
+
+        #operatorDropdown label:hover {
+            background: rgba(132, 169, 140, 0.1);
+        }
+
+        #operatorDropdown input[type="checkbox"] {
+            margin-right: 8px;
+            cursor: pointer;
+            accent-color: var(--forest);
+        }
+
+        .selected-operators-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+            min-height: 30px;
+        }
+
+        .selected-operator-badge {
+            background: var(--forest);
+            color: var(--pale-sage);
+            padding: 7px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            animation: fadeIn 0.3s var(--ease-out) both;
+        }
+
+        .selected-operator-badge input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--pale-sage);
+        }
+
+        .selected-operator-badge label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            margin: 0;
+            color: var(--pale-sage);
+            font-size: 13px;
+        }
+
+        .no-operators-message {
+            color: #999;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* Sort / Filter Labels */
+        section label {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--charcoal);
+            cursor: pointer;
+            padding: 4px 0;
+        }
+
+        section input[type="radio"],
+        section input[type="checkbox"] {
+            accent-color: var(--forest);
+            margin-right: 6px;
+        }
+
+        section strong {
+            font-family: var(--font-display);
+            color: var(--dark-teal);
+        }
+
+        /* ── Schedule Cards ── */
+        #scheduleContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 18px;
+            margin-top: 16px;
+        }
+
+        #scheduleContainer>div {
+            border: 1.5px solid rgba(82, 121, 111, 0.15);
+            padding: 20px;
+            margin: 0;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.35s var(--ease-out);
+            background: #fff;
+            animation: fadeInUp 0.4s var(--ease-out) both;
+        }
+
+        #scheduleContainer>div:hover {
+            border-color: var(--forest);
+            box-shadow: 0 6px 24px rgba(82, 121, 111, 0.2);
+            transform: translateY(-3px);
+        }
+
+        #scheduleContainer h4 {
+            color: var(--dark-teal);
+            margin-bottom: 10px;
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        #scheduleContainer p {
+            color: #5a6c70;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        #scheduleContainer button {
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+            padding: 11px;
+        }
+
+        #noSchedulesMsg {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+                padding-top: 120px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            #scheduleContainer {
+                grid-template-columns: 1fr;
+            }
+
+            select,
+            input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+                padding-top: 140px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div onclick="goDashboard()" style="cursor:pointer;">
+            🚌 Bhromon
+        </div>
+
+        <div class="header-buttons">
+            <button class="profile-btn" onclick="toggleProfile()">Profile ▼</button>
+            <div id="profileMenu" style="display:none;">
+                <button onclick="goToProfile()">My Profile</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <section>
+        <h3>🔍 Search Again</h3>
+
+        <select id="fromCity"></select>
+        <select id="toCity"></select>
+        <input type="date" id="journeyDate">
+
+        <button onclick="searchAgain()">Search</button>
+    </section>
+
+    <!-- FILTER SECTION -->
+    <section>
+        <h3>⚙️ Filters</h3>
+
+        <!-- Sorting Options -->
+        <div>
+            <strong>Sort By:</strong><br>
+            <label>
+                <input type="radio" name="sortOption" id="sortPriceLow" value="price-low" checked>
+                💰 Price: Low to High
+            </label>
+
+            <label>
+                <input type="radio" name="sortOption" id="sortPriceHigh" value="price-high">
+                💰 Price: High to Low
+            </label>
+
+            <label>
+                <input type="radio" name="sortOption" id="sortTimeEarly" value="time-early">
+                🕐 Departure: Early to Late
+            </label>
+
+            <label>
+                <input type="radio" name="sortOption" id="sortTimeLate" value="time-late">
+                🕐 Departure: Late to Early
+            </label>
+        </div>
+
+        <br>
+
+        <!-- Bus Type -->
+        <div>
+            <strong>Bus Type:</strong><br>
+            <label>
+                <input type="checkbox" name="busType" value="ac">
+                AC
+            </label>
+
+            <label>
+                <input type="checkbox" name="busType" value="non-ac">
+                Non-AC
+            </label>
+        </div>
+
+        <br>
+
+        <!-- Operators -->
+        <div class="operator-section">
+            <strong>Bus Operators:</strong><br>
+            <button class="operator-dropdown-btn" onclick="toggleOperatorDropdown()">📋 Select Operators ▼</button>
+
+            <div id="operatorDropdown" style="display:none;"></div>
+        </div>
+
+        <div class="operator-section">
+            <strong>Selected Operators:</strong>
+            <div id="selectedOperators" class="selected-operators-container"></div>
+            <div id="noOperatorsMsg" class="no-operators-message" style="display:none;">No operators selected - showing
+                all schedules</div>
+        </div>
+
+        <br>
+        <button onclick="resetFilters()">🔄 Reset Filters</button>
+    </section>
+
+    <section>
+        <h3>🚌 Available Schedules</h3>
+        <div id="scheduleContainer"></div>
+    </section>
+
+    <script src="../js/schedules.js"></script>
+
+</body>
+
+</html>

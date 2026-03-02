@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bhromon — Bus Ticket Booking System</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse at 30% 30%, rgba(82, 121, 111, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 70%, rgba(132, 169, 140, 0.1) 0%, transparent 50%),
+        linear-gradient(160deg, #2F3E46 0%, #354F52 50%, #2F3E46 100%);
+      background-size: 100% 100%, 100% 100%, 200% 200%;
+      animation: gradientShift 12s ease-in-out infinite;
+    }
+
+    /* Floating ambient orbs */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(80px);
+      opacity: 0.35;
+    }
+    body::before {
+      width: 400px;
+      height: 400px;
+      background: var(--forest);
+      top: -120px;
+      left: -80px;
+      animation: float 8s ease-in-out infinite;
+    }
+    body::after {
+      width: 350px;
+      height: 350px;
+      background: var(--sage);
+      bottom: -100px;
+      right: -60px;
+      animation: float 10s ease-in-out infinite reverse;
+    }
+
+    .hero-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(202, 210, 197, 0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(132, 169, 140, 0.18);
+      padding: 60px 50px;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.06);
+      text-align: center;
+      max-width: 560px;
+      width: 100%;
+      animation: fadeInUp 0.7s var(--ease-out) both;
+    }
+
+    .hero-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 8px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, var(--pale-sage), var(--sage));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .tagline {
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-group .btn {
+      min-width: 140px;
+    }
+
+    .btn-signup {
+      background: transparent;
+      color: var(--sage);
+      border: 2px solid rgba(132, 169, 140, 0.35);
+    }
+    .btn-signup:hover {
+      background: rgba(132, 169, 140, 0.12);
+      border-color: var(--sage);
+      transform: translateY(-2px);
+    }
+
+    .footer-text {
+      margin-top: 32px;
+      font-size: 12px;
+      color: rgba(202, 210, 197, 0.3);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 600px) {
+      .hero-card {
+        padding: 40px 28px;
+      }
+      .brand-name {
+        font-size: 38px;
+      }
+      .tagline {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero-card">
+    <span class="hero-icon">🚌</span>
+    <h1 class="brand-name">Bhromon</h1>
+
+    <p class="tagline">
+      Your journey starts here. Search routes, book seats,
+      and manage your trips — all in one place.
+    </p>
+
+    <div class="btn-group">
+      <a href="pages/login.html">
+        <button class="btn btn-primary btn-lg">Login</button>
+      </a>
+      <a href="pages/signup.html">
+        <button class="btn btn-signup btn-lg">Sign Up</button>
+      </a>
+    </div>
+
+    <p class="footer-text">Travel Smart · Travel Green</p>
+  </div>
+</body>
+
+</html>

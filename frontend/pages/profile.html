@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile — Bhromon</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        body {
+            padding: 24px;
+            padding-top: 90px;
+            background: var(--pale-sage);
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(82, 121, 111, 0.06) 0%, transparent 50%);
+            min-height: 100vh;
+            color: var(--charcoal);
+        }
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 28px;
+            animation: slideInDown 0.5s var(--ease-out) both;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--pale-sage);
+            z-index: 100;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            color: var(--charcoal);
+            font-size: 30px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            padding: 11px 24px;
+            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+            color: var(--pale-sage);
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.35s var(--ease-out);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(82, 121, 111, 0.35);
+            color: var(--pale-sage);
+        }
+
+        /* ── Sections ── */
+        section {
+            background: #fff;
+            padding: 28px;
+            margin-bottom: 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(82, 121, 111, 0.08);
+            box-shadow: var(--shadow-sm);
+            animation: fadeInUp 0.5s var(--ease-out) both;
+        }
+
+        section:first-of-type {
+            margin-top: 20px;
+            scroll-margin-top: 110px;
+        }
+
+        section {
+            scroll-margin-top: 110px;
+        }
+
+        section:nth-of-type(2) {
+            animation-delay: 0.08s;
+        }
+
+        section:nth-of-type(3) {
+            animation-delay: 0.16s;
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            color: var(--charcoal);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--sage);
+        }
+
+        /* ── Form ── */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--forest);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid rgba(82, 121, 111, 0.2);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: var(--font-body);
+            transition: all 0.3s var(--ease-out);
+            background: #fff;
+            color: var(--charcoal);
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--forest);
+            box-shadow: 0 0 0 4px rgba(82, 121, 111, 0.1);
+        }
+
+        input:disabled {
+            background: rgba(202, 210, 197, 0.2);
+            cursor: not-allowed;
+            color: #999;
+            border-color: rgba(82, 121, 111, 0.1);
+        }
+
+        button {
+            padding: 11px 28px;
+            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+            color: var(--pale-sage);
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.35s var(--ease-out);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(82, 121, 111, 0.35);
+        }
+
+        /* ── Danger Zone ── */
+        .danger-zone {
+            border: 2px solid #c0392b;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            background: rgba(192, 57, 43, 0.03);
+        }
+
+        .danger-zone h2 {
+            color: #c0392b;
+            border-bottom-color: #c0392b;
+        }
+
+        .danger-zone p {
+            color: #666;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #c0392b, #96281b) !important;
+            width: 100%;
+            padding: 14px !important;
+            font-size: 15px !important;
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 6px 20px rgba(192, 57, 43, 0.35) !important;
+        }
+
+        /* ── Feedback Messages ── */
+        .success-message {
+            background: rgba(82, 121, 111, 0.1);
+            color: var(--forest);
+            border: 1px solid rgba(82, 121, 111, 0.2);
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 15px;
+            display: none;
+            font-weight: 500;
+            animation: fadeInUp 0.3s var(--ease-out) both;
+        }
+
+        .error-message {
+            background: rgba(192, 57, 43, 0.1);
+            color: #c0392b;
+            border: 1px solid rgba(192, 57, 43, 0.2);
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 15px;
+            display: none;
+            font-weight: 500;
+            animation: fadeInUp 0.3s var(--ease-out) both;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 16px;
+                padding-top: 130px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 14px;
+                align-items: flex-start;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+                padding-top: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>👤 My Profile</h1>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+
+    <!-- ================= PROFILE INFO ================= -->
+    <section>
+        <h2>Profile Information</h2>
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" id="name">
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="text" id="email" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Phone Number:</label>
+            <input type="text" id="phone" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Role:</label>
+            <input type="text" id="role" disabled>
+        </div>
+
+        <button onclick="updateName()">Update Name</button>
+    </section>
+
+    <!-- ================= CHANGE PASSWORD ================= -->
+    <section>
+        <h2>Change Password</h2>
+
+        <div class="form-group">
+            <label>Old Password:</label>
+            <input type="password" id="oldPassword">
+        </div>
+
+        <div class="form-group">
+            <label>New Password:</label>
+            <input type="password" id="newPassword">
+        </div>
+
+        <button onclick="changePassword()">Change Password</button>
+    </section>
+
+    <!-- ================= DELETE ACCOUNT ================= -->
+    <section class="danger-zone">
+        <h2>⚠️ Danger Zone</h2>
+        <p>
+            Once you delete your account, there is no going back. Please be certain.
+        </p>
+        <button class="delete-btn" onclick="deleteAccount()">Delete Account Permanently</button>
+    </section>
+
+    <script src="../js/profile.js"></script>
+
+</body>
+
+</html>
