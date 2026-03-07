@@ -169,20 +169,24 @@ async function loadRecentSearches() {
 
             // Format search time
             const searchDate = new Date(s.search_time);
-            const formattedDate = searchDate.toLocaleDateString('en-BD', { 
+            const formattedSearchDate = searchDate.toLocaleTimeString('en-GB', { 
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            const journeyDate = new Date(s.journey_date);
+            const formattedJourneyDate = journeyDate.toLocaleDateString('en-BD', { 
                 year: 'numeric', 
                 month: 'short', 
                 day: 'numeric' 
             });
-            const formattedTime = searchDate.toLocaleTimeString('en-GB', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
 
             searchCard.innerHTML = `
                 <h4>🚌 ${s.from_city} → ${s.to_city}</h4>
-                <p><strong>Date:</strong> ${formattedDate}</p>
-                <p><strong>Searched:</strong> ${formattedTime}</p>
+                <p><strong>Journey Date:</strong> ${formattedJourneyDate}</p>
+                <p><strong>Searched:</strong> ${formattedSearchDate}</p>
                 <button onclick="recentSearch(${s.from_city_id}, ${s.to_city_id}, '${s.journey_date}')">
                     Search Again
                 </button>
