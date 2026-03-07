@@ -22,28 +22,53 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 24px 28px;
+            padding: 16px 28px;
             animation: slideInDown 0.5s var(--ease-out) both;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background: var(--pale-sage);
+            background: var(--dark-teal);
             z-index: 100;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 50px;
+            max-width: 180px;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 100%;
+            width: auto;
+            max-width: 150px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
         }
 
         h1 {
             font-family: var(--font-display);
-            color: var(--charcoal);
-            font-size: 30px;
+            color: var(--dark-teal);
+            font-size: 28px;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin: 0;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
-        .back-btn {
+        /* .back-btn {
             padding: 11px 24px;
             background: linear-gradient(135deg, var(--forest), var(--dark-teal));
             color: var(--pale-sage);
@@ -64,7 +89,7 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(82, 121, 111, 0.35);
             color: var(--pale-sage);
-        }
+        } */
 
         /* ── Sections ── */
         section {
@@ -222,24 +247,66 @@
         @media (max-width: 600px) {
             body {
                 padding: 16px;
-                padding-top: 130px;
+                padding-top: 120px;
             }
 
             .header {
-                flex-direction: column;
-                gap: 14px;
-                align-items: flex-start;
+                flex-direction: row;
+                gap: 12px;
+                align-items: center;
+                padding: 14px 20px;
+                justify-content: space-between;
+            }
+
+            .logo {
+                height: 40px;
+                max-width: 140px;
+                gap: 8px;
+                flex-shrink: 0;
+            }
+
+            .logo img {
+                max-width: 120px;
             }
 
             h1 {
-                font-size: 24px;
+                font-size: 22px;
+                flex-shrink: 0;
+                white-space: nowrap;
             }
         }
 
         @media (max-width: 480px) {
             body {
                 padding: 12px;
-                padding-top: 150px;
+                padding-top: 110px;
+            }
+
+            .header {
+                flex-direction: row;
+                gap: 10px;
+                padding: 12px 16px;
+                justify-content: space-between;
+            }
+
+            .logo {
+                height: 35px;
+                max-width: 110px;
+                gap: 6px;
+                flex-shrink: 0;
+            }
+
+            .logo img {
+                max-width: 90px;
+            }
+
+            h1 {
+                font-size: 18px;
+                flex-shrink: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 180px;
             }
         }
     </style>
@@ -248,8 +315,11 @@
 <body>
 
     <div class="header">
-        <h1>👤 My Profile</h1>
-        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+        <div class="logo" onclick="window.location.href = '../pages/customerDashboard.html'">
+            <img src="../../docs/bhromon_logo.png" alt="bhromon">
+        </div>
+        <h1>My Profile</h1>
+        <!-- <button class="back-btn" onclick="goBack()">← Back to Dashboard</button> -->
     </div>
 
     <!-- ================= PROFILE INFO ================= -->
