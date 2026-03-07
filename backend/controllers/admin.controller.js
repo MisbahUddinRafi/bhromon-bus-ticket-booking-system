@@ -365,7 +365,7 @@ exports.getScheduleDetails = async (req, res) => {
             LEFT JOIN BOOKING b ON bs.booking_id = b.booking_id
             LEFT JOIN USERS u ON b.user_id = u.user_id
             WHERE ss.schedule_id = $1
-            ORDER BY ss.seat_number
+            ORDER BY CAST(substr(ss.seat_number, 2) AS INTEGER)
         `, [scheduleId]);
 
         res.json({
