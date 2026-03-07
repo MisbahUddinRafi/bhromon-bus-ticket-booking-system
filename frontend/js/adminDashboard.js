@@ -237,7 +237,21 @@ async function createSchedule() {
     const result = await res.json();
     alert(result.message);
 
-    loadActiveSchedules();
+    if (result.success || res.status === 200) {
+        resetScheduleForm();
+        loadActiveSchedules();
+    }
+}
+
+/* Reset Schedule Form to Default Values */
+function resetScheduleForm() {
+    // document.getElementById('sourceCity').value = '';
+    // document.getElementById('destinationCity').value = '';
+    // document.getElementById('journeyDate').value = '';
+    document.getElementById('departureTime').value = '';
+    document.getElementById('price').value = '';
+    document.getElementById('operatorSelect').value = '';
+    document.getElementById('busSelect').innerHTML = '';
 }
 
 /* Active schedules */

@@ -40,11 +40,48 @@
       font-weight: 700;
       cursor: pointer;
       transition: all 0.3s var(--ease-out);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 50px;
+      max-width: 180px;
+    }
+
+    header .logo img {
+      height: 100%;
+      width: auto;
+      max-width: 150px;
+      object-fit: contain;
+      display: block;
     }
 
     header .logo:hover {
       opacity: 0.8;
       transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      header .logo {
+        height: 40px;
+        max-width: 140px;
+        gap: 8px;
+      }
+
+      header .logo img {
+        max-width: 120px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header .logo {
+        height: 35px;
+        max-width: 110px;
+        gap: 6px;
+      }
+
+      header .logo img {
+        max-width: 90px;
+      }
     }
 
     .header-nav {
@@ -366,7 +403,9 @@
 <body>
 
   <header>
-    <div class="logo" onclick="window.location.reload()">Bhromon</div>
+    <div class="logo" onclick="window.location.reload()">
+      <img src="../../docs/bhromon_logo.png" alt="bhromon">
+    </div>
 
     <div class="header-nav">
       <div class="nav-btn-group">
