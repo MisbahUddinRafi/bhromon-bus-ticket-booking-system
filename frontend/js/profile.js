@@ -41,8 +41,11 @@ function goBack() {
 
     if (user.role === 'admin') {
         window.location.href = 'adminDashboard.html';
-    } else {
+    } else if (user.role === 'customer') {
         window.location.href = 'customerDashboard.html';
+    } else {
+        localStorage.clear();
+        window.location.href = '../index.html';
     }
 }
 

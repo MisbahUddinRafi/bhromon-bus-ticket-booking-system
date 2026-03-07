@@ -50,7 +50,7 @@
     header .logo img {
       height: 100%;
       width: auto;
-      max-width: 150px;
+      max-width: 160px;
       object-fit: contain;
       display: block;
     }
@@ -62,9 +62,21 @@
 
     @media (max-width: 768px) {
       header .logo {
+        height: 45px;
+        max-width: 160px;
+        gap: 8px;
+      }
+
+      header .logo img {
+        max-width: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header .logo {
         height: 40px;
         max-width: 140px;
-        gap: 8px;
+        gap: 6px;
       }
 
       header .logo img {
@@ -72,17 +84,6 @@
       }
     }
 
-    @media (max-width: 480px) {
-      header .logo {
-        height: 35px;
-        max-width: 110px;
-        gap: 6px;
-      }
-
-      header .logo img {
-        max-width: 90px;
-      }
-    }
 
     .header-nav {
       display: flex;
@@ -409,22 +410,26 @@
 
     <div class="header-nav">
       <div class="nav-btn-group">
-        <button class="nav-btn" onclick="document.querySelector('section:nth-child(2)').scrollIntoView({ behavior: 'smooth' })">📝</button>
+        <button class="nav-btn"
+          onclick="document.querySelector('section:nth-child(2)').scrollIntoView({ behavior: 'smooth' })">📝</button>
         <div class="tooltip">Search Ticket</div>
       </div>
 
       <div class="nav-btn-group">
-        <button class="nav-btn" onclick="document.querySelector('section:nth-child(3)').scrollIntoView({ behavior: 'smooth' })">📅</button>
+        <button class="nav-btn"
+          onclick="document.querySelector('section:nth-child(3)').scrollIntoView({ behavior: 'smooth' })">📅</button>
         <div class="tooltip">Recent Searches</div>
       </div>
 
       <div class="nav-btn-group">
-        <button class="nav-btn" onclick="document.querySelector('section:nth-child(4)').scrollIntoView({ behavior: 'smooth' })">📜</button>
+        <button class="nav-btn"
+          onclick="document.querySelector('section:nth-child(4)').scrollIntoView({ behavior: 'smooth' })">📜</button>
         <div class="tooltip">Upcoming Trips</div>
       </div>
 
       <div class="nav-btn-group">
-        <button class="nav-btn" onclick="document.querySelector('section:nth-child(5)').scrollIntoView({ behavior: 'smooth' })">📚</button>
+        <button class="nav-btn"
+          onclick="document.querySelector('section:nth-child(5)').scrollIntoView({ behavior: 'smooth' })">📚</button>
         <div class="tooltip">Past Trips</div>
       </div>
 
