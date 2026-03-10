@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alert Messages Demo — Bhromon</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    body {
+      background: linear-gradient(160deg, #2F3E46 0%, #354F52 50%, #2F3E46 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--pale-sage);
+    }
+
+    .header h1 {
+      font-size: 36px;
+      margin-bottom: 8px;
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .demo-section {
+      margin-bottom: 40px;
+    }
+
+    .demo-section h2 {
+      font-size: 20px;
+      color: var(--sage);
+      margin-bottom: 20px;
+      font-family: var(--font-display);
+      border-left: 4px solid var(--sage);
+      padding-left: 12px;
+    }
+
+    .demo-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .btn-demo {
+      background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+      color: var(--pale-sage);
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-weight: 600;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .btn-demo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(82, 121, 111, 0.45);
+    }
+
+    .code-block {
+      background: rgba(202, 210, 197, 0.08);
+      border: 1px solid rgba(132, 169, 140, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-top: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: var(--sage);
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .inline-alerts {
+      display: grid;
+      gap: 16px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(132, 169, 140, 0.2);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body class="body-dark">
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Alert Messages Demo</h1>
+      <p>Reusable alert components with earthy green design system</p>
+    </div>
+
+    <!-- Success Alerts -->
+    <div class="demo-section">
+      <h2>✓ Success Alerts</h2>
+      
+      <div class="demo-grid">
+        <button class="btn-demo" onclick="showSuccess('Success!', 'Your booking has been confirmed. Ticket #12345 has been created.')">
+          Show Success Alert
+        </button>
+      </div>
+
+      <div class="code-block">
+showSuccess('Success!', 'Your booking has been confirmed.');</div>
+
+      <div class="inline-alerts" style="margin-top: 20px;">
+        <div class="alert alert-success">
+          <div class="alert-icon">✓</div>
+          <div class="alert-content">
+            <div class="alert-title">Success!</div>
+            <div class="alert-message">Your profile has been updated successfully. All changes are now visible.</div>
+          </div>
+          <button class="alert-close">&times;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Alerts -->
+    <div class="demo-section">
+      <h2>✕ Error Alerts</h2>
+      
+      <div class="demo-grid">
+        <button class="btn-demo" onclick="showError('Booking Failed!', 'Invalid seat selection. Please try again with available seats.')">
+          Show Error Alert
+        </button>
+      </div>
+
+      <div class="code-block">
+showError('Error!', 'Please check your input and try again.');</div>
+
+      <div class="inline-alerts" style="margin-top: 20px;">
+        <div class="alert alert-error">
+          <div class="alert-icon">✕</div>
+          <div class="alert-content">
+            <div class="alert-title">Error!</div>
+            <div class="alert-message">Email already exists in our system. Please try with a different email address.</div>
+          </div>
+          <button class="alert-close">&times;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning Alerts -->
+    <div class="demo-section">
+      <h2>⚠ Warning Alerts</h2>
+      
+      <div class="demo-grid">
+        <button class="btn-demo" onclick="showWarning('Limited Availability!', 'Only 3 seats remaining on this route. Prices may increase soon!')">
+          Show Warning Alert
+        </button>
+      </div>
+
+      <div class="code-block">
+showWarning('Warning!', 'Your reservation expires in 10 minutes.');</div>
+
+      <div class="inline-alerts" style="margin-top: 20px;">
+        <div class="alert alert-warning">
+          <div class="alert-icon">⚠</div>
+          <div class="alert-content">
+            <div class="alert-title">Warning!</div>
+            <div class="alert-message">Your login session will expire in 5 minutes. Please save your changes.</div>
+          </div>
+          <button class="alert-close">&times;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Alerts -->
+    <div class="demo-section">
+      <h2>ℹ Info Alerts</h2>
+      
+      <div class="demo-grid">
+        <button class="btn-demo" onclick="showInfo('New Feature', 'You can now book round-trip tickets with special discounts!')">
+          Show Info Alert
+        </button>
+      </div>
+
+      <div class="code-block">
+showInfo('Info', 'Your confirmation email has been sent.');</div>
+
+      <div class="inline-alerts" style="margin-top: 20px;">
+        <div class="alert alert-info">
+          <div class="alert-icon">ℹ</div>
+          <div class="alert-content">
+            <div class="alert-title">Information</div>
+            <div class="alert-message">Your ticket confirmation has been sent to your registered email. You can also view it in your dashboard.</div>
+          </div>
+          <button class="alert-close">&times;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Programmtic Examples -->
+    <div class="demo-section">
+      <h2>Interactive Examples</h2>
+      
+      <div class="demo-grid" style="grid-template-columns: 1fr 1fr;">
+        <div>
+          <button class="btn-demo" onclick="showSuccess('Success!', 'Form submitted successfully!', 4000)">Form Success</button>
+        </div>
+        <div>
+          <button class="btn-demo" onclick="showError('Error!', 'Please fill all required fields.', 4000)">Form Error</button>
+        </div>
+        <div>
+          <button class="btn-demo" onclick="showWarning('Warning!', 'This action cannot be undone.', 0)">Permanent Warning</button>
+        </div>
+        <div>
+          <button class="btn-demo" onclick="showInfo('Info', 'Processing your request...', 3000)">Processing</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>See <strong>ALERTS_GUIDE.md</strong> in the docs folder for detailed implementation instructions.</p>
+    </div>
+  </div>
+
+  <script src="../js/alerts.js"></script>
+  <script>
+    // Add close button functionality for inline alerts
+    document.querySelectorAll('.alert-close').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const alert = this.closest('.alert');
+        alert.classList.add('alert-dismissing');
+        setTimeout(() => alert.remove(), 350);
+      });
+    });
+  </script>
+</body>
+
+</html>

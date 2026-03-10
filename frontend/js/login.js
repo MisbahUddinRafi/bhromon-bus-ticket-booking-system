@@ -1,5 +1,4 @@
 const form = document.getElementById("loginForm");
-const message = document.getElementById("message");
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -21,23 +20,25 @@ form.addEventListener("submit", async (e) => {
         const result = await res.json();
 
         if (!res.ok) {
-            message.textContent = result.message;
+            showError('Login Failed!', result.message || 'Invalid email/phone or password.');
             return;
         }
 
         localStorage.setItem("user", JSON.stringify(result.user));
         console.log(result.user);
-        message.textContent = "Login successful!";
-        alert(`Welcome, ${result.user.name}!`);
+        
+        showSuccess('Welcome Back!', 'Hello ' + result.user.name + '! Redirecting to dashboard...', 2000); 
 
         /* redirect to dashboard */
-        if (result.user.role === "admin") {
-            window.location.href = "../pages/adminDashboard.html";
-        } else if (result.user.role === "customer") {
-            window.location.href = "../pages/customerDashboard.html";
-        }
+        setTimeout(() => {
+            if (result.user.role === "admin") {
+                window.location.href = "../pages/adminDashboard.html";
+            } else if (result.user.role === "customer") {
+                window.location.href = "../pages/customerDashboard.html";
+            }
+        }, 2000);
     } catch (err) {
-        message.textContent = "Server error";
+        showError('Server Error!', 'An unexpected error occurred. Please try again later.');
         console.error(err);
     }
 });

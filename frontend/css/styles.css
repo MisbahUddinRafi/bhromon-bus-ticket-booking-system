@@ -449,7 +449,204 @@ a:hover {
 }
 
 
-/* ── Toast Messages ── */
+/* ── Alert Messages ── */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 500;
+  animation: slideInDown 0.4s var(--ease-out) both;
+  position: relative;
+  overflow: hidden;
+  border: 1.5px solid;
+  backdrop-filter: blur(10px);
+}
+
+.alert::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  animation: shimmer 3s infinite;
+  animation-delay: 0.5s;
+}
+
+.alert-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+.alert-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.alert-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+}
+
+.alert-message {
+  opacity: 0.95;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.alert-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  transition: all 0.2s var(--ease-out);
+  position: relative;
+  z-index: 2;
+  opacity: 0.7;
+}
+
+.alert-close:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.15);
+}
+
+
+/* ── Alert: Success ── */
+.alert-success {
+  background: linear-gradient(135deg, rgba(82, 121, 111, 0.15) 0%, rgba(132, 169, 140, 0.08) 100%);
+  color: #52796F;
+  border-color: rgba(82, 121, 111, 0.35);
+  box-shadow: 0 4px 20px rgba(82, 121, 111, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.alert-success .alert-icon {
+  background: linear-gradient(135deg, var(--sage), var(--forest));
+  color: var(--pale-sage);
+  box-shadow: 0 0 12px rgba(82, 121, 111, 0.3);
+}
+
+.alert-success .alert-title {
+  color: var(--forest);
+}
+
+.alert-success .alert-close {
+  color: var(--forest);
+}
+
+
+/* ── Alert: Error/Danger ── */
+.alert-error,
+.alert-danger {
+  background: linear-gradient(135deg, rgba(192, 57, 43, 0.12) 0%, rgba(231, 76, 60, 0.06) 100%);
+  color: #b93c2f;
+  border-color: rgba(192, 57, 43, 0.35);
+  box-shadow: 0 4px 20px rgba(192, 57, 43, 0.12), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.alert-error .alert-icon,
+.alert-danger .alert-icon {
+  background: linear-gradient(135deg, #d9534f, #c0392b);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(192, 57, 43, 0.3);
+}
+
+.alert-error .alert-title,
+.alert-danger .alert-title {
+  color: #c0392b;
+}
+
+.alert-error .alert-close,
+.alert-danger .alert-close {
+  color: #c0392b;
+}
+
+
+/* ── Alert: Warning ── */
+.alert-warning {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.12) 0%, rgba(241, 196, 15, 0.08) 100%);
+  color: #d68910;
+  border-color: rgba(230, 126, 34, 0.35);
+  box-shadow: 0 4px 20px rgba(230, 126, 34, 0.12), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.alert-warning .alert-icon {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(230, 126, 34, 0.3);
+}
+
+.alert-warning .alert-title {
+  color: #d35400;
+}
+
+.alert-warning .alert-close {
+  color: #d35400;
+}
+
+
+/* ── Alert: Info ── */
+.alert-info {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.12) 0%, rgba(149, 165, 166, 0.08) 100%);
+  color: #2980b9;
+  border-color: rgba(52, 152, 219, 0.35);
+  box-shadow: 0 4px 20px rgba(52, 152, 219, 0.12), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.alert-info .alert-icon {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(52, 152, 219, 0.3);
+}
+
+.alert-info .alert-title {
+  color: #2980b9;
+}
+
+.alert-info .alert-close {
+  color: #2980b9;
+}
+
+
+/* ── Alert: Dismissible Animation ── */
+.alert.alert-dismissing {
+  animation: slideOutUp 0.35s var(--ease-out) forwards;
+}
+
+@keyframes slideOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+
+/* ── Toast Messages (Compact variant) ── */
 .toast {
   padding: 14px 20px;
   border-radius: var(--radius-sm);

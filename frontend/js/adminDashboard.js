@@ -225,21 +225,28 @@ async function createSchedule() {
         busId: busSelect.value
     };
 
-    const res = await fetch(`${API}/create-schedule`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-user': JSON.stringify(user)
-        },
-        body: JSON.stringify(data)
-    });
+    try {
+        const res = await fetch(`${API}/create-schedule`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user': JSON.stringify(user)
+            },
+            body: JSON.stringify(data)
+        });
 
-    const result = await res.json();
-    alert(result.message);
+        const result = await res.json();
 
-    if (result.success || res.status === 200) {
-        resetScheduleForm();
-        loadActiveSchedules();
+        if (result.success || res.status === 200) {
+            showSuccess('Schedule Created!', 'New bus schedule has been created successfully.');
+            resetScheduleForm();
+            loadActiveSchedules();
+        } else {
+            showError('Creation Failed!', result.message || 'Could not create schedule.');
+        }
+    } catch (err) {
+        showError('Server Error!', 'An unexpected error occurred. Please try again.');
+        console.error(err);
     }
 }
 
@@ -315,10 +322,25 @@ async function loadActiveSchedules() {
 }
 
 async function cancelSchedule(id) {
-    await fetch(`${API}/cancel-schedule/${id}`, {
-        method: 'PUT'
-    });
-    loadActiveSchedules();
+    if (!confirm('Are you sure you want to cancel this schedule? This action may affect existing bookings.')) {
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API}/cancel-schedule/${id}`, {
+            method: 'PUT'
+        });
+        
+        if (res.ok) {
+            showSuccess('Schedule Cancelled!', 'The bus schedule has been cancelled.');
+            loadActiveSchedules();
+        } else {
+            showError('Cancellation Failed!', 'Could not cancel the schedule. Please try again.');
+        }
+    } catch (err) {
+        showError('Server Error!', 'An error occurred while cancelling the schedule.');
+        console.error(err);
+    }
 }
 
 
@@ -492,7 +514,7 @@ async function openScheduleModal(scheduleId) {
         }, 50);
     } catch (err) {
         console.error('Error fetching schedule details:', err);
-        alert('Error loading schedule details');
+        showError('Error!', 'Could not load schedule details. Please try again.');
     }
 }
 

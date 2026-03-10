@@ -1,5 +1,4 @@
 const form = document.getElementById("signupForm");
-const message = document.getElementById("message");
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -23,22 +22,22 @@ form.addEventListener("submit", async (e) => {
         const result = await res.json();
 
         if (!res.ok) {
-            message.textContent = result.message; 
+            showError('Signup Failed!', result.message || 'Please check your information and try again.');
             return; 
         }
 
-        message.textContent = "Signup successful! You can now log in.";
-        alert(`Welcome, ${result.user.name}! Please log in.`);
+        showSuccess('Account Created!', `Welcome ${result.user.name}! Redirecting to login...`, 2500);
 
         /* redirect to login page */
-        window.location.href = "../pages/login.html";
+        setTimeout(() => {
+            window.location.href = "../pages/login.html";
+        }, 2500);
 
     } catch (err) {
-        message.textContent = "Server error. Please try again later.";  
+        showError('Server Error!', 'An unexpected error occurred. Please try again later.');
+        console.error(err);
     }
-}); 
-
-
+});
 function backButtonClicked() {
     window.location.href = "../index.html";
 }
