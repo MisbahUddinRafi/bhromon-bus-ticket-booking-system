@@ -112,12 +112,12 @@ async function searchTicket() {
     const journeyDate = document.getElementById('journeyDate').value;
 
     if (!fromCityId || !toCityId || !journeyDate) {
-        alert('Please select both starting and destination cities, and a journey date.');
+        showError('Incomplete Search!', 'Please select both starting and destination cities, and a journey date.');
         return;
     }
 
     if (fromCityId === toCityId) {
-        alert('Starting city and destination city cannot be the same.');
+        showError('Invalid Route!', 'Starting city and destination city cannot be the same.');
         return;
     }
 
@@ -132,7 +132,7 @@ async function searchTicket() {
 
     if (!res.ok) {
         const errorData = await res.json();
-        alert(errorData.message || 'Search failed. Please try again.');
+        showError('Search Failed!', errorData.message || 'Could not search schedules. Please try again.');
         return;
     }
 

@@ -19,7 +19,7 @@ async function loadProfile() {
     });
 
     if (!res.ok) {
-        alert("Failed to load profile: " + res.status);
+        showError('Failed to Load!', 'Could not load your profile. Please try again.');
         return;
     }
 
@@ -60,7 +60,7 @@ async function updateName() {
     const newName = document.getElementById("name").value;
 
     if (!newName || newName === oldName) {
-        alert("new name should be different and not empty");
+        showError('Invalid Input!', 'New name should be different and not empty.');
         return;
     }
 
@@ -76,14 +76,14 @@ async function updateName() {
     const data = await res.json();
 
     if (!res.ok) {
-        alert(data.message);
+        showError('Update Failed!', data.message);
     } else {
 
         let user = JSON.parse(localStorage.getItem('user'));
         user.name = newName;
         localStorage.setItem('user', JSON.stringify(user));
 
-        alert('Profile updated successfully');
+        showSuccess('Profile Updated!', 'Your name has been updated successfully.');
     }
 
 }
@@ -97,12 +97,12 @@ async function changePassword() {
     const newPassword = document.getElementById("newPassword").value;
 
     if (!oldPassword || !newPassword) {
-        alert("Please fill all fields");
+        showError('Incomplete Form!', 'Please fill all required fields.');
         return;
     }
 
     if (oldPassword === newPassword) {
-        alert("New password should be different from old password");
+        showError('Invalid Password!', 'New password should be different from old password.');
         return;
     }
 
@@ -118,9 +118,9 @@ async function changePassword() {
     const data = await res.json();
 
     if (!res.ok) {
-        alert(data.message);
+        showError('Password Change Failed!', data.message);
     } else {
-        alert("Password changed successfully");
+        showSuccess('Password Changed!', 'Your password has been changed successfully.');
 
         // Clear fields
         document.getElementById("oldPassword").value = "";
@@ -152,14 +152,16 @@ async function deleteAccount() {
     const data = await res.json();
 
     if (!res.ok) {
-        alert(data.message);
+        showError('Deletion Failed!', data.message);
     } else {
 
-        alert("Account deleted successfully");
+        showSuccess('Account Deleted!', 'Your account has been deleted. Redirecting...');
 
         localStorage.removeItem('user');
 
-        window.location.href = "../index.html";
+        setTimeout(() => {
+            window.location.href = "../index.html";
+        }, 2000);
     }
 }
 

@@ -128,7 +128,7 @@ function renderSchedules(data) {
 
 // ================= BOOK SEAT =================
 function bookSeat() {
-    alert('Under construction');
+    showInfo('Coming Soon!', 'Seat booking feature is under construction. Stay tuned!');
 }
 
 // ================= FILTER EVENTS =================
