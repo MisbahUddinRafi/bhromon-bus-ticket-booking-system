@@ -54,6 +54,9 @@ async function openBookingModal(scheduleId) {
         if (!detailsRes.ok) throw new Error('Failed to fetch schedule details');
         const detailsData = await detailsRes.json();
         bookingState.scheduleDetails = detailsData.schedule;
+        
+        // Debug: Log the actual data received from API
+        console.log('Schedule Details Received:', bookingState.scheduleDetails);
 
         // Fetch seat statuses
         const seatsRes = await fetch(`${BOOKING_API}/schedule-seats/${scheduleId}`, {
@@ -68,6 +71,10 @@ async function openBookingModal(scheduleId) {
         seatsData.seats.forEach(seat => {
             bookingState.seatStatuses[seat.seat_number] = seat.seat_status;
         });
+        
+        // Debug: Log seat statuses
+        console.log('Seat Statuses:', bookingState.seatStatuses);
+        console.log('Sample seat check - S1:', bookingState.seatStatuses['S1']);
 
         // Create and show modal
         createBookingModalDOM();
@@ -107,20 +114,46 @@ function createBookingModalDOM() {
     header.className = 'booking-modal-header';
     header.innerHTML = `
         <div class="booking-header-left">
-            <h3>${bookingState.scheduleDetails.operator_name}</h3>
-            <div class="booking-header-details">
-                <span class="detail-item">
-                    <strong>Departure:</strong> ${bookingState.scheduleDetails.departure_time}
-                </span>
-                <span class="detail-item">
-                    <strong>Bus Type:</strong> ${bookingState.scheduleDetails.bus_type.toUpperCase()}
-                </span>
-                <span class="detail-item">
-                    <strong>Price:</strong> ৳${parseFloat(bookingState.scheduleDetails.price).toFixed(2)}
-                </span>
-                <span class="detail-item">
-                    <strong>Available:</strong> ${bookingState.scheduleDetails.available_seats} seats
-                </span>
+            <div class="booking-header-title">
+                <h3>${bookingState.scheduleDetails.operator_name || 'Bus Operator'}</h3>
+            </div>
+            <div class="booking-header-columns">
+                <div class="booking-header-column">
+                    <div class="header-detail">
+                        <strong>From</strong>
+                        <span>${bookingState.scheduleDetails.from_city || bookingState.scheduleDetails.departure_city || bookingState.scheduleDetails.origin || 'Departure City'}</span>
+                    </div>
+                    <div class="header-detail">
+                        <strong>To</strong>
+                        <span>${bookingState.scheduleDetails.to_city || bookingState.scheduleDetails.arrival_city || bookingState.scheduleDetails.destination || 'Arrival City'}</span>
+                    </div>
+                    <div class="header-detail">
+                        <strong>Journey Date</strong>
+                        <span>${bookingState.scheduleDetails.journey_date || bookingState.scheduleDetails.departure_date || bookingState.scheduleDetails.date || 'Date'}</span>
+                    </div>
+                    <div class="header-detail">
+                        <strong>Departure Time</strong>
+                        <span>${bookingState.scheduleDetails.departure_time || bookingState.scheduleDetails.time || 'Time'}</span>
+                    </div>
+                </div>
+                <div class="booking-header-column">
+                    <div class="header-detail">
+                        <strong>Bus Number</strong>
+                        <span>${bookingState.scheduleDetails.bus_number || bookingState.scheduleDetails.busNumber || bookingState.scheduleDetails.bus_id || bookingState.scheduleDetails.registration_number || 'N/A'}</span>
+                    </div>
+                    <div class="header-detail">
+                        <strong>Bus Type</strong>
+                        <span>${(bookingState.scheduleDetails.bus_type || 'Standard').toUpperCase()}</span>
+                    </div>
+                    <div class="header-detail">
+                        <strong>Price</strong>
+                        <span>৳${parseFloat(bookingState.scheduleDetails.price || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="header-detail">
+                        <strong>Available Seats</strong>
+                        <span>${bookingState.scheduleDetails.available_seats || 0}</span>
+                    </div>
+                </div>
             </div>
         </div>
         <button id="bookingModalCloseBtn" class="booking-modal-close-btn" onclick="tryCloseBookingModal()">
@@ -205,10 +238,16 @@ function createBookingModalDOM() {
         </button>
     `;
 
+    // Assemble modal with scrollable content wrapper
+    // Create scrollable container for header, tabs, and body
+    const scrollableContent = document.createElement('div');
+    scrollableContent.className = 'booking-scrollable-content';
+    scrollableContent.appendChild(header);
+    scrollableContent.appendChild(tabBar);
+    scrollableContent.appendChild(body);
+    
     // Assemble modal
-    modal.appendChild(header);
-    modal.appendChild(tabBar);
-    modal.appendChild(body);
+    modal.appendChild(scrollableContent);
     modal.appendChild(footer);
 
     // Add to page
@@ -355,22 +394,30 @@ function renderSeatGrid() {
             const seatId = `S${seatNum}`;
             const status = bookingState.seatStatuses[seatId];
             const isSelected = bookingState.selectedSeats.includes(seatId);
+            
 
             const seatBtn = document.createElement('button');
-            seatBtn.className = `seat-button`;
+            seatBtn.className = 'seat-button';
             seatBtn.id = `seat-${seatId}`;
             seatBtn.textContent = seatId;
 
-            // Apply status class
-            if (status === 'booked' || status === 'cancelled') {
+            // Remove all seat status classes first
+            seatBtn.classList.remove('seat-available', 'seat-selected', 'seat-booked');
+
+            // Apply status class - normalize status to lowercase
+            const normalizedStatus = status ? status.toLowerCase().trim() : '';
+            
+            if (normalizedStatus === 'booked') {
                 seatBtn.classList.add('seat-booked');
                 seatBtn.disabled = true;
             } else if (isSelected) {
                 seatBtn.classList.add('seat-selected');
+                seatBtn.disabled = false;
             } else {
                 seatBtn.classList.add('seat-available');
+                seatBtn.disabled = false;
             }
-
+            
             seatBtn.onclick = () => toggleSeatSelection(seatId);
             rowDiv.appendChild(seatBtn);
         }

@@ -286,15 +286,27 @@ exports.getScheduleDetails = async (req, res) => {
         const result = await db.query(
             `SELECT
                 s.schedule_id,
+                s.journey_date,
                 s.departure_time,
-                s.price,
+                s.price, 
+                s.bus_id,
                 b.bus_type,
-                bo.operator_name,
+                b.bus_number, 
+                bo.operator_id,
+                bo.operator_name, 
+                s.route_id, 
+                c1.city_id as from_city_id,
+                c2.city_id as to_city_id,
+                c1.city_name as from_city,
+                c2.city_name as to_city,
                 (SELECT COUNT(*) FROM SCHEDULE_SEAT WHERE schedule_id = $1 AND schedule_seat_status = 'available') as available_seats
             FROM SCHEDULE s
             JOIN BUS b ON s.bus_id = b.bus_id
             JOIN BUS_OPERATOR bo ON b.operator_id = bo.operator_id
-            WHERE s.schedule_id = $1`,
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
+            WHERE s.schedule_id = $1 and s.schedule_status = 'active'`,
             [scheduleId]
         );
 

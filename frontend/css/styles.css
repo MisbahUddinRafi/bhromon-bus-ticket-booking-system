@@ -40,6 +40,11 @@
   --radius-md:    14px;
   --radius-lg:    20px;
   --radius-xl:    28px;
+
+  /* Seat States */
+  --seat-available: #F5F5F5;
+  --seat-booked:    #EF4444;
+  --seat-selected:  #354F52;
 }
 
 
@@ -914,16 +919,14 @@ a:hover {
   background: #fff;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  width: 90%;
-  max-width: 900px;
-  height: 80vh;
-  max-height: 80vh;
-  overflow: hidden;
+  width: 50vw;
+  height: 95vh;
   z-index: 1099;
   display: flex;
   flex-direction: column;
   cursor: move;
   animation: fadeInUp 0.35s var(--ease-out) both;
+  overflow: hidden;
 }
 
 /* Allow normal cursor for interactive elements */
@@ -938,68 +941,97 @@ a:hover {
 .booking-modal-header {
   background: linear-gradient(135deg, var(--dark-teal), var(--charcoal));
   color: var(--pale-sage);
-  padding: 20px 28px;
+  padding: 40px 40px;
   border-bottom: 2px solid rgba(132, 169, 140, 0.2);
   flex-shrink: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 20px;
-}
-
-.booking-header-left {
-  flex: 1;
-}
-
-.booking-header-left h3 {
-  margin: 0 0 12px 0;
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--pale-sage);
-}
-
-.booking-header-details {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.detail-item strong {
-  font-weight: 600;
-  color: rgba(202, 210, 197, 0.8);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  position: relative;
 }
 
 .booking-modal-close-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  color: var(--pale-sage);
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  background: transparent;
+  border: none;
+  color: #CAD2C5;
+  font-size: 36px;
+  width: 44px;
+  height: 44px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.25s var(--ease-out);
+  transition: opacity 0.2s var(--ease-out);
+  padding: 0;
+  line-height: 1;
+  z-index: 10;
   flex-shrink: 0;
 }
 
 .booking-modal-close-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: rotate(90deg);
+  opacity: 0.7;
+}
+
+.booking-modal-close-btn:active {
+  opacity: 0.9;
+}
+
+
+/* ── Header Structure (Title + Two Columns) ── */
+.booking-header-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-right: 8px;
+}
+
+.booking-header-title h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--pale-sage);
+  letter-spacing: 0.2px;
+  line-height: 1.3;
+}
+
+.booking-header-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  width: 100%;
+}
+
+.booking-header-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-detail strong {
+  font-weight: 600;
+  color: rgba(202, 210, 197, 0.8);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.header-detail span {
+  color: var(--pale-sage);
+  font-weight: 500;
+  font-size: 17px;
+  word-break: break-word;
 }
 
 
@@ -1040,12 +1072,33 @@ a:hover {
 }
 
 
+/* ── Scrollable Content Container ── */
+.booking-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Modal Header (now scrollable) ── */
+.booking-modal-header {
+  background: linear-gradient(135deg, var(--dark-teal), var(--charcoal));
+  color: var(--pale-sage);
+  padding: 20px 28px;
+  border-bottom: 2px solid rgba(132, 169, 140, 0.2);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
 /* ── Modal Body ── */
 .booking-modal-body {
   flex: 1;
-  overflow-y: auto;
   padding: 24px 28px;
   background: #fff;
+  overflow: visible;
 }
 
 .booking-tab-content {
@@ -1061,13 +1114,14 @@ a:hover {
 /* ── Seat Status Legend ── */
 .seat-status-legend {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: 24px;
   margin-bottom: 28px;
   padding: 16px 20px;
   background: rgba(132, 169, 140, 0.06);
   border-radius: var(--radius-md);
-  flex-wrap: wrap;
 }
 
 .legend-item {
@@ -1082,28 +1136,30 @@ a:hover {
 .seat-box {
   width: 24px;
   height: 24px;
-  border-radius: 4px;
-  border: 2px solid rgba(82, 121, 111, 0.3);
+  border-radius: 8px;
+  border: none;
 }
 
 .seat-box.available {
-  background: var(--sage);
+  background: var(--seat-available);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .seat-box.booked {
-  background: var(--dark-teal);
+  background: var(--seat-booked);
 }
 
 .seat-box.selected {
-  background: var(--forest);
+  background: var(--seat-selected);
 }
 
 .legend-meta {
-  width: 100%;
+  flex-basis: 100%;
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--seat-selected);
   font-style: italic;
-  margin-top: 4px;
+  text-align: center;
+  font-weight: 500;
 }
 
 
@@ -1111,23 +1167,32 @@ a:hover {
 .seat-grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+  background: #CAD2C5;
+  padding: 24px 20px;
+  border-radius: var(--radius-md);
 }
 
 .seat-row {
   display: flex;
-  gap: 12px;
+  gap: 25px;
   justify-content: center;
+  align-items: center;
+}
+
+/* Aisle gap in middle of bus seating: 2 seats, 75px gap (4x25px), then 2 seats */
+.seat-row > .seat-button:nth-child(2) {
+  margin-right: 75px;
 }
 
 .seat-button {
   width: 50px;
   height: 50px;
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: 12px;
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
@@ -1137,19 +1202,21 @@ a:hover {
   align-items: center;
   justify-content: center;
   user-select: none;
+  background: transparent !important;
+  color: inherit;
 }
 
 .seat-button.seat-available {
-  background: var(--sage);
-  color: #fff;
-  border-color: var(--forest);
-  box-shadow: 0 2px 8px rgba(132, 169, 140, 0.2);
+  background: #F5F5F5 !important;
+  color: #333 !important;
+  border-color: #ddd !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 .seat-button.seat-available:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 16px rgba(132, 169, 140, 0.35);
-  background: var(--forest);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  border-color: #999 !important;
 }
 
 .seat-button.seat-available:active {
@@ -1157,28 +1224,31 @@ a:hover {
 }
 
 .seat-button.seat-selected {
-  background: var(--forest);
-  color: #fff;
-  border-color: var(--dark-teal);
-  box-shadow: 0 0 0 3px rgba(82, 121, 111, 0.3);
+  background: #354F52 !important;
+  color: #fff !important;
+  border-color: #1a2a2d !important;
+  box-shadow: 0 0 0 3px rgba(53, 79, 82, 0.3) !important;
   transform: scale(1.08);
+  font-weight: 700;
 }
 
 .seat-button.seat-selected:hover {
-  background: var(--dark-teal);
-  box-shadow: 0 0 0 3px rgba(82, 121, 111, 0.5);
+  box-shadow: 0 0 0 3px rgba(53, 79, 82, 0.5) !important;
+  transform: scale(1.08);
 }
 
 .seat-button.seat-booked {
-  background: var(--dark-teal);
-  color: rgba(202, 210, 197, 0.5);
-  border-color: var(--charcoal);
-  cursor: not-allowed;
-  opacity: 0.6;
+  background: #EF4444 !important;
+  color: #fff !important;
+  border-color: #d93a33 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
 .seat-button.seat-booked:hover {
-  transform: none;
+  transform: none !important;
+  cursor: not-allowed !important;
 }
 
 
@@ -1278,8 +1348,8 @@ a:hover {
 .btn-continue-booking {
   width: 100%;
   padding: 14px 24px;
-  background: linear-gradient(135deg, var(--forest), var(--dark-teal));
-  color: var(--pale-sage);
+  background: var(--seat-selected);
+  color: #fff;
   border: none;
   border-radius: var(--radius-md);
   font-family: var(--font-display);
@@ -1287,7 +1357,7 @@ a:hover {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.35s var(--ease-out);
-  box-shadow: 0 4px 15px rgba(82, 121, 111, 0.3);
+  box-shadow: 0 4px 15px rgba(53, 79, 82, 0.3);
   letter-spacing: 0.3px;
   position: relative;
   overflow: hidden;
@@ -1304,7 +1374,7 @@ a:hover {
 
 .btn-continue-booking:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(82, 121, 111, 0.45);
+  box-shadow: 0 8px 25px rgba(53, 79, 82, 0.45);
 }
 
 .btn-continue-booking:hover:not(:disabled)::before {
@@ -1324,19 +1394,20 @@ a:hover {
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .booking-modal-panel {
-    width: 95%;
-    height: 85vh;
-    max-height: 85vh;
+    width: 70vw;
+    height: 95vh;
   }
 
   .booking-modal-header {
-    flex-direction: column;
-    padding: 16px 20px;
+    padding: 30px 30px;
   }
 
-  .booking-header-details {
-    gap: 12px;
-    font-size: 13px;
+  .booking-header-columns {
+    gap: 30px;
+  }
+
+  .header-detail span {
+    font-size: 15px;
   }
 
   .seat-button {
@@ -1346,7 +1417,11 @@ a:hover {
   }
 
   .seat-row {
-    gap: 10px;
+    gap: 18px;
+  }
+
+  .seat-row > .seat-button:nth-child(2) {
+    margin-right: 54px;
   }
 
   .booking-footer-top {
@@ -1357,30 +1432,37 @@ a:hover {
 
 @media (max-width: 480px) {
   .booking-modal-panel {
-    width: 98%;
-    height: 90vh;
-    max-height: 90vh;
+    width: 95vw;
+    height: 95vh;
   }
 
   .booking-modal-header {
-    padding: 12px 16px;
+    padding: 24px 20px;
   }
 
-  .booking-header-left h3 {
-    font-size: 16px;
-    margin-bottom: 8px;
+  .booking-header-title h3 {
+    font-size: 22px;
+    margin-bottom: 16px;
   }
 
-  .booking-header-details {
-    flex-direction: column;
-    gap: 6px;
-    font-size: 12px;
+  .booking-header-columns {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .header-detail {
+    gap: 4px;
+  }
+
+  .header-detail span {
+    font-size: 14px;
   }
 
   .booking-modal-close-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    top: 14px;
   }
 
   .booking-modal-body {
