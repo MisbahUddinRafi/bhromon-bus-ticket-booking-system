@@ -43,6 +43,8 @@ function toggleProfile() {
 function goToProfile() { window.location.href = '../pages/profile.html'; }
 function logout() { localStorage.clear(); window.location.href = '../index.html'; }
 
+
+
 // ================= SEARCH AGAIN =================
 function searchAgain() {
     const from = document.getElementById('fromCity').value;
@@ -51,9 +53,13 @@ function searchAgain() {
     window.location.href = `schedules.html?from=${from}&to=${to}&date=${date}`;
 }
 
+
+
 // ================= CITIES =================
 async function loadCities() {
-    const res = await fetch(`${API}/cities`, { headers: { 'x-user': JSON.stringify(user) } });
+    const res = await fetch(`${API}/cities`, { 
+        headers: { 'x-user': JSON.stringify(user) } 
+    });
     const cities = await res.json();
 
     const from = document.getElementById('fromCity');
@@ -73,6 +79,8 @@ function prefillValues() {
     document.getElementById('toCity').value = toCityId;
     document.getElementById('journeyDate').value = journeyDate;
 }
+
+
 
 // ================= LOAD SCHEDULES =================
 async function loadSchedules() {
@@ -117,18 +125,13 @@ function renderSchedules(data) {
             <div style="border:1px solid black; padding:10px; margin:10px;">
                 <h4>${s.operator_name}</h4>
                 <p>Departure: ${s.departure_time}</p>
-                <p>Arrival: ${s.arrival_time}</p>
                 <p>Bus Type: ${s.bus_type}</p>
                 <p>Price: ৳${s.price}</p>
-                <button onclick="bookSeat()" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Book Seat</button>
+                <p>Available Seats: ${s.available_seats}</p>
+                <button onclick="openBookingModal(${s.schedule_id})" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Book Seat</button>
             </div>
         `;
     });
-}
-
-// ================= BOOK SEAT =================
-function bookSeat() {
-    showInfo('Coming Soon!', 'Seat booking feature is under construction. Stay tuned!');
 }
 
 // ================= FILTER EVENTS =================
