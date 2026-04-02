@@ -6,7 +6,7 @@ let fromCityId = params.get('from');
 let toCityId = params.get('to');
 let journeyDate = params.get('date');
 
-// 🔵 Default Filter State
+// Default Filter State
 let filters = {
     sortBy: 'price', // 'price' or 'time'
     sortOrder: 'low', // 'low' for price ascending or 'early' for time ascending
@@ -25,7 +25,7 @@ window.onload = async () => {
 };
 
 // ================= HEADER =================
-function goDashboard() { 
+function goDashboard() {
     if (user.role === 'customer') {
         window.location.href = './customerDashboard.html';
     } else if (user.role === 'admin') {
@@ -57,8 +57,8 @@ function searchAgain() {
 
 // ================= CITIES =================
 async function loadCities() {
-    const res = await fetch(`${API}/cities`, { 
-        headers: { 'x-user': JSON.stringify(user) } 
+    const res = await fetch(`${API}/cities`, {
+        headers: { 'x-user': JSON.stringify(user) }
     });
     const cities = await res.json();
 
@@ -85,7 +85,7 @@ function prefillValues() {
 // ================= LOAD SCHEDULES =================
 async function loadSchedules() {
     let url = `${API}/schedules?fromCityId=${fromCityId}&toCityId=${toCityId}&journeyDate=${journeyDate}`;
-    
+
     // Add sorting parameters based on selected sort option
     if (filters.sortBy === 'price') {
         url += `&sortPrice=${filters.sortOrder}`;
@@ -143,7 +143,7 @@ function attachFilterEvents() {
         filters.sortOrder = sortOrder;
         loadSchedules();
     });
-    
+
     document.querySelectorAll('input[name="busType"]').forEach(cb => cb.onchange = () => {
         filters.busType = Array.from(document.querySelectorAll('input[name="busType"]:checked')).map(c => c.value);
         loadSchedules();
@@ -235,7 +235,7 @@ function resetFilters() {
     filters = { sortBy: 'price', sortOrder: 'low', busType: [], operators: [] };
     document.getElementById('sortPriceLow').checked = true;
     document.querySelectorAll('input[name="busType"]').forEach(r => r.checked = false);
-    
+
     // Restore operators cache when filters are reset
     allOperators = [...allOperatorsCache];
     renderSelectedOperators();

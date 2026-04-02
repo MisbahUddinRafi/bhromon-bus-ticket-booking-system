@@ -213,6 +213,7 @@ document.getElementById('operatorSelect')
         });
     });
 
+
 /* Create Schedule */
 async function createSchedule() {
 
@@ -260,6 +261,7 @@ function resetScheduleForm() {
     document.getElementById('operatorSelect').value = '';
     document.getElementById('busSelect').innerHTML = '';
 }
+
 
 /* Active schedules */
 async function loadActiveSchedules() {

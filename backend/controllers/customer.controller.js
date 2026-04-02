@@ -15,7 +15,7 @@ exports.getCities = async (req, res) => {
 
 /* Search route & save recent search */
 exports.searchRoute = async (req, res) => {
-    const { fromCityId, toCityId, journeyDate } = req.body;              // ***** eikhane id or name hobe oita sure na
+    const { fromCityId, toCityId, journeyDate } = req.body;           
     const userId = req.user.user_id;
 
     const routeResult = await db.query(
@@ -40,6 +40,16 @@ exports.searchRoute = async (req, res) => {
 };
 
 
+/* Complete expired schedules */ 
+const completeExpiredSchedules = async () => {
+    await db.query(`
+        UPDATE SCHEDULE
+        SET schedule_status = 'completed'
+        WHERE schedule_status = 'active'
+        AND (journey_date + departure_time) < NOW()
+    `);
+};
+
 // Get schedules based on search criteria
 exports.getSchedules = async (req, res) => {
 
@@ -62,7 +72,7 @@ exports.getSchedules = async (req, res) => {
             });
         }
 
-        // 1️⃣ Get route_id
+        // 1. Get route_id
         const routeResult = await db.query(
             `SELECT route_id FROM ROUTE
              WHERE source_city_id = $1 
@@ -76,7 +86,11 @@ exports.getSchedules = async (req, res) => {
 
         const routeId = routeResult.rows[0].route_id;
 
-        // 2️⃣ Base Query
+
+        // Update the schedule status: 
+        await completeExpiredSchedules();
+
+        // 2. Base Query
         let query = `
             SELECT
                 s.schedule_id,
@@ -99,7 +113,7 @@ exports.getSchedules = async (req, res) => {
         let values = [routeId, journeyDate];
         let index = 3;
 
-        // 3️⃣ Bus Type Filter (AC / Non-AC)
+        // 3. Bus Type Filter (AC / Non-AC)
         if (busTypes) {
             const typesArray = busTypes.split(',');
             query += ` AND b.bus_type = ANY($${index}::bus_type_enum[])`;
@@ -107,7 +121,7 @@ exports.getSchedules = async (req, res) => {
             index++;
         }
 
-        // 4️⃣ Operator Filter
+        // 4. Operator Filter
         if (operatorIds) {
             const operatorsArray = operatorIds.split(',').map(Number);
             query += ` AND bo.operator_id = ANY($${index}::int[])`;
@@ -115,7 +129,7 @@ exports.getSchedules = async (req, res) => {
             index++;
         }
 
-        // 5️⃣ Sorting Logic
+        // 5. Sorting Logic
         let orderClause = ' ORDER BY s.departure_time ASC'; // default
 
         if (sortPrice === 'low') {
@@ -133,7 +147,7 @@ exports.getSchedules = async (req, res) => {
 
         query += orderClause;
 
-        // 🔎 Optional Debug
+        // Optional Debug
         // console.log("Final Query:", query);
         // console.log("Values:", values);
 

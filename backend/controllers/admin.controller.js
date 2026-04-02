@@ -178,9 +178,6 @@ exports.getActiveSchedules = async (req, res) => {
         // First, mark past schedules as completed
         await completeExpiredSchedules();
 
-
-
-
         // Then fetch active schedules
         const result = await pool.query(`
             SELECT 
@@ -204,8 +201,8 @@ exports.getActiveSchedules = async (req, res) => {
             ORDER BY s.journey_date, s.departure_time
         `);
         
-        console.log(result.rows[0].journey_date);
-        console.log(typeof result.rows[0].journey_date);
+        // console.log(result.rows[0].journey_date);
+        // console.log(typeof result.rows[0].journey_date);
         
         res.json(result.rows);
 
