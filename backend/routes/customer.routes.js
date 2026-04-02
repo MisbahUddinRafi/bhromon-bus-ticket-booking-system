@@ -13,8 +13,7 @@ router.get('/schedules', auth, controller.getSchedules);
 // Booking Routes
 router.get('/schedule-seats/:scheduleId', auth, bookingController.getScheduleSeats);
 router.get('/schedule-details/:scheduleId', auth, bookingController.getScheduleDetails);
-router.post('/validate-seats', auth, bookingController.validateAndReserveSeats);
-router.post('/complete-booking', auth, bookingController.completeBooking);
+router.get('/check-existing-bookings/:scheduleId', auth, bookingController.checkExistingBookings);
 router.post('/cancel-booking/:bookingId', auth, bookingController.cancelBooking);
 
 

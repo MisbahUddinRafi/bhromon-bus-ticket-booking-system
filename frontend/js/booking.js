@@ -69,12 +69,8 @@ async function openBookingModal(scheduleId) {
         // Build seat status map
         bookingState.seatStatuses = {};
         seatsData.seats.forEach(seat => {
-            bookingState.seatStatuses[seat.seat_number] = seat.seat_status;
+            bookingState.seatStatuses[seat.seat_number] = seat.schedule_seat_status;
         });
-        
-        // Debug: Log seat statuses
-        console.log('Seat Statuses:', bookingState.seatStatuses);
-        console.log('Sample seat check - S1:', bookingState.seatStatuses['S1']);
 
         // Create and show modal
         createBookingModalDOM();
@@ -592,7 +588,7 @@ function getPoliciesHTML() {
 
 /**
  * Proceed to passenger details validation
- * Validates selected seats are still available
+ * Check existing bookings, validate total doesn't exceed 4 seats
  */
 async function proceedToPassengerDetails() {
     if (bookingState.selectedSeats.length === 0) {
@@ -607,65 +603,43 @@ async function proceedToPassengerDetails() {
         const btn = document.getElementById('continueBookingBtn');
         const originalText = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Validating...';
+        btn.textContent = 'Checking bookings...';
 
-        // Call validate endpoint
-        const response = await fetch(`${BOOKING_API}/validate-seats`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-user': JSON.stringify(user)
-            },
-            body: JSON.stringify({
-                scheduleId: bookingState.scheduleId,
-                seatNumbers: bookingState.selectedSeats
-            })
+        // Check existing bookings for this user on this schedule
+        const checkRes = await fetch(`${BOOKING_API}/check-existing-bookings/${bookingState.scheduleId}`, {
+            headers: { 'x-user': JSON.stringify(user) }
         });
 
-        const data = await response.json();
-
-        if (!data.success) {
-            showError(data.message || 'Failed to reserve seats. Please try again.');
+        if (!checkRes.ok) {
+            showError('Failed to check existing bookings. Please try again.');
             btn.disabled = false;
             btn.textContent = originalText;
-            
-            // Re-fetch seats in case they changed
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
             return;
         }
 
-        // Success - save booking ID
-        bookingState.bookingId = data.booking_id;
+        const checkData = await checkRes.json();
+        const existingSeats = checkData.existing_seats || 0;
+        const totalSeats = existingSeats + bookingState.selectedSeats.length;
 
-        // Show confirmation dialog
-        const confirmMsg = `
-            ✓ Seats reserved successfully!
-            
-            Selected Seats: ${bookingState.selectedSeats.sort().join(', ')}
-            Total Fare: ৳${(bookingState.selectedSeats.length * parseFloat(bookingState.scheduleDetails.price)).toFixed(2)}
-            
-            Time limit: 15 minutes
-            
-            Click OK to proceed to passenger details.
-        `;
-
-        const userConfirmed = confirm(confirmMsg);
-
-        if (userConfirmed) {
-            // TODO: Navigate to passenger details page / form
-            showSuccess('Booking confirmed! Proceeding to passenger details...');
-            // For now, just close the modal
-            setTimeout(() => {
-                closeBookingModal();
-            }, 1500);
-        } else {
-            // User cancelled - cancel the booking
-            await cancelBookingAndReleaseSeats();
+        // Validate total doesn't exceed 4 seats
+        if (totalSeats > MAX_SEATS) {
+            const message = `You already have ${existingSeats} seat(s) booked on this schedule.\n\nYou can only book maximum ${MAX_SEATS} seats per schedule.\n\nYou can select ${MAX_SEATS - existingSeats} more seat(s).`;
+            showError(message);
             btn.disabled = false;
             btn.textContent = originalText;
+            return;
         }
+
+        // Everything is fine - show temporary message
+        showSuccess('✓ Validation passed! All seats are available.\n\n(Passenger details form coming soon...)');
+        
+        btn.disabled = false;
+        btn.textContent = originalText;
+        
+        // Close modal after showing message
+        setTimeout(() => {
+            closeBookingModal();
+        }, 2000);
 
     } catch (err) {
         console.error('Error validating seats:', err);

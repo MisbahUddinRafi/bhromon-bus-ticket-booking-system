@@ -118,3 +118,32 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$ LANGUAGE plpgsql;
 
+
+
+
+-- ============================================================
+-- 3. CHECK EXISTING BOOKING FOR SCHEDULE
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION count_existing_booked_seat(
+    p_user_id INT, p_schedule_id INT
+) 
+RETURNS INTEGER AS $$
+
+DECLARE
+    v_booked_seat_count INT := 0; 
+BEGIN 
+    SELECT COUNT(*) INTO v_booked_seat_count
+    FROM booked_seat bs
+    WHERE bs.schedule_id = p_schedule_id
+    AND EXISTS 
+        (SELECT 1 FROM booking b
+         WHERE b.booking_id = bs.booking_id 
+         AND b.booking_status = 'confirmed'
+         AND b.user_id = p_user_id);
+
+    RETURN v_booked_seat_count; 
+EXCEPTION WHEN OTHERS THEN
+    RAISE;
+END;
+$$ LANGUAGE plpgsql;
