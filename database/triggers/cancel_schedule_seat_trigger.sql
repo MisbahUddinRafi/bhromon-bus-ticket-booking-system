@@ -4,7 +4,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.schedule_status = 'cancelled' THEN
         UPDATE SCHEDULE_SEAT
-        SET schedule_seat_status = 'cancelled'
+        SET schedule_seat_status = 'cancelled'              -- where status = 'booked' -> 'cancelled' : trigger will update booking status
         WHERE schedule_id = NEW.schedule_id;
     END IF;
 

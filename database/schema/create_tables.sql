@@ -221,30 +221,4 @@ CREATE TABLE RECENT_SEARCHES (
 
 
 
--- Table: BOOKING_HOLD
--- Temporary hold on seats while user completes booking process
--- Auto-expires after 15 minutes to release seats for other users
-CREATE TABLE BOOKING_HOLD (
-    hold_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    schedule_id INT NOT NULL,
-    seat_number VARCHAR(10) NOT NULL,
-    booking_id INT,
-    hold_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP + INTERVAL '15 minutes',
 
-    CONSTRAINT fk_hold_user
-        FOREIGN KEY (user_id)
-        REFERENCES USERS(user_id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_hold_schedule
-        FOREIGN KEY (schedule_id)
-        REFERENCES SCHEDULE(schedule_id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_hold_booking
-        FOREIGN KEY (booking_id)
-        REFERENCES BOOKING(booking_id)
-        ON DELETE CASCADE
-);
