@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         // Get data from sessionStorage (passed from booking modal)
         const bookingData = sessionStorage.getItem('bookingData');
-        
+
         if (!bookingData) {
             showError('Invalid Session', 'Booking data not found. Redirecting to schedules...');
             setTimeout(() => {
@@ -128,13 +128,13 @@ async function validateSeatsBeforePage() {
         if (unavailableSeats.length > 0) {
             const message = `The following seat(s) are no longer available: ${unavailableSeats.join(', ')}\n\nPlease select different seats.`;
             showError('Seats Unavailable', message);
-            
+
             // Clear session and redirect
             sessionStorage.removeItem('bookingData');
             setTimeout(() => {
                 window.location.href = `schedules.html?from=${passengerState.scheduleDetails.from_city_id}&to=${passengerState.scheduleDetails.to_city_id}&date=${passengerState.scheduleDetails.journey_date}`;
             }, 3000);
-            
+
             throw new Error('Unavailable seats detected');
         }
 
@@ -152,7 +152,7 @@ function populateScheduleDetails() {
     const totalFare = price * passengerState.selectedSeats.length;
 
     document.getElementById('detailOperator').textContent = details.operator_name || '—';
-    document.getElementById('detailRoute').textContent = 
+    document.getElementById('detailRoute').textContent =
         `${details.from_city} → ${details.to_city}`;
     document.getElementById('detailDate').textContent = details.journey_date || '—';
     document.getElementById('detailTime').textContent = details.departure_time || '—';
@@ -411,8 +411,40 @@ async function proceedToPayment() {
         // Normalize phone number before storing
         const normalizedPhone = normalizeBDPhone(document.getElementById('contactPhone').value.trim());
 
-        // Store passenger info in sessionStorage for payment page
-        sessionStorage.setItem('passengerData', JSON.stringify({
+        // Collect passenger data from form inputs
+        passengerState.selectedSeats.forEach(seatNum => {
+            const nameInput = document.getElementById(`passenger-name-${seatNum}`);
+            const genderInput = document.querySelector(`input[name="gender-${seatNum}"]:checked`);
+            passengerState.passengers[seatNum] = {
+                name: nameInput.value.trim(),
+                gender: genderInput ? genderInput.value : ''
+            };
+        });
+
+        btn.textContent = 'Creating booking...';
+
+        // Create pending booking via API
+        const bookingRes = await fetch(`${BOOKING_API}/create-booking`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user': JSON.stringify(user)
+            },
+            body: JSON.stringify({
+                scheduleId: passengerState.scheduleId,
+                seats: passengerState.selectedSeats
+            })
+        });
+
+        const bookingData = await bookingRes.json();
+
+        if (!bookingRes.ok || !bookingData.success) {
+            throw new Error(bookingData.message || 'Failed to create booking');
+        }
+
+        // Store all data in sessionStorage for payment page
+        sessionStorage.setItem('paymentData', JSON.stringify({
+            bookingId: bookingData.bookingId,
             scheduleId: passengerState.scheduleId,
             selectedSeats: passengerState.selectedSeats,
             passengers: passengerState.passengers,
@@ -421,22 +453,20 @@ async function proceedToPayment() {
             scheduleDetails: passengerState.scheduleDetails
         }));
 
-        // Show success and redirect to payment (when implemented)
-        showSuccess('Ready for Payment', 'All details validated. Redirecting to payment...');
-        
+        // Redirect to payment page
+        showSuccess('Ready for Payment', 'Redirecting to payment...');
         setTimeout(() => {
-            // TODO: Redirect to payment page when implemented
-            // window.location.href = './payment.html';
-            showInfo('Coming Soon', 'Payment page will be implemented next.');
-            btn.disabled = false;
-            btn.textContent = btnText;
-        }, 2000);
+            window.location.href = './payment.html';
+        }, 1000);
 
     } catch (err) {
         console.error('Error in proceeding to payment:', err);
         btn.disabled = false;
         btn.textContent = btnText;
-        // Error is already shown by validateSeatsBeforePayment
+
+        if (!err.message.includes('Unavailable seats')) {
+            showError('Error', err.message || 'Failed to proceed to payment. Please try again.');
+        }
     }
 }
 
@@ -474,15 +504,15 @@ async function validateSeatsBeforePayment() {
         if (unavailableSeats.length > 0) {
             const message = `The following seat(s) were booked by another user: ${unavailableSeats.join(', ')}\n\nPlease select different seats.`;
             showError('Seats No Longer Available', message);
-            
+
             // Clear session and redirect
             sessionStorage.removeItem('bookingData');
             sessionStorage.removeItem('passengerData');
-            
+
             setTimeout(() => {
                 window.location.href = `schedules.html?from=${passengerState.scheduleDetails.from_city_id}&to=${passengerState.scheduleDetails.to_city_id}&date=${passengerState.scheduleDetails.journey_date}`;
             }, 3000);
-            
+
             throw new Error('Unavailable seats detected before payment');
         }
 

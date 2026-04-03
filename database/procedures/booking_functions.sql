@@ -61,7 +61,7 @@ BEGIN
             p_schedule_id,
             p_seat_numbers[i],
             p_passenger_names[i],
-            p_passenger_genders[i]
+            p_passenger_genders[i]::gender_enum
         );
     END LOOP;
 
@@ -75,7 +75,7 @@ BEGIN
     VALUES (
         p_booking_id,
         p_payment_amount,
-        p_payment_type,
+        p_payment_type::payment_type_enum,
         'ticket_purchase'
     );
 

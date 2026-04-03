@@ -15,6 +15,9 @@ router.get('/schedule-seats/:scheduleId', auth, bookingController.getScheduleSea
 router.get('/schedule-details/:scheduleId', auth, bookingController.getScheduleDetails);
 router.get('/check-existing-bookings/:scheduleId', auth, bookingController.checkExistingBookings);
 router.post('/cancel-booking/:bookingId', auth, bookingController.cancelBooking);
+router.post('/create-booking', auth, bookingController.createPendingBooking);
+router.post('/confirm-payment', auth, bookingController.confirmPayment);
 
 
 module.exports = router;
+
