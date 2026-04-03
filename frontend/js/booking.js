@@ -588,7 +588,8 @@ function getPoliciesHTML() {
 
 /**
  * Proceed to passenger details validation
- * Check existing bookings, validate total doesn't exceed 4 seats
+ * Validates: 1. Max 4 seats constraint, 2. Seat availability
+ * Then redirects to passengerInfo page
  */
 async function proceedToPassengerDetails() {
     if (bookingState.selectedSeats.length === 0) {
@@ -597,15 +598,16 @@ async function proceedToPassengerDetails() {
     }
 
     const user = JSON.parse(localStorage.getItem('user'));
+    const btn = document.getElementById('continueBookingBtn');
+    const originalText = btn.textContent;
 
     try {
-        // Show loading state
-        const btn = document.getElementById('continueBookingBtn');
-        const originalText = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Checking bookings...';
+        btn.textContent = 'Validating...';
 
-        // Check existing bookings for this user on this schedule
+        // ====================================
+        // VALIDATION 1: Check existing bookings
+        // ====================================
         const checkRes = await fetch(`${BOOKING_API}/check-existing-bookings/${bookingState.scheduleId}`, {
             headers: { 'x-user': JSON.stringify(user) }
         });
@@ -621,7 +623,7 @@ async function proceedToPassengerDetails() {
         const existingSeats = checkData.existing_seats || 0;
         const totalSeats = existingSeats + bookingState.selectedSeats.length;
 
-        // Validate total doesn't exceed 4 seats
+        // Validate max 4 seats constraint
         if (totalSeats > MAX_SEATS) {
             const message = `You already have ${existingSeats} seat(s) booked on this schedule.\n\nYou can only book maximum ${MAX_SEATS} seats per schedule.\n\nYou can select ${MAX_SEATS - existingSeats} more seat(s).`;
             showError(message);
@@ -630,53 +632,60 @@ async function proceedToPassengerDetails() {
             return;
         }
 
-        // Everything is fine - show temporary message
-        showSuccess('✓ Validation passed! All seats are available.\n\n(Passenger details form coming soon...)');
-        
-        btn.disabled = false;
-        btn.textContent = originalText;
-        
-        // Close modal after showing message
-        setTimeout(() => {
-            closeBookingModal();
-        }, 2000);
+        // ====================================
+        // VALIDATION 2: Check seat availability
+        // ====================================
+        const seatsRes = await fetch(`${BOOKING_API}/schedule-seats/${bookingState.scheduleId}`, {
+            headers: { 'x-user': JSON.stringify(user) }
+        });
 
-    } catch (err) {
-        console.error('Error validating seats:', err);
-        showError('An error occurred while validating seats. Please try again.');
-        btn.disabled = false;
-        document.getElementById('continueBookingBtn').textContent = originalText;
-    }
-}
+        if (!seatsRes.ok) {
+            showError('Failed to validate seat availability. Please try again.');
+            btn.disabled = false;
+            btn.textContent = originalText;
+            return;
+        }
 
-/**
- * Cancel booking and release held seats
- */
-async function cancelBookingAndReleaseSeats() {
-    if (!bookingState.bookingId) return;
+        const seatsData = await seatsRes.json();
+        const seatStatusMap = {};
+        seatsData.seats.forEach(seat => {
+            seatStatusMap[seat.seat_number] = seat.schedule_seat_status;
+        });
 
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    try {
-        const response = await fetch(`${BOOKING_API}/cancel-booking/${bookingState.bookingId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-user': JSON.stringify(user)
+        // Check if any selected seat is no longer available
+        const unavailableSeats = [];
+        bookingState.selectedSeats.forEach(seatNum => {
+            if (seatStatusMap[seatNum] !== 'available') {
+                unavailableSeats.push(seatNum);
             }
         });
 
-        const data = await response.json();
-        
-        if (data.success) {
-            // Reset booking state
-            bookingState.selectedSeats = [];
-            bookingState.bookingId = null;
-            updateFooterInfo();
-            renderSeatGrid();
+        if (unavailableSeats.length > 0) {
+            const message = `The following seat(s) are no longer available: ${unavailableSeats.join(', ')}\n\nPlease select different seats.`;
+            showError(message);
+            btn.disabled = false;
+            btn.textContent = originalText;
+            return;
         }
+
+        // ====================================
+        // ALL VALIDATIONS PASSED
+        // ====================================
+        // Store booking data for passenger info page
+        sessionStorage.setItem('bookingData', JSON.stringify({
+            scheduleId: bookingState.scheduleId,
+            selectedSeats: bookingState.selectedSeats,
+            scheduleDetails: bookingState.scheduleDetails
+        }));
+
+        // Redirect to passenger info page
+        window.location.href = './passengerInfo.html';
+
     } catch (err) {
-        console.error('Error cancelling booking:', err);
+        console.error('Error validating seats:', err);
+        showError('An error occurred. Please try again.');
+        btn.disabled = false;
+        btn.textContent = originalText;
     }
 }
 
@@ -685,15 +694,15 @@ async function cancelBookingAndReleaseSeats() {
 // ============================================================
 
 /**
- * Show error alert
+ * Show error alert using alerts.js
  */
 function showError(message) {
-    alert(`⚠ ${message}`);
+    showAlert('error', '⚠ Booking Error', message, 5000);
 }
 
 /**
- * Show success alert
+ * Show success alert using alerts.js
  */
 function showSuccess(message) {
-    alert(`✓ ${message}`);
+    showAlert('success', '✓ Success', message, 3000);
 }

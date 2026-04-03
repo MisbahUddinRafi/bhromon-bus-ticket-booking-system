@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passenger Details — Bhromon</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        :root {
+            --passenger-primary: #354F52;
+            --passenger-secondary: #84A98C;
+            --passenger-accent: #CAD2C5;
+            --passenger-error: #c0392b;
+        }
+
+        body {
+            background: var(--pale-sage);
+            padding-top: 80px;
+        }
+
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--dark-teal), var(--charcoal));
+            color: var(--pale-sage);
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+            animation: slideInDown 0.5s var(--ease-out) both;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+        }
+
+        header div:first-child {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: opacity 0.3s;
+            height: 50px;
+            max-width: 180px;
+        }
+
+        header div:first-child img {
+            height: 100%;
+            width: auto;
+            max-width: 150px;
+            object-fit: contain;
+            display: block;
+        }
+
+        header div:first-child:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            header div:first-child {
+                height: 40px;
+                max-width: 140px;
+                gap: 8px;
+            }
+
+            header div:first-child img {
+                max-width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header div:first-child {
+                height: 35px;
+                max-width: 110px;
+                gap: 6px;
+            }
+
+            header div:first-child img {
+                max-width: 90px;
+            }
+        }
+
+        .header-buttons {
+            position: relative;
+            z-index: 1000;
+        }
+
+        header button {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--pale-sage);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        header button:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        #profileMenu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            z-index: 10000;
+            overflow: hidden;
+            min-width: 190px;
+            border: 1px solid rgba(82, 121, 111, 0.1);
+            animation: slideInDown 0.25s var(--ease-out) both;
+        }
+
+        #profileMenu button {
+            width: 100%;
+            background: #fff;
+            color: var(--charcoal);
+            border: none;
+            border-bottom: 1px solid rgba(82, 121, 111, 0.08);
+            border-radius: 0;
+            padding: 13px 20px;
+            text-align: left;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        #profileMenu button:last-child {
+            border-bottom: none;
+        }
+
+        #profileMenu button:hover {
+            background: rgba(132, 169, 140, 0.08);
+            color: var(--forest);
+        }
+
+
+        .profile-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--pale-sage);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 10px 20px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.3s var(--ease-out);
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 14px;
+        }
+
+        .profile-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+        }
+
+
+
+         /* ── Passenger Info Page ── */
+        
+         .passenger-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .passenger-main {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        /* Left side - Contact & Passenger Details */
+        .passenger-left {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Contact Info Card */
+        .contact-card {
+            background: rgba(202, 210, 197, 0.25);
+            backdrop-filter: blur(24px);
+            border: 1.5px solid rgba(132, 169, 140, 0.4);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2F3E46;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #2F3E46;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid rgba(132, 169, 140, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #2F3E46;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #84A98C;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(47, 62, 70, 0.5);
+        }
+
+        /* Passenger Details Card */
+        .passengers-card {
+            background: rgba(202, 210, 197, 0.25);
+            backdrop-filter: blur(24px);
+            border: 1.5px solid rgba(132, 169, 140, 0.4);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .passengers-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #2F3E46;
+        }
+
+        .passenger-item {
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(132, 169, 140, 0.3);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .passenger-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .passenger-seat-number {
+            font-size: 12px;
+            font-weight: 600;
+            color: #2F3E46;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .passenger-form-group {
+            margin-bottom: 16px;
+        }
+
+        .passenger-form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #2F3E46;
+            margin-bottom: 8px;
+        }
+
+        .passenger-form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid rgba(132, 169, 140, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #2F3E46;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .passenger-form-group input:focus {
+            outline: none;
+            border-color: #84A98C;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .gender-option {
+            flex: 1;
+        }
+
+        .gender-option input[type="radio"] {
+            display: none;
+        }
+
+        .gender-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1.5px solid rgba(132, 169, 140, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #2F3E46;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .gender-option input[type="radio"]:checked + label {
+            background: rgba(132, 169, 140, 0.3);
+            border-color: #84A98C;
+            color: #84A98C;
+        }
+
+        /* Right side - Schedule Details */
+        .passenger-right {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .schedule-details-card {
+            background: rgba(202, 210, 197, 0.25);
+            backdrop-filter: blur(24px);
+            border: 1.5px solid rgba(132, 169, 140, 0.4);
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .schedule-details-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #2F3E46;
+        }
+
+        .schedule-detail-item {
+            margin-bottom: 14px;
+        }
+
+        .schedule-detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2F3E46;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #2F3E46;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .separator {
+            height: 1px;
+            background: rgba(132, 169, 140, 0.1);
+            margin: 16px 0;
+        }
+
+        .total-fare {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2F3E46;
+            padding: 12px 0;
+        }
+
+        /* Buttons */
+        .button-group {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-proceed {
+            flex: 1;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #84A98C 0%, #7a9a82 100%);
+            color: #2F3E46;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-proceed:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(132, 169, 140, 0.3);
+        }
+
+        .btn-proceed:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-back {
+            padding: 14px 24px;
+            background: rgba(132, 169, 140, 0.1);
+            color: #2F3E46;
+            border: 1.5px solid rgba(132, 169, 140, 0.45);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-back:hover {
+            background: rgba(132, 169, 140, 0.2);
+            border-color: #84A98C;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .passenger-main {
+                grid-template-columns: 1fr;
+            }
+
+            .passenger-right {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .passenger-container {
+                padding: 16px;
+            }
+
+            .passenger-main {
+                gap: 16px;
+                margin-top: 16px;
+            }
+
+            .contact-card,
+            .passengers-card,
+            .schedule-details-card {
+                padding: 20px;
+            }
+
+            .contact-card h3,
+            .passengers-card h3,
+            .schedule-details-card h3 {
+                font-size: 15px;
+            }
+
+            .passenger-item {
+                padding: 16px;
+            }
+
+            .button-group {
+                flex-direction: column-reverse;
+            }
+        }
+
+        /* Error styling */
+        .form-group input.error,
+        .passenger-form-group input.error {
+            border-color: #c0392b;
+        }
+
+        .error-message {
+            font-size: 12px;
+            color: #e74c3c;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div onclick="goDashboard()" style="cursor:pointer;">
+            <img src="../../docs/bhromon_logo.png" alt="bhromon">
+        </div>
+
+        <div class="header-buttons">
+            <button class="profile-btn" onclick="toggleProfile()">Profile ▼</button>
+            <div id="profileMenu" style="display:none;">
+                <button onclick="goToProfile()">My Profile</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="passenger-container">
+        <div class="passenger-main">
+            <!-- Left Side: Contact Info & Passenger Details -->
+            <div class="passenger-left">
+                <!-- Contact Information Card -->
+                <div class="contact-card">
+                    <h3>Contact Information</h3>
+                    <div class="form-group">
+                        <label for="contactPhone">Phone Number</label>
+                        <input type="text" id="contactPhone" placeholder="01700000000 or +8801700000000" />
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Email Address</label>
+                        <input type="email" id="contactEmail" placeholder="example@email.com" />
+                        <div class="error-message"></div>
+                    </div>
+                </div>
+
+                <!-- Passenger Details Card -->
+                <div class="passengers-card">
+                    <h3>Passenger Details</h3>
+                    <div id="passengersContainer">
+                        <!-- Passenger items will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Schedule Details -->
+            <div class="passenger-right">
+                <div class="schedule-details-card">
+                    <h3>Journey Details</h3>
+                    
+                    <div class="schedule-detail-item">
+                        <div class="detail-label">Operator</div>
+                        <div class="detail-value" id="detailOperator">—</div>
+                    </div>
+
+                    <div class="schedule-detail-item">
+                        <div class="detail-label">Route</div>
+                        <div class="detail-value" id="detailRoute">—</div>
+                    </div>
+
+                    <div class="schedule-detail-item">
+                        <div class="detail-label">Date</div>
+                        <div class="detail-value" id="detailDate">—</div>
+                    </div>
+
+                    <div class="schedule-detail-item">
+                        <div class="detail-label">Departure Time</div>
+                        <div class="detail-value" id="detailTime">—</div>
+                    </div>
+
+                    <div class="separator"></div>
+
+                    <div class="schedule-detail-item">
+                        <div class="detail-label">Selected Seats</div>
+                        <div class="detail-value" id="detailSeats">—</div>
+                    </div>
+
+                    <div class="schedule-detail-item">
+                        <div class="detail-label">Per Seat Cost</div>
+                        <div class="detail-value" id="detailPrice">—</div>
+                    </div>
+
+                    <div class="schedule-detail-item">
+                        <div class="detail-label">Total Fare</div>
+                        <div class="detail-value total-fare" id="detailTotalFare">৳0.00</div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-back" onclick="goBackToSchedules()">← Back to Schedules</button>
+                        <button class="btn-proceed" id="proceedPaymentBtn" onclick="proceedToPayment()">Proceed to Payment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/alerts.js"></script>
+    <script src="../js/passengerInfo.js"></script>
+</body>
+</html>

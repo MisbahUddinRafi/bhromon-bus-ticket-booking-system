@@ -1,4 +1,5 @@
-                                                                                                                                                                                                            const db = require('../src/db');
+// database connection
+const db = require('../src/db');
 
 /* ============================================================
    Booking Controller
