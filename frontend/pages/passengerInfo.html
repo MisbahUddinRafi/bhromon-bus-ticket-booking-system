@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Passenger Details — Bhromon</title>
+    <meta name="description"
+        content="Enter passenger details and contact information to complete your bus ticket booking on Bhromon.">
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        :root {
-            --passenger-primary: #354F52;
-            --passenger-secondary: #84A98C;
-            --passenger-accent: #CAD2C5;
-            --passenger-error: #c0392b;
-        }
-
+        /* ── Body ── */
         body {
-            background: var(--pale-sage);
             padding-top: 80px;
+            background: var(--charcoal);
+            background-image:
+                radial-gradient(ellipse at 15% 40%, rgba(82, 121, 111, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 70%, rgba(53, 79, 82, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+            color: var(--text-primary);
         }
-
 
         /* ── Header ── */
         header {
@@ -27,13 +28,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
             animation: slideInDown 0.5s var(--ease-out) both;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1001;
+            border-bottom: 1px solid rgba(132, 169, 140, 0.15);
         }
 
         header div:first-child {
@@ -44,7 +46,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: opacity 0.3s;
+            transition: all 0.3s var(--ease-out);
             height: 50px;
             max-width: 180px;
         }
@@ -146,29 +148,104 @@
             color: var(--forest);
         }
 
-
         .profile-btn {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--pale-sage);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 10px 20px;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        transition: all 0.3s var(--ease-out);
-        font-family: var(--font-display);
-        font-weight: 600;
-        font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--pale-sage);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .profile-btn:hover {
-        background: rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.18);
         }
 
+        /* ── Progress Steps ── */
+        .progress-bar-wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px 0;
+            animation: fadeInUp 0.4s var(--ease-out) both;
+        }
 
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 6px;
+        }
 
-         /* ── Passenger Info Page ── */
-        
-         .passenger-container {
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            flex-shrink: 0;
+            border: 2px solid rgba(132, 169, 140, 0.3);
+            background: rgba(202, 210, 197, 0.06);
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .step.done .step-dot {
+            background: var(--forest);
+            border-color: var(--forest);
+            color: var(--pale-sage);
+        }
+
+        .step.active .step-dot {
+            background: linear-gradient(135deg, var(--sage), var(--forest));
+            border-color: var(--sage);
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(132, 169, 140, 0.2);
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 500;
+            font-family: var(--font-display);
+            color: var(--text-muted);
+        }
+
+        .step.done .step-label {
+            color: var(--sage);
+        }
+
+        .step.active .step-label {
+            color: var(--pale-sage);
+            font-weight: 600;
+        }
+
+        .step-connector {
+            flex: 1;
+            height: 2px;
+            background: rgba(132, 169, 140, 0.2);
+            margin: 0 8px;
+        }
+
+        .step-connector.done {
+            background: var(--forest);
+        }
+
+        /* ── Page Container ── */
+        .passenger-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
@@ -178,139 +255,204 @@
             display: grid;
             grid-template-columns: 1fr 380px;
             gap: 24px;
-            margin-top: 24px;
+            margin-top: 16px;
         }
 
-        /* Left side - Contact & Passenger Details */
+        /* ── Left Panel ── */
         .passenger-left {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
         }
 
-        /* Contact Info Card */
-        .contact-card {
-            background: rgba(202, 210, 197, 0.25);
-            backdrop-filter: blur(24px);
-            border: 1.5px solid rgba(132, 169, 140, 0.4);
-            padding: 32px;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        /* ── Cards ── */
+        .pi-card {
+            background: #fff;
+            border: 1px solid rgba(82, 121, 111, 0.1);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            animation: fadeInUp 0.5s var(--ease-out) both;
         }
 
-        .contact-card h3 {
+        .pi-card:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+
+        .pi-card-header {
+            background: linear-gradient(135deg, var(--dark-teal), var(--forest));
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pi-card-header .card-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(202, 210, 197, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #2F3E46;
         }
 
+        .pi-card-header h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--pale-sage);
+            margin: 0;
+            font-family: var(--font-display);
+        }
+
+        .pi-card-body {
+            padding: 28px;
+        }
+
+        /* ── Form Groups ── */
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
         }
 
         .form-group label {
             display: block;
-            font-size: 13px;
-            font-weight: 500;
-            color: #2F3E46;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--charcoal);
             margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.7px;
+            font-family: var(--font-display);
         }
 
         .form-group input {
             width: 100%;
             padding: 12px 14px;
-            border: 1.5px solid rgba(132, 169, 140, 0.45);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            color: #2F3E46;
+            border: 1.5px solid rgba(82, 121, 111, 0.2);
+            border-radius: var(--radius-sm);
+            background: #fff;
+            color: var(--charcoal);
             font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
+            font-family: var(--font-body);
+            transition: all 0.3s var(--ease-out);
             outline: none;
-            border-color: #84A98C;
-            background: rgba(255, 255, 255, 0.08);
         }
 
         .form-group input::placeholder {
-            color: rgba(47, 62, 70, 0.5);
+            color: rgba(47, 62, 70, 0.38);
         }
 
-        /* Passenger Details Card */
-        .passengers-card {
-            background: rgba(202, 210, 197, 0.25);
-            backdrop-filter: blur(24px);
-            border: 1.5px solid rgba(132, 169, 140, 0.4);
-            padding: 32px;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        .form-group input:focus {
+            border-color: var(--forest);
+            box-shadow: 0 0 0 4px rgba(82, 121, 111, 0.1);
         }
 
-        .passengers-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #2F3E46;
+        .form-group input.error {
+            border-color: #c0392b;
+            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.1);
         }
 
+        .error-message {
+            font-size: 12px;
+            color: #e74c3c;
+            margin-top: 6px;
+            display: none;
+            font-family: var(--font-body);
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* ── Passenger Items ── */
         .passenger-item {
-            padding: 24px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1.5px solid rgba(132, 169, 140, 0.3);
-            border-radius: 12px;
+            background: rgba(82, 121, 111, 0.03);
+            border: 1.5px solid rgba(82, 121, 111, 0.12);
+            border-radius: var(--radius-sm);
+            padding: 22px;
             margin-bottom: 16px;
+            transition: border-color 0.3s;
         }
 
         .passenger-item:last-child {
             margin-bottom: 0;
         }
 
+        .passenger-item:hover {
+            border-color: rgba(82, 121, 111, 0.25);
+        }
+
         .passenger-seat-number {
-            font-size: 12px;
-            font-weight: 600;
-            color: #2F3E46;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--forest);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
+            letter-spacing: 1.2px;
+            margin-bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(82, 121, 111, 0.08);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(82, 121, 111, 0.15);
         }
 
         .passenger-form-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+        }
+
+        .passenger-form-group:last-child {
+            margin-bottom: 0;
         }
 
         .passenger-form-group label {
             display: block;
-            font-size: 13px;
-            font-weight: 500;
-            color: #2F3E46;
-            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 6px;
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
         }
 
         .passenger-form-group input {
             width: 100%;
             padding: 10px 12px;
-            border: 1.5px solid rgba(132, 169, 140, 0.45);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            color: #2F3E46;
+            border: 1.5px solid rgba(82, 121, 111, 0.2);
+            border-radius: var(--radius-sm);
+            background: #fff;
+            color: var(--charcoal);
             font-size: 13px;
-            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            transition: all 0.3s var(--ease-out);
+            outline: none;
+        }
+
+        .passenger-form-group input::placeholder {
+            color: rgba(47, 62, 70, 0.38);
         }
 
         .passenger-form-group input:focus {
-            outline: none;
-            border-color: #84A98C;
-            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--forest);
+            box-shadow: 0 0 0 3px rgba(82, 121, 111, 0.1);
         }
 
+        .passenger-form-group input.error {
+            border-color: #c0392b;
+        }
+
+        /* ── Gender Selector ── */
         .gender-options {
             display: flex;
-            gap: 16px;
-            margin-top: 8px;
+            gap: 10px;
+            margin-top: 0;
         }
 
         .gender-option {
@@ -325,135 +467,210 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
-            border: 1.5px solid rgba(132, 169, 140, 0.45);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #2F3E46;
+            gap: 6px;
+            padding: 9px 10px;
+            border: 1.5px solid rgba(82, 121, 111, 0.2);
+            border-radius: var(--radius-sm);
+            background: #fff;
+            color: rgba(47, 62, 70, 0.65);
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0;
+            transition: all 0.3s var(--ease-out);
+            font-size: 13px;
             font-weight: 500;
+            font-family: var(--font-body);
+            text-transform: none;
+            letter-spacing: 0;
         }
 
-        .gender-option input[type="radio"]:checked + label {
-            background: rgba(132, 169, 140, 0.3);
-            border-color: #84A98C;
-            color: #84A98C;
+        .gender-option label:hover {
+            border-color: var(--sage);
+            color: var(--forest);
+            background: rgba(132, 169, 140, 0.05);
         }
 
-        /* Right side - Schedule Details */
+        .gender-option input[type="radio"]:checked+label {
+            background: rgba(82, 121, 111, 0.1);
+            border-color: var(--forest);
+            color: var(--forest);
+            font-weight: 600;
+        }
+
+        /* ── Right Panel: Summary ── */
         .passenger-right {
             position: sticky;
             top: 100px;
             height: fit-content;
+            animation: fadeInUp 0.5s 0.12s var(--ease-out) both;
         }
 
         .schedule-details-card {
-            background: rgba(202, 210, 197, 0.25);
-            backdrop-filter: blur(24px);
-            border: 1.5px solid rgba(132, 169, 140, 0.4);
-            padding: 28px;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border: 1px solid rgba(82, 121, 111, 0.1);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
         }
 
-        .schedule-details-card h3 {
+        .schedule-details-card .sdc-header {
+            background: linear-gradient(135deg, var(--charcoal), var(--dark-teal));
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sdc-header .card-icon {
+            font-size: 20px;
+        }
+
+        .sdc-header h3 {
+            margin: 0;
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 18px;
-            color: #2F3E46;
+            color: var(--pale-sage);
+            font-family: var(--font-display);
+        }
+
+        .sdc-body {
+            padding: 22px;
         }
 
         .schedule-detail-item {
             margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(82, 121, 111, 0.08);
         }
 
-        .schedule-detail-item:last-child {
+        .schedule-detail-item:last-of-type {
+            border-bottom: none;
             margin-bottom: 0;
+            padding-bottom: 0;
         }
 
         .detail-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #2F3E46;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--forest);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.9px;
+            margin-bottom: 4px;
+            font-family: var(--font-display);
         }
 
         .detail-value {
             font-size: 14px;
-            color: #2F3E46;
-            margin-top: 4px;
+            color: var(--charcoal);
             font-weight: 500;
+            font-family: var(--font-body);
         }
 
         .separator {
             height: 1px;
-            background: rgba(132, 169, 140, 0.1);
-            margin: 16px 0;
+            background: linear-gradient(90deg, transparent, rgba(82, 121, 111, 0.2), transparent);
+            margin: 6px 0 16px;
+        }
+
+        .total-fare-row {
+            background: rgba(82, 121, 111, 0.05);
+            border: 1.5px solid rgba(82, 121, 111, 0.15);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .total-fare-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--charcoal);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            font-family: var(--font-display);
         }
 
         .total-fare {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2F3E46;
-            padding: 12px 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--forest);
+            font-family: var(--font-display);
         }
 
-        /* Buttons */
+        /* ── Action Buttons ── */
         .button-group {
-            margin-top: 24px;
+            margin-top: 20px;
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .btn-proceed {
-            flex: 1;
+            width: 100%;
             padding: 14px 24px;
-            background: linear-gradient(135deg, #84A98C 0%, #7a9a82 100%);
-            color: #2F3E46;
+            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+            color: var(--pale-sage);
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: var(--font-display);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s var(--ease-out);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            box-shadow: 0 4px 16px rgba(82, 121, 111, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-proceed::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .btn-proceed:hover::after {
+            transform: translateX(100%);
         }
 
         .btn-proceed:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(132, 169, 140, 0.3);
+            box-shadow: 0 8px 24px rgba(82, 121, 111, 0.4);
         }
 
         .btn-proceed:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .btn-back {
-            padding: 14px 24px;
-            background: rgba(132, 169, 140, 0.1);
-            color: #2F3E46;
-            border: 1.5px solid rgba(132, 169, 140, 0.45);
-            border-radius: 8px;
-            font-size: 14px;
+            width: 100%;
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--charcoal);
+            border: 1.5px solid rgba(82, 121, 111, 0.25);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
             font-weight: 600;
+            font-family: var(--font-display);
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.3s var(--ease-out);
+            letter-spacing: 0.3px;
         }
 
         .btn-back:hover {
-            background: rgba(132, 169, 140, 0.2);
-            border-color: #84A98C;
+            border-color: var(--sage);
+            background: rgba(132, 169, 140, 0.06);
+            color: var(--forest);
         }
 
-        /* Responsive Design */
+        /* ── Responsive ── */
         @media (max-width: 1024px) {
             .passenger-main {
                 grid-template-columns: 1fr;
@@ -471,48 +688,46 @@
 
             .passenger-main {
                 gap: 16px;
-                margin-top: 16px;
+                margin-top: 12px;
             }
 
-            .contact-card,
-            .passengers-card,
-            .schedule-details-card {
+            .pi-card-body {
                 padding: 20px;
             }
 
-            .contact-card h3,
-            .passengers-card h3,
-            .schedule-details-card h3 {
-                font-size: 15px;
+            .pi-card-header {
+                padding: 15px 20px;
             }
 
-            .passenger-item {
-                padding: 16px;
+            .sdc-body {
+                padding: 18px;
             }
 
+            .progress-bar-wrap {
+                padding: 16px 16px 0;
+            }
+
+            .step-label {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
             .button-group {
                 flex-direction: column-reverse;
             }
-        }
 
-        /* Error styling */
-        .form-group input.error,
-        .passenger-form-group input.error {
-            border-color: #c0392b;
-        }
+            .progress-steps {
+                gap: 0;
+            }
 
-        .error-message {
-            font-size: 12px;
-            color: #e74c3c;
-            margin-top: 6px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
+            .step-label {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -529,87 +744,137 @@
         </div>
     </header>
 
+    <!-- Booking Progress -->
+    <div class="progress-bar-wrap">
+        <div class="progress-steps">
+            <div class="step done">
+                <div class="step-dot">✓</div>
+                <span class="step-label">Search</span>
+            </div>
+            <div class="step-connector done"></div>
+            <div class="step done">
+                <div class="step-dot">✓</div>
+                <span class="step-label">Seat Selection</span>
+            </div>
+            <div class="step-connector done"></div>
+            <div class="step active">
+                <div class="step-dot">3</div>
+                <span class="step-label">Passenger Info</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+                <div class="step-dot">4</div>
+                <span class="step-label">Payment</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="passenger-container">
         <div class="passenger-main">
+
             <!-- Left Side: Contact Info & Passenger Details -->
             <div class="passenger-left">
+
                 <!-- Contact Information Card -->
-                <div class="contact-card">
-                    <h3>Contact Information</h3>
-                    <div class="form-group">
-                        <label for="contactPhone">Phone Number</label>
-                        <input type="text" id="contactPhone" placeholder="01700000000 or +8801700000000" />
-                        <div class="error-message"></div>
+                <div class="pi-card">
+                    <div class="pi-card-header">
+                        <div class="card-icon">📞</div>
+                        <h3>Contact Information</h3>
                     </div>
-                    <div class="form-group">
-                        <label for="contactEmail">Email Address</label>
-                        <input type="email" id="contactEmail" placeholder="example@email.com" />
-                        <div class="error-message"></div>
+                    <div class="pi-card-body">
+                        <div class="form-group">
+                            <label for="contactPhone">Phone Number</label>
+                            <input type="text" id="contactPhone" placeholder="01700000000 or +8801700000000" />
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Email Address</label>
+                            <input type="email" id="contactEmail" placeholder="example@email.com" />
+                            <div class="error-message"></div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Passenger Details Card -->
-                <div class="passengers-card">
-                    <h3>Passenger Details</h3>
-                    <div id="passengersContainer">
-                        <!-- Passenger items will be inserted here by JavaScript -->
+                <div class="pi-card">
+                    <div class="pi-card-header">
+                        <div class="card-icon">🧳</div>
+                        <h3>Passenger Details</h3>
+                    </div>
+                    <div class="pi-card-body">
+                        <div id="passengersContainer">
+                            <!-- Passenger items will be inserted here by JavaScript -->
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- Right Side: Schedule Details -->
+            <!-- Right Side: Journey Summary -->
             <div class="passenger-right">
                 <div class="schedule-details-card">
-                    <h3>Journey Details</h3>
-                    
-                    <div class="schedule-detail-item">
-                        <div class="detail-label">Operator</div>
-                        <div class="detail-value" id="detailOperator">—</div>
+                    <div class="sdc-header">
+                        <div class="card-icon">🚌</div>
+                        <h3>Journey Summary</h3>
                     </div>
+                    <div class="sdc-body">
 
-                    <div class="schedule-detail-item">
-                        <div class="detail-label">Route</div>
-                        <div class="detail-value" id="detailRoute">—</div>
-                    </div>
+                        <div class="schedule-detail-item">
+                            <div class="detail-label">Operator</div>
+                            <div class="detail-value" id="detailOperator">—</div>
+                        </div>
 
-                    <div class="schedule-detail-item">
-                        <div class="detail-label">Date</div>
-                        <div class="detail-value" id="detailDate">—</div>
-                    </div>
+                        <div class="schedule-detail-item">
+                            <div class="detail-label">Route</div>
+                            <div class="detail-value" id="detailRoute">—</div>
+                        </div>
 
-                    <div class="schedule-detail-item">
-                        <div class="detail-label">Departure Time</div>
-                        <div class="detail-value" id="detailTime">—</div>
-                    </div>
+                        <div class="schedule-detail-item">
+                            <div class="detail-label">Date</div>
+                            <div class="detail-value" id="detailDate">—</div>
+                        </div>
 
-                    <div class="separator"></div>
+                        <div class="schedule-detail-item">
+                            <div class="detail-label">Departure Time</div>
+                            <div class="detail-value" id="detailTime">—</div>
+                        </div>
 
-                    <div class="schedule-detail-item">
-                        <div class="detail-label">Selected Seats</div>
-                        <div class="detail-value" id="detailSeats">—</div>
-                    </div>
+                        <div class="separator"></div>
 
-                    <div class="schedule-detail-item">
-                        <div class="detail-label">Per Seat Cost</div>
-                        <div class="detail-value" id="detailPrice">—</div>
-                    </div>
+                        <div class="schedule-detail-item">
+                            <div class="detail-label">Selected Seats</div>
+                            <div class="detail-value" id="detailSeats">—</div>
+                        </div>
 
-                    <div class="schedule-detail-item">
-                        <div class="detail-label">Total Fare</div>
-                        <div class="detail-value total-fare" id="detailTotalFare">৳0.00</div>
-                    </div>
+                        <div class="schedule-detail-item">
+                            <div class="detail-label">Per Seat Cost</div>
+                            <div class="detail-value" id="detailPrice">—</div>
+                        </div>
 
-                    <div class="button-group">
-                        <button class="btn-back" onclick="goBackToSchedules()">← Back to Schedules</button>
-                        <button class="btn-proceed" id="proceedPaymentBtn" onclick="proceedToPayment()">Proceed to Payment</button>
+                        <div class="total-fare-row">
+                            <span class="total-fare-label">Total Fare</span>
+                            <span class="total-fare" id="detailTotalFare">৳0.00</span>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn-proceed" id="proceedPaymentBtn" onclick="proceedToPayment()">
+                                Proceed to Payment →
+                            </button>
+                            <button class="btn-back" onclick="goBackToSchedules()">
+                                ← Back to Schedules
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script src="../js/alerts.js"></script>
     <script src="../js/passengerInfo.js"></script>
 </body>
+
 </html>

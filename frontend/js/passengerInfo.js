@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!bookingData) {
             showError('Invalid Session', 'Booking data not found. Redirecting to schedules...');
             setTimeout(() => {
-                window.location.href = './schedules.html';
+                window.location.href = `schedules.html?from=${passengerState.scheduleDetails.from_city_id}&to=${passengerState.scheduleDetails.to_city_id}&date=${passengerState.scheduleDetails.journey_date}`;
             }, 2000);
             return;
         }
@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         passengerState.scheduleDetails = data.scheduleDetails;
 
         // Setup profile info
-        const user = JSON.parse(localStorage.getItem('user'));
         if (user) {
             passengerState.contactInfo.phone = user.phone_number || '';
             passengerState.contactInfo.email = user.email || '';
@@ -133,7 +132,7 @@ async function validateSeatsBeforePage() {
             // Clear session and redirect
             sessionStorage.removeItem('bookingData');
             setTimeout(() => {
-                window.location.href = './schedules.html';
+                window.location.href = `schedules.html?from=${passengerState.scheduleDetails.from_city_id}&to=${passengerState.scheduleDetails.to_city_id}&date=${passengerState.scheduleDetails.journey_date}`;
             }, 3000);
             
             throw new Error('Unavailable seats detected');
@@ -481,7 +480,7 @@ async function validateSeatsBeforePayment() {
             sessionStorage.removeItem('passengerData');
             
             setTimeout(() => {
-                window.location.href = './schedules.html';
+                window.location.href = `schedules.html?from=${passengerState.scheduleDetails.from_city_id}&to=${passengerState.scheduleDetails.to_city_id}&date=${passengerState.scheduleDetails.journey_date}`;
             }, 3000);
             
             throw new Error('Unavailable seats detected before payment');
@@ -498,7 +497,7 @@ async function validateSeatsBeforePayment() {
 function goBackToSchedules() {
     sessionStorage.removeItem('bookingData');
     sessionStorage.removeItem('passengerData');
-    window.location.href = './schedules.html';
+    window.location.href = `schedules.html?from=${passengerState.scheduleDetails.from_city_id}&to=${passengerState.scheduleDetails.to_city_id}&date=${passengerState.scheduleDetails.journey_date}`;
 }
 
 // ============================================================
