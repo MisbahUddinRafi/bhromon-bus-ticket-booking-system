@@ -15,7 +15,7 @@ exports.getCities = async (req, res) => {
 
 /* Search route & save recent search */
 exports.searchRoute = async (req, res) => {
-    const { fromCityId, toCityId, journeyDate } = req.body;           
+    const { fromCityId, toCityId, journeyDate } = req.body;
     const userId = req.user.user_id;
 
     const routeResult = await db.query(
@@ -40,7 +40,7 @@ exports.searchRoute = async (req, res) => {
 };
 
 
-/* Complete expired schedules */ 
+/* Complete expired schedules */
 const completeExpiredSchedules = async () => {
     await db.query(`
         UPDATE SCHEDULE
@@ -203,10 +203,10 @@ exports.getRecentSearches = async (req, res) => {
 
 
 
-/* Get upcoming trips */ 
+/* Get upcoming trips */
 // get/api/customer/upcoming-trips 
 
-exports.getUpcomingTrips = async(req, res) => {
+exports.getUpcomingTrips = async (req, res) => {
     const userId = req.user.user_id;
 
     // Update the schedule status: 
@@ -247,12 +247,12 @@ exports.getUpcomingTrips = async(req, res) => {
             AND (s.journey_date + s.departure_time) >= NOW()
             AND b.booking_status IN ('pending', 'confirmed') 
             ORDER BY b.booking_time DESC
-        `, 
-        [userId]
+        `,
+            [userId]
         )
 
         res.json(result.rows);
-    } catch(err) {
+    } catch (err) {
         console.error("Upcoming Trips Error:", err);
         res.status(500).json({
             message: 'Error fetching upcoming trips'
@@ -265,7 +265,7 @@ exports.getUpcomingTrips = async(req, res) => {
 
 /* Get past trips */
 // get/api/customer/past-trips
-exports.getPastTrips = async(req, res) => {
+exports.getPastTrips = async (req, res) => {
     const userId = req.user.user_id;
 
     try {
@@ -303,15 +303,104 @@ exports.getPastTrips = async(req, res) => {
             AND (s.journey_date + s.departure_time) < NOW()
             AND b.booking_status IN ('pending', 'confirmed')  
             ORDER BY b.booking_time DESC
-        `, 
-        [userId]
-        ) 
+        `,
+            [userId]
+        )
 
         res.json(result.rows);
-    } catch(err) {
+    } catch (err) {
         console.error("Past Trips Error:", err);
-        res.status(500).json({  
+        res.status(500).json({
             message: 'Error fetching past trips'
         });
-    }   
+    }
+};
+
+
+/* Cancel booking */
+exports.cancelBooking = async (req, res) => {
+    const { bookingId, refundMethod } = req.body;
+    const userId = req.user.user_id;
+
+    // Acquire a client for transaction
+    const client = await db.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        // 1. Verify booking ownership and status
+        const bookingResult = await client.query(
+            `SELECT b.booking_id, b.booking_status, s.journey_date, s.departure_time
+             FROM BOOKING b
+             JOIN SCHEDULE s ON b.schedule_id = s.schedule_id
+             WHERE b.booking_id = $1 AND b.user_id = $2`,
+            [bookingId, userId]
+        );
+
+        if (bookingResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        const booking = bookingResult.rows[0];
+
+        if (booking.booking_status === 'cancelled') {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ message: 'Booking is already cancelled' });
+        }
+
+        // 2. Check time difference (Must be > 2 hours)
+        const now = new Date();
+
+        // Handle journey_date being a Date object or string
+        let departure;
+        if (booking.journey_date instanceof Date) {
+            // PG returns Date object for journey_date. 
+            // We strip time from Date object and add the departure_time.
+            const journeyDateOnly = booking.journey_date.toISOString().split('T')[0];
+            departure = new Date(`${journeyDateOnly}T${booking.departure_time}`);
+        } else {
+            // Assume journey_date is a string in YYYY-MM-DD or DD-MM-YYYY
+            // PG's default output might vary, but we'll try to parse it.
+            const dateStr = booking.journey_date;
+            departure = new Date(`${dateStr}T${booking.departure_time}`);
+        }
+
+        const timeDiffHours = (departure - now) / (1000 * 60 * 60);
+
+        if (timeDiffHours < 2) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ message: 'Cannot cancel booking less than 2 hours before departure' });
+        }
+
+        // 3. Update booking status
+        // The trigger (trg_booking_cancel) will handle seat availability
+        await client.query(
+            `UPDATE BOOKING 
+             SET booking_status = 'cancelled' 
+             WHERE booking_id = $1
+             AND booking_status != 'cancelled'`,
+            [bookingId]
+        );
+
+        // 4. Process refund using function 
+        const refundResult = await client.query(
+            `SELECT refund_booking_cancellation($1, $2)`,
+            [bookingId, refundMethod]
+        );
+
+        // Commit transaction
+        if (refundResult.rows[0].refund_booking_cancellation === true) {            // refund result is true if refund was successful, false if there was an issue
+            await client.query('COMMIT');
+        }
+
+        res.json({ success: true, message: 'Booking cancelled successfully' });
+
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Cancel Booking Error:', err);
+        res.status(500).json({ message: 'Error cancelling booking' });
+    } finally {
+        client.release();
+    }
 };

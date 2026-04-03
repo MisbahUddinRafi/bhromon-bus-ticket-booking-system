@@ -32,17 +32,17 @@ window.addEventListener('popstate', (event) => {
 
 function setupEventListeners() {
     // Close profile menu when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         const profileBtn = document.querySelector('.profile-btn');
         const profileMenu = document.getElementById('profileMenu');
-        
+
         if (profileBtn && profileMenu && !profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
             profileMenu.style.display = 'none';
         }
     });
 
     // Prevent going back using keyboard shortcut
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.altKey && e.key === 'ArrowLeft') {
             e.preventDefault();
         }
@@ -173,18 +173,18 @@ async function loadRecentSearches() {
 
             // Format search time
             const searchDate = new Date(s.search_time);
-            const formattedSearchDate = searchDate.toLocaleTimeString('en-GB', { 
+            const formattedSearchDate = searchDate.toLocaleTimeString('en-GB', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
-                hour: '2-digit', 
-                minute: '2-digit' 
+                hour: '2-digit',
+                minute: '2-digit'
             });
             const journeyDate = new Date(s.journey_date);
-            const formattedJourneyDate = journeyDate.toLocaleDateString('en-BD', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
+            const formattedJourneyDate = journeyDate.toLocaleDateString('en-BD', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
             });
 
             searchCard.innerHTML = `
@@ -195,7 +195,7 @@ async function loadRecentSearches() {
                     Search Again
                 </button>
             `;
-            
+
             container.appendChild(searchCard);
         });
 
@@ -253,8 +253,6 @@ async function loadUpcomingTrips() {
             const seatList = passengers.length > 0 ? passengers.map(p => p.seat_number).join(', ') : 'N/A';
             const totalFare = trip.total_fare ? parseFloat(trip.total_fare).toFixed(2) : '0.00';
 
-            
-
             tripCard.innerHTML = `
                 <div class="trip-card-header">
                     <p class="trip-route">🚌 ${trip.from_city} → ${trip.to_city}</p>
@@ -297,15 +295,138 @@ async function loadUpcomingTrips() {
                     <button class="btn-trip" onclick="downloadTripTicket(${trip.booking_id})">
                         Download Ticket
                     </button>
+                    ${trip.booking_status !== 'cancelled' ? `
+                    <button class="btn-trip" style="background: rgba(214, 40, 40, 0.1); border-color: rgba(214, 40, 40, 0.3); color: #e63946;" 
+                        onclick='openCancelModal(${JSON.stringify(trip).replace(/'/g, "&apos;")})'>
+                        Cancel Booking
+                    </button>
+                    ` : ''}
                 </div>
             `;
-            
+
             container.appendChild(tripCard);
         });
 
     } catch (err) {
         console.error('Error loading upcoming trips:', err);
         document.getElementById('upcomingTrips').innerHTML = '<div class="empty-message">Error loading trips</div>';
+    }
+}
+
+// ============================================================
+// CANCEL BOOKING LOGIC
+// ============================================================
+
+let currentTripToCancel = null;
+
+function openCancelModal(trip) {
+    currentTripToCancel = trip;
+    const now = new Date();
+
+    // Parse journey date (DD-MM-YYYY) and departure time (HH:MM:SS)
+    const [day, month, year] = trip.journey_date.split('-').map(Number);
+    const [hours, minutes, seconds] = trip.departure_time.split(':').map(Number);
+    const departure = new Date(year, month - 1, day, hours, minutes, seconds);
+
+    const timeDiffMs = departure - now;
+    const timeDiffHours = timeDiffMs / (1000 * 60 * 60);
+
+    if (timeDiffHours < 2) {
+        showError('Cancellation Not Allowed', 'Bookings can only be cancelled at least 2 hours before departure.');
+        return;
+    }
+
+    // Calculate refund
+    let refundPercent = 0;
+    if (timeDiffHours >= 72) refundPercent = 95;
+    else if (timeDiffHours >= 48) refundPercent = 90;
+    else if (timeDiffHours >= 36) refundPercent = 75;
+    else if (timeDiffHours >= 24) refundPercent = 70;
+    else if (timeDiffHours >= 18) refundPercent = 65;
+    else if (timeDiffHours >= 12) refundPercent = 60;
+    else if (timeDiffHours >= 6) refundPercent = 50;
+    else if (timeDiffHours >= 2) refundPercent = 10;
+
+    const totalPayment = parseFloat(trip.total_fare);
+    const totalSeats = parseInt(trip.total_seats_booked);
+
+    // Total payment includes service charge (20 per seat)
+    // Deduction = (100 - refundPercent)% of (totalPayment - serviceCharge) + serviceCharge ???
+    // Or normally: deduction is taken from the ticket price, and service charge is never refunded.
+    // The user said: "service charge is 20 taka per seat".
+    const totalServiceCharge = totalSeats * 20;
+    const ticketPriceOnly = totalPayment - totalServiceCharge;
+
+    const refundAmount = (ticketPriceOnly * refundPercent / 100);
+    const deduction = totalPayment - refundAmount;
+
+    // Populate modal
+    document.getElementById('cancelTotalSeats').textContent = totalSeats;
+    document.getElementById('cancelTotalPayment').textContent = `৳${totalPayment.toFixed(2)}`;
+    document.getElementById('cancelTimeRemaining').textContent = `${Math.floor(timeDiffHours)}h ${Math.round((timeDiffHours % 1) * 60)}m`;
+    document.getElementById('cancelDeduction').textContent = `৳${deduction.toFixed(2)}`;
+    document.getElementById('cancelRefundAmount').textContent = `৳${refundAmount.toFixed(2)}`;
+
+    // Reset modal state
+    document.getElementById('cancelAgreement').checked = false;
+    document.getElementById('btnConfirmCancel').disabled = true;
+
+    // Show modal
+    document.getElementById('cancelBookingOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCancelModal() {
+    document.getElementById('cancelBookingOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+    currentTripToCancel = null;
+}
+
+// Agreement check listener
+document.getElementById('cancelAgreement')?.addEventListener('change', function () {
+    document.getElementById('btnConfirmCancel').disabled = !this.checked;
+});
+
+function handleCancelConfirmation() {
+    document.getElementById('customConfirmOverlay').style.display = 'flex';
+}
+
+function closeCustomConfirm() {
+    document.getElementById('customConfirmOverlay').style.display = 'none';
+}
+
+async function executeCancellation() {
+    if (!currentTripToCancel) return;
+
+    closeCustomConfirm();
+
+    try {
+        const refundMethod = document.getElementById('refundMethod').value;
+        const res = await fetch(`${API}/cancel-booking`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user': JSON.stringify(user)
+            },
+            body: JSON.stringify({
+                bookingId: currentTripToCancel.booking_id,
+                refundMethod: refundMethod
+            })
+        });
+
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.message || 'Failed to cancel booking');
+        }
+
+        showSuccess('Cancellation Successful', 'Your booking has been cancelled successfully. Refund will be processed as per policy.');
+        closeCancelModal();
+        loadUpcomingTrips();
+        loadDashboard();
+
+    } catch (err) {
+        console.error('Cancellation Error:', err);
+        showError('Cancellation Failed', err.message);
     }
 }
 
@@ -374,7 +495,7 @@ async function loadPastTrips() {
                     </button>
                 </div>
             `;
-            
+
             container.appendChild(tripCard);
         });
 
@@ -395,7 +516,7 @@ async function openViewScheduleModal(scheduleId, userSeatsString) {
         const detailsRes = await fetch(`${API}/schedule-details/${scheduleId}`, {
             headers: { 'x-user': JSON.stringify(user) }
         });
-        
+
         if (!detailsRes.ok) throw new Error('Failed to fetch schedule details');
         const detailsData = await detailsRes.json();
         const scheduleDetails = detailsData.schedule;
@@ -404,7 +525,7 @@ async function openViewScheduleModal(scheduleId, userSeatsString) {
         const seatsRes = await fetch(`${API}/schedule-seats/${scheduleId}`, {
             headers: { 'x-user': JSON.stringify(user) }
         });
-        
+
         if (!seatsRes.ok) throw new Error('Failed to fetch seats');
         const seatsData = await seatsRes.json();
 
@@ -415,13 +536,13 @@ async function openViewScheduleModal(scheduleId, userSeatsString) {
         });
 
         // Parse user's seats
-        const userSeats = userSeatsString 
+        const userSeats = userSeatsString
             ? userSeatsString.split(',').map(s => `S${s.trim()}`)
             : [];
 
         // Populate modal content
         populateViewScheduleModal(scheduleDetails, seatStatuses, userSeats);
-        
+
         // Show modal
         const overlay = document.getElementById('viewScheduleOverlay');
         overlay.classList.add('show');

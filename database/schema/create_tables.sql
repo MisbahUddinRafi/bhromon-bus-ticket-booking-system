@@ -187,7 +187,7 @@ CREATE TABLE PAYMENT (
     payment_type payment_type_enum NOT NULL,
     payment_reason payment_reason_enum,
     payment_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    booking_id INT UNIQUE NOT NULL,
+    booking_id INT NOT NULL,
 
     CONSTRAINT fk_payment_booking
         FOREIGN KEY (booking_id)

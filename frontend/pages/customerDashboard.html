@@ -722,6 +722,7 @@
     }
 
     @media (max-width: 768px) {
+
       #upcomingTrips,
       #pastTrips {
         grid-template-columns: 1fr;
@@ -750,12 +751,238 @@
       }
     }
 
+    /* ── Cancel Booking Modal ── */
+    .cancel-booking-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-out);
+      backdrop-filter: blur(6px);
+    }
+
+    .cancel-booking-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .cancel-modal {
+      background: #fff;
+      border-radius: var(--radius-md);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+      max-width: 650px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideInUp 0.4s var(--ease-out) both;
+    }
+
+    .cancel-modal-header {
+      background: linear-gradient(135deg, #d62828, #9b2226);
+      /* Reddish for cancellation */
+      padding: 20px 24px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cancel-modal-header h3 {
+      margin: 0;
+      color: #fff;
+      border-bottom: none;
+      padding-bottom: 0;
+      font-size: 1.25rem;
+    }
+
+    .cancel-modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .policy-section,
+    .calculation-section {
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(82, 121, 111, 0.04);
+      border: 1px solid rgba(82, 121, 111, 0.1);
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-family: var(--font-display);
+      margin-bottom: 12px;
+      color: var(--charcoal);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .policy-list {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #555;
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .calculation-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+      font-size: 14px;
+    }
+
+    .calc-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .calc-label {
+      opacity: 0.7;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .calc-value {
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+
+    .calc-value.refund {
+      color: #2a9d8f;
+      font-size: 1.1rem;
+    }
+
+    .payment-method-select {
+      grid-column: span 2;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .agreement-section {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .agreement-section input {
+      margin-top: 3px;
+    }
+
+    .cancel-modal-footer {
+      padding: 20px 24px;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn-confirm-cancel {
+      background: #d62828;
+      color: #fff;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-confirm-cancel:hover:not(:disabled) {
+      background: #9b2226;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3);
+    }
+
+    .btn-confirm-cancel:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-close-modal {
+      background: #eee;
+      color: #333;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-close-modal:hover {
+      background: #ddd;
+    }
+
+    /* Custom Confirm Dialog */
+    .custom-confirm-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 4000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .confirm-dialog {
+      background: white;
+      padding: 30px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+      max-width: 400px;
+      text-align: center;
+      animation: slideInUp 0.3s var(--ease-out);
+    }
+
+    .confirm-dialog h4 {
+      margin: 0 0 15px 0;
+      font-family: var(--font-display);
+      color: #d62828;
+    }
+
+    .confirm-dialog p {
+      margin: 0 0 25px 0;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .confirm-dialog-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
     /* ── Animations ── */
     @keyframes slideInUp {
       from {
         opacity: 0;
         transform: translateY(30px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -857,7 +1084,89 @@
     </div>
   </div>
 
-  <script src="../js/booking.js"></script>
+  <!-- Cancel Booking Confirmation Modal -->
+  <div id="cancelBookingOverlay" class="cancel-booking-overlay">
+    <div class="cancel-modal">
+      <div class="cancel-modal-header">
+        <h3>Cancel Booking Confirmation</h3>
+        <div class="view-schedule-close-btn" onclick="closeCancelModal()">×</div>
+      </div>
+      <div class="cancel-modal-body">
+        <div class="policy-section">
+          <div class="section-title">🎫 Cancellation Policy</div>
+          <ul class="policy-list">
+            <li>72+   hours before departure: <strong>95% Refund</strong></li>
+            <li>48-72 hours before departure: <strong>90% Refund</strong></li>
+            <li>36-48 hours before departure: <strong>75% Refund</strong></li>
+            <li>24-36 hours before departure: <strong>70% Refund</strong></li>
+            <li>18-24 hours before departure: <strong>65% Refund</strong></li>
+            <li>12-18 hours before departure: <strong>60% Refund</strong></li>
+            <li> 6-12 hours before departure:  <strong>50% Refund</strong></li>
+            <li>  2-6 hours before departure:  <strong>10% Refund</strong></li>
+            <li>Less than 2 hours:            <strong> No Refund</strong></li>
+          </ul>
+        </div>
+
+        <div class="calculation-section">
+          <div class="section-title">💰 Cost Calculation</div>
+          <div class="calculation-grid">
+            <div class="calc-item">
+              <span class="calc-label">Total Seats</span>
+              <span id="cancelTotalSeats" class="calc-value">-</span>
+            </div>
+            <div class="calc-item">
+              <span class="calc-label">Total Payment</span>
+              <span id="cancelTotalPayment" class="calc-value">-</span>
+            </div>
+            <div class="calc-item">
+              <span class="calc-label">Time Remaining</span>
+              <span id="cancelTimeRemaining" class="calc-value">-</span>
+            </div>
+            <div class="calc-item">
+              <span class="calc-label">Total Deduction</span>
+              <span id="cancelDeduction" class="calc-value">-</span>
+            </div>
+            <div class="calc-item">
+              <span class="calc-label">Total Refund</span>
+              <span id="cancelRefundAmount" class="calc-value refund">-</span>
+            </div>
+            <div class="payment-method-select">
+              <span class="calc-label">Select Refund Method</span>
+              <select id="refundMethod">
+                <option value="cash">Cash (Collect from office)</option>
+                <option value="bkash">bKash</option>
+                <option value="nagad">Nagad</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <label class="agreement-section">
+          <input type="checkbox" id="cancelAgreement">
+          <span>I have read the cancellation policy and I agree to the terms and conditions regarding the refund
+            process.</span>
+        </label>
+      </div>
+      <div class="cancel-modal-footer">
+        <button class="btn-close-modal" onclick="closeCancelModal()">Return to Dashboard</button>
+        <button id="btnConfirmCancel" class="btn-confirm-cancel" disabled onclick="handleCancelConfirmation()">Confirm
+          Cancellation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Dialog -->
+  <div id="customConfirmOverlay" class="custom-confirm-overlay">
+    <div class="confirm-dialog">
+      <h4>Are you sure?</h4>
+      <p>Do you really want to cancel this booking? This action cannot be undone.</p>
+      <div class="confirm-dialog-btns">
+        <button class="btn-close-modal" onclick="closeCustomConfirm()">No, Keep it</button>
+        <button class="btn-confirm-cancel" onclick="executeCancellation()">Yes, Cancel Booking</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/alerts.js"></script>
   <script src="../js/customerDashboard.js"></script>
 </body>

@@ -281,6 +281,7 @@ exports.getUserHistory = async (req, res) => {
                 c2.city_name AS destination,
                 p.payment_amount AS total_fare,
                 p.payment_type AS payment_method,
+                p.payment_reason, 
                 (SELECT COUNT(*)::int FROM BOOKED_SEAT bs WHERE bs.booking_id = b.booking_id) AS total_seats_booked,
                 COALESCE((
                     SELECT JSON_AGG(JSON_BUILD_OBJECT('seat_number', bs.seat_number, 'name', bs.passenger_name, 'gender', bs.passenger_gender))
@@ -296,7 +297,7 @@ exports.getUserHistory = async (req, res) => {
             JOIN CITY c1 ON r.source_city_id = c1.city_id
             JOIN CITY c2 ON r.destination_city_id = c2.city_id
             LEFT JOIN PAYMENT p ON b.booking_id = p.booking_id
-            WHERE b.user_id = $1
+            WHERE b.user_id = $1 
             ORDER BY b.booking_time DESC
         `, [req.params.id]);
 
@@ -387,10 +388,30 @@ exports.getScheduleDetails = async (req, res) => {
                 u.phone_number,
                 u.email
             FROM SCHEDULE_SEAT ss
-            LEFT JOIN BOOKED_SEAT bs ON ss.schedule_id = bs.schedule_id AND ss.seat_number = bs.seat_number
-            LEFT JOIN BOOKING b ON bs.booking_id = b.booking_id
-            LEFT JOIN USERS u ON b.user_id = u.user_id
-            WHERE ss.schedule_id = $1
+
+            LEFT JOIN (
+                SELECT DISTINCT ON (bs.schedule_id, bs.seat_number)
+                    bs.schedule_id,
+                    bs.seat_number,
+                    bs.passenger_name,
+                    bs.passenger_gender,
+                    bs.booking_id
+                FROM BOOKED_SEAT bs
+                JOIN BOOKING b ON bs.booking_id = b.booking_id
+                WHERE b.booking_status = 'confirmed'
+                ORDER BY bs.schedule_id, bs.seat_number, b.booking_time DESC
+            ) bs
+                ON ss.schedule_id = bs.schedule_id
+                AND ss.seat_number = bs.seat_number
+
+            LEFT JOIN BOOKING b 
+                ON bs.booking_id = b.booking_id
+
+            LEFT JOIN USERS u 
+                ON b.user_id = u.user_id
+
+            WHERE ss.schedule_id = $1 
+
             ORDER BY CAST(substr(ss.seat_number, 2) AS INTEGER)
         `, [scheduleId]);
 

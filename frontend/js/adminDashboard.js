@@ -406,13 +406,6 @@ function togglePastSchedules() {
 
 
 
-
-
-
-
-
-
-
 /* Load users */
 async function loadUsers() {
     const res = await fetch(`${API}/users`);
@@ -542,6 +535,7 @@ async function loadUserHistory() {
                     <p><span class="label">Seats Booked:</span> ${seatsBooked}</p>
                     <p><span class="label">Total Fare:</span> ৳${totalFare}</p>
                     <p><span class="label">Payment Method:</span> ${paymentMethod}</p>
+                    <p><span class="label">Payment Type:</span> ${booking.payment_reason || 'N/A'}</p>
                 </div>
                 
                 <div style="margin-top: 16px; border-top: 1px dashed rgba(82, 121, 111, 0.2); padding-top: 12px;">
