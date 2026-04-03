@@ -24,17 +24,17 @@ window.addEventListener('popstate', (event) => {
 
 function setupEventListeners() {
     // Close profile menu when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         const profileBtn = document.querySelector('.profile-btn');
         const profileMenu = document.getElementById('profileMenu');
-        
+
         if (profileBtn && profileMenu && !profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
             profileMenu.style.display = 'none';
         }
     });
 
     // Prevent going back using keyboard shortcut
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.altKey && e.key === 'ArrowLeft') {
             e.preventDefault();
         }
@@ -60,24 +60,24 @@ function initModalDrag() {
 
     const updatedHeader = document.querySelector('.modal-header');
 
-    updatedHeader.addEventListener('mousedown', function(e) {
+    updatedHeader.addEventListener('mousedown', function (e) {
         isDragging = true;
         const rect = modal.getBoundingClientRect();
-        
+
         // Store the initial position
         modalPos.x = rect.left;
         modalPos.y = rect.top;
-        
+
         // Store the offset between click position and modal position
         modalOffset.x = e.clientX - rect.left;
         modalOffset.y = e.clientY - rect.top;
-        
+
         updatedHeader.style.cursor = 'grabbing';
-        
+
         document.body.style.userSelect = 'none';
     });
 
-    document.addEventListener('mousemove', function(e) {
+    document.addEventListener('mousemove', function (e) {
         if (!isDragging) return;
         e.preventDefault();
 
@@ -96,7 +96,7 @@ function initModalDrag() {
         modal.style.transform = 'none'; // Remove center transform when dragging
     });
 
-    document.addEventListener('mouseup', function() {
+    document.addEventListener('mouseup', function () {
         if (isDragging) {
             isDragging = false;
             updatedHeader.style.cursor = 'move';
@@ -327,12 +327,12 @@ async function cancelSchedule(id) {
     if (!confirm('Are you sure you want to cancel this schedule? This action may affect existing bookings.')) {
         return;
     }
-    
+
     try {
         const res = await fetch(`${API}/cancel-schedule/${id}`, {
             method: 'PUT'
         });
-        
+
         if (res.ok) {
             showSuccess('Schedule Cancelled!', 'The bus schedule has been cancelled.');
             loadActiveSchedules();
@@ -387,7 +387,7 @@ async function loadPastSchedules() {
     schedules.forEach(s => {
         const row = document.createElement('tr');
         row.style.cursor = 'pointer';
-        
+
         // Determine status class
         let statusClass = '';
         if (s.schedule_status === 'completed') {
@@ -395,7 +395,7 @@ async function loadPastSchedules() {
         } else if (s.schedule_status === 'cancelled') {
             statusClass = 'schedule-status-cancelled';
         }
-        
+
         row.innerHTML = `
             <td class="schedule-route">${s.source} → ${s.destination}</td>
             <td>${s.operator_name || '-'}</td>
@@ -413,6 +413,28 @@ async function loadPastSchedules() {
     table.appendChild(tbody);
     tableWrapper.appendChild(table);
     container.appendChild(tableWrapper);
+}
+
+/* Toggle Past Schedules visibility */
+let pastSchedulesVisible = false;
+
+function togglePastSchedules() {
+    const btn = document.getElementById('pastScheduleToggleBtn');
+    const container = document.getElementById('pastSchedules');
+
+    if (!pastSchedulesVisible) {
+        // Load and show
+        loadPastSchedules();
+        pastSchedulesVisible = true;
+        btn.innerHTML = '🔽 Minimize Past Schedules';
+        btn.classList.add('minimize');
+    } else {
+        // Hide
+        container.innerHTML = '';
+        pastSchedulesVisible = false;
+        btn.innerHTML = '📋 View Past Schedules';
+        btn.classList.remove('minimize');
+    }
 }
 
 
@@ -477,6 +499,15 @@ async function loadOperatorHistory() {
     data.forEach(schedule => {
         const card = document.createElement('div');
         card.className = 'schedule-card';
+
+        // Determine status badge class for operator history cards
+        let cardStatusClass = 'card-status-active';
+        if (schedule.schedule_status === 'completed') {
+            cardStatusClass = 'card-status-completed';
+        } else if (schedule.schedule_status === 'cancelled') {
+            cardStatusClass = 'card-status-cancelled';
+        }
+
         card.innerHTML = `
             <h4>${schedule.source_city} → ${schedule.destination_city}</h4>
             <p><span class="label">Bus Number:</span> ${schedule.bus_number}</p>
@@ -485,7 +516,7 @@ async function loadOperatorHistory() {
             <p><span class="label">Date:</span> ${schedule.journey_date}</p>
             <p><span class="label">Departure:</span> ${schedule.departure_time}</p>
             <p><span class="label">Price:</span> ৳${schedule.price}</p>
-            <p><span class="label">Status:</span> <strong>${schedule.schedule_status}</strong></p>
+            <p><span class="label">Status:</span> <span class="${cardStatusClass}">${schedule.schedule_status}</span></p>
         `;
         card.onclick = () => openScheduleModal(schedule.schedule_id);
         container.appendChild(card);
@@ -499,17 +530,17 @@ async function openScheduleModal(scheduleId) {
         const data = await res.json();
 
         displayScheduleDetails(data);
-        
+
         // Reset modal position to center - clear all pixel values
         const modal = document.getElementById('scheduleModal');
         modal.style.top = '50vh';
         modal.style.left = '50vw';
         modal.style.transform = 'translate(-50%, -50%)';
         modal.style.position = 'fixed';
-        
+
         modal.classList.add('show');
         document.getElementById('scheduleModalOverlay').classList.add('show');
-        
+
         // Reinitialize dragging after modal is shown
         setTimeout(() => {
             initModalDrag();
@@ -524,6 +555,14 @@ async function openScheduleModal(scheduleId) {
 function displayScheduleDetails(data) {
     const schedule = data.schedule;
     const seats = data.seats;
+
+    // Determine status class for schedule details modal
+    let detailStatusClass = 'detail-status-active';
+    if (schedule.schedule_status === 'completed') {
+        detailStatusClass = 'detail-status-completed';
+    } else if (schedule.schedule_status === 'cancelled') {
+        detailStatusClass = 'detail-status-cancelled';
+    }
 
     // Display schedule details
     const detailsHTML = `
@@ -557,7 +596,7 @@ function displayScheduleDetails(data) {
         </div>
         <div class="detail-item">
             <label>Schedule Status</label>
-            <value>${schedule.schedule_status}</value>
+            <value><span class="${detailStatusClass}">${schedule.schedule_status}</span></value>
         </div>
         <div class="detail-item">
             <label>Ticket Price</label>
@@ -578,7 +617,7 @@ function displaySeatsTable(seats) {
 
     seats.forEach(seat => {
         const row = document.createElement('tr');
-        
+
         // Status badge class
         let statusClass = '';
         if (seat.schedule_seat_status === 'available') {
