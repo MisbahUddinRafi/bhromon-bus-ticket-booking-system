@@ -194,3 +194,124 @@ exports.getRecentSearches = async (req, res) => {
 
     res.json(result.rows);
 };
+
+
+
+
+
+
+
+
+
+/* Get upcoming trips */ 
+// get/api/customer/upcoming-trips 
+
+exports.getUpcomingTrips = async(req, res) => {
+    const userId = req.user.user_id;
+
+    // Update the schedule status: 
+    await completeExpiredSchedules();
+
+    try {
+        const result = await db.query(
+            `SELECT 
+                b.booking_id, 
+                b.booking_status, 
+                to_char(b.booking_time, 'DD-MM-YYYY HH24:MI:SS') AS booking_time,
+                u.name AS user_name,
+                to_char(s.journey_date, 'DD-MM-YYYY') AS journey_date,
+                s.departure_time,
+                bo.operator_name,
+                bo.contact_number, 
+                bus.bus_number,
+                c1.city_name AS from_city, 
+                c2.city_name AS to_city,
+                p.payment_amount AS total_fare,
+                p.payment_type AS payment_method,
+                (SELECT COUNT(*)::int FROM BOOKED_SEAT bs WHERE bs.booking_id = b.booking_id) AS total_seats_booked,
+                COALESCE((
+                    SELECT JSON_AGG(JSON_BUILD_OBJECT('seat_number', bs.seat_number, 'name', bs.passenger_name, 'gender', bs.passenger_gender))
+                    FROM BOOKED_SEAT bs
+                    WHERE bs.booking_id = b.booking_id
+                ), '[]'::json) AS passenger_info
+            FROM BOOKING b
+            JOIN USERS u ON b.user_id = u.user_id
+            JOIN SCHEDULE s ON b.schedule_id = s.schedule_id
+            JOIN BUS bus ON s.bus_id = bus.bus_id
+            JOIN BUS_OPERATOR bo ON bus.operator_id = bo.operator_id
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
+            LEFT JOIN PAYMENT p ON b.booking_id = p.booking_id
+            WHERE b.user_id = $1 
+            AND (s.journey_date + s.departure_time) >= NOW()
+            AND b.booking_status IN ('pending', 'confirmed') 
+            ORDER BY b.booking_time DESC
+        `, 
+        [userId]
+        )
+
+        res.json(result.rows);
+    } catch(err) {
+        console.error("Upcoming Trips Error:", err);
+        res.status(500).json({
+            message: 'Error fetching upcoming trips'
+        });
+    }
+
+}
+
+
+
+/* Get past trips */
+// get/api/customer/past-trips
+exports.getPastTrips = async(req, res) => {
+    const userId = req.user.user_id;
+
+    try {
+        const result = await db.query(
+            `SELECT 
+                b.booking_id, 
+                b.booking_status, 
+                to_char(b.booking_time, 'DD-MM-YYYY HH24:MI:SS') AS booking_time,
+                u.name AS user_name,
+                to_char(s.journey_date, 'DD-MM-YYYY') AS journey_date,
+                s.departure_time,
+                bo.operator_name,
+                bo.contact_number,
+                bus.bus_number,
+                c1.city_name AS from_city, 
+                c2.city_name AS to_city,
+                p.payment_amount AS total_fare,
+                p.payment_type AS payment_method,
+                (SELECT COUNT(*)::int FROM BOOKED_SEAT bs WHERE bs.booking_id = b.booking_id) AS total_seats_booked,
+                COALESCE((
+                    SELECT JSON_AGG(JSON_BUILD_OBJECT('seat_number', bs.seat_number, 'name', bs.passenger_name, 'gender', bs.passenger_gender))
+                    FROM BOOKED_SEAT bs
+                    WHERE bs.booking_id = b.booking_id
+                ), '[]'::json) AS passenger_info
+            FROM BOOKING b
+            JOIN USERS u ON b.user_id = u.user_id
+            JOIN SCHEDULE s ON b.schedule_id = s.schedule_id
+            JOIN BUS bus ON s.bus_id = bus.bus_id
+            JOIN BUS_OPERATOR bo ON bus.operator_id = bo.operator_id
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
+            LEFT JOIN PAYMENT p ON b.booking_id = p.booking_id
+            WHERE b.user_id = $1 
+            AND (s.journey_date + s.departure_time) < NOW()
+            AND b.booking_status IN ('pending', 'confirmed')  
+            ORDER BY b.booking_time DESC
+        `, 
+        [userId]
+        ) 
+
+        res.json(result.rows);
+    } catch(err) {
+        console.error("Past Trips Error:", err);
+        res.status(500).json({  
+            message: 'Error fetching past trips'
+        });
+    }   
+};

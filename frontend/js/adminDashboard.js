@@ -459,17 +459,28 @@ async function loadUserHistory() {
             card.style.cursor = 'default'; // Disable pointer cursor as per requirement
 
             // Determine status badge class and time label
-            let statusClass = '';
+            let bookingStatusClass = '';
+            let scheduleStatusClass = '';
             let timeLabel = 'Booking Time';
 
-            const status = (booking.booking_status || '').toLowerCase();
-            if (status === 'confirmed') {
-                statusClass = 'card-status-completed';
-            } else if (status === 'cancelled') {
-                statusClass = 'card-status-cancelled';
+            const bookingStatus = (booking.booking_status || '').toLowerCase();
+            if (bookingStatus === 'confirmed') {
+                bookingStatusClass = 'card-status-completed';
+            } else if (bookingStatus === 'cancelled') {
+                bookingStatusClass = 'card-status-cancelled';
                 timeLabel = 'Cancellation Time';
-            } else if (status === 'pending') {
-                statusClass = 'card-status-pending';
+            } else if (bookingStatus === 'pending') {
+                bookingStatusClass = 'card-status-pending';
+            }
+
+            const scheduleStatus = (booking.schedule_status || '').toLowerCase();
+            console.log('schedule status: ', scheduleStatus);
+            if (scheduleStatus === 'completed') {
+                scheduleStatusClass = 'card-status-completed';
+            } else if (scheduleStatus === 'cancelled') {
+                scheduleStatusClass = 'card-status-cancelled';
+            } else if (scheduleStatus === 'active' && scheduleStatusClass !== 'card-status-cancelled') {
+                scheduleStatusClass = 'card-status-pending';
             }
 
             // Format booking time to DD/MM/YYYY HH:MM:SS format
@@ -521,7 +532,8 @@ async function loadUserHistory() {
                 </h4>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <p><span class="label">User:</span> ${userName}</p>
-                    <p><span class="label">Status:</span> <span class="${statusClass}">${booking.booking_status || 'N/A'}</span></p>
+                    <p><span class="label">Booking Status:</span> <span class="${bookingStatusClass}">${booking.booking_status || 'N/A'}</span></p>
+                    <p><span class="label">Schedule Status:</span> <span class="${scheduleStatusClass}">${booking.schedule_status || 'N/A'}</span></p>
                     <p><span class="label">${timeLabel}:</span> ${formattedBookingTime}</p>
                     <p><span class="label">Journey Date:</span> ${journeyDate}</p>
                     <p><span class="label">Departure:</span> ${departureTime}</p>

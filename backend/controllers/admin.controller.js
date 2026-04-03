@@ -74,12 +74,14 @@ exports.createSchedule = async (req, res) => {
     if (price <= 0 || price > 5000)
         return res.status(400).json({ message: "Invalid price" });
 
+
+    // using transaction to ensure route creation and schedule creation happen together
     const client = await pool.connect();
 
     try {
-        await client.query('BEGIN');
+        await client.query('BEGIN');        // begin transaction
 
-        // 1️⃣ Find or create route
+        // 1. Find or create route
         let route = await client.query(
             `SELECT route_id 
              FROM ROUTE 
@@ -102,7 +104,7 @@ exports.createSchedule = async (req, res) => {
             routeId = route.rows[0].route_id;
         }
 
-        // 2️⃣ Insert schedule (Seats auto-created by DB trigger)
+        // 2. Insert schedule (Seats auto-created by DB trigger)
         await client.query(
             `INSERT INTO SCHEDULE 
             (journey_date, departure_time, price, schedule_status, bus_id, route_id)
@@ -110,12 +112,12 @@ exports.createSchedule = async (req, res) => {
             [journeyDate, departureTime, price, busId, routeId]
         );
 
-        await client.query('COMMIT');
+        await client.query('COMMIT');           // commit transaction
 
         res.json({ message: "Schedule Created Successfully" });
 
     } catch (err) {
-        await client.query('ROLLBACK');
+        await client.query('ROLLBACK');         // rollback transaction on error
 
         // Handle duplicate bus schedule error
         if (err.code === '23505') {
@@ -128,7 +130,7 @@ exports.createSchedule = async (req, res) => {
         res.status(500).json({ message: "Error creating schedule" });
 
     } finally {
-        client.release();
+        client.release();           // release client back to pool
     }
 };
 
@@ -141,7 +143,8 @@ exports.cancelSchedule = async (req, res) => {
         const result = await pool.query(
             `UPDATE SCHEDULE
              SET schedule_status='cancelled'
-             WHERE schedule_id=$1
+             WHERE schedule_id=$1 
+             AND schedule_status='active'
              RETURNING schedule_id`,
             [req.params.id]
         );
@@ -200,9 +203,6 @@ exports.getActiveSchedules = async (req, res) => {
             WHERE s.schedule_status = 'active'
             ORDER BY s.journey_date, s.departure_time
         `);
-
-        // console.log(result.rows[0].journey_date);
-        // console.log(typeof result.rows[0].journey_date);
 
         res.json(result.rows);
 
@@ -263,10 +263,14 @@ exports.getPastSchedules = async (req, res) => {
 ========================= */
 exports.getUserHistory = async (req, res) => {
     try {
+
+        await completeExpiredSchedules();   // ensure schedule statuses are up-to-date
+
         const result = await pool.query(`
             SELECT 
                 b.booking_id, 
                 b.booking_status, 
+                s.schedule_status, 
                 to_char(b.booking_time, 'DD-MM-YYYY HH24:MI:SS') AS booking_time,
                 u.name AS user_name,
                 to_char(s.journey_date, 'DD-MM-YYYY') AS journey_date,
@@ -281,7 +285,7 @@ exports.getUserHistory = async (req, res) => {
                 COALESCE((
                     SELECT JSON_AGG(JSON_BUILD_OBJECT('seat_number', bs.seat_number, 'name', bs.passenger_name, 'gender', bs.passenger_gender))
                     FROM BOOKED_SEAT bs
-                    WHERE bs.booking_id = b.booking_id
+                    WHERE bs.booking_id = b.booking_id 
                 ), '[]'::json) AS passenger_info
             FROM BOOKING b
             JOIN USERS u ON b.user_id = u.user_id
@@ -354,7 +358,7 @@ exports.getScheduleDetails = async (req, res) => {
                 s.price,
                 b.bus_number,
                 b.bus_type,
-                bo.operator_name,
+                bo.operator_name, 
                 c1.city_name AS source_city,
                 c2.city_name AS destination_city
             FROM SCHEDULE s

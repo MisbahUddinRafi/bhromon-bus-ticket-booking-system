@@ -9,6 +9,8 @@ router.get('/cities', auth, controller.getCities);
 router.post('/search', auth, controller.searchRoute);
 router.get('/recent-searches', auth, controller.getRecentSearches);
 router.get('/schedules', auth, controller.getSchedules);
+router.get('/upcoming-trips', auth, controller.getUpcomingTrips);
+router.get('/past-trips', auth, controller.getPastTrips);
 
 // Booking Routes
 router.get('/schedule-seats/:scheduleId', auth, bookingController.getScheduleSeats);
