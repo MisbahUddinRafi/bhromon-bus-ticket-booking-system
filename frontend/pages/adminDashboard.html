@@ -366,20 +366,20 @@
             inset: 0;
             background: rgba(47, 62, 70, 0.75);
             backdrop-filter: blur(4px);
-            z-index: 999;
+            z-index: 9991;
+            /* Higher than header etc */
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-overlay.show {
-            display: block;
+            display: flex;
             animation: fadeIn 0.25s var(--ease-out) both;
         }
 
         .modal {
-            display: none;
-            position: fixed;
-            top: 50vh;
-            left: 50vw;
-            transform: translate(-50%, -50%);
+            display: block;
+            /* Overridden by parent flex */
             background: #fff;
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
@@ -387,13 +387,12 @@
             max-width: 1000px;
             max-height: 85vh;
             overflow-y: auto;
-            z-index: 1000;
-            touch-action: none;
-            user-select: none;
+            position: relative;
+            /* Not fixed anymore */
+            z-index: 10000;
         }
 
-        .modal.show {
-            display: block;
+        .modal {
             animation: fadeInUp 0.35s var(--ease-out) both;
         }
 
@@ -605,6 +604,16 @@
             }
         }
 
+        @keyframes glowBlue {
+            from {
+                box-shadow: 0 0 6px rgba(52, 152, 219, 0.25), 0 0 14px rgba(52, 152, 219, 0.1);
+            }
+
+            to {
+                box-shadow: 0 0 12px rgba(52, 152, 219, 0.45), 0 0 28px rgba(52, 152, 219, 0.2);
+            }
+        }
+
         /* ── Status badge in modal detail ── */
         .detail-status-completed {
             background: rgba(46, 204, 113, 0.12);
@@ -682,6 +691,20 @@
             border: 1px solid rgba(52, 152, 219, 0.4);
         }
 
+        .card-status-pending {
+            background: rgba(52, 152, 219, 0.12);
+            color: #2980b9;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            display: inline-block;
+            border: 1px solid rgba(52, 152, 219, 0.5);
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.3), 0 0 20px rgba(52, 152, 219, 0.15);
+            animation: glowBlue 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+        }
+
         /* ── Past Schedule Toggle Button ── */
         .past-schedule-toggle {
             background: linear-gradient(135deg, var(--forest), var(--dark-teal)) !important;
@@ -696,10 +719,12 @@
             transition: all 0.35s var(--ease-out) !important;
             letter-spacing: 0.3px;
             box-shadow: 0 4px 16px rgba(82, 121, 111, 0.3) !important;
-            min-width: 240px !important;
+            width: 100% !important;
+            /* Fixed: Fill the row */
             position: relative;
             overflow: hidden;
-            display: inline-flex !important;
+            display: flex !important;
+            /* Changed from inline-flex */
             align-items: center;
             justify-content: center;
             gap: 8px;
@@ -1012,7 +1037,7 @@
             <select id="userList"></select>
             <button onclick="loadUserHistory()" style="flex: 0 1 auto; min-width: 100px;">Search</button>
         </div>
-        <div id="userHistory"></div>
+        <div id="userHistory" class="schedule-cards-container"></div>
     </section>
 
     <section id="sectionOperatorHistory">
@@ -1024,38 +1049,37 @@
         <div id="operatorHistory" class="schedule-cards-container"></div>
     </section>
 
-    <!-- Modal for Schedule Details -->
-    <div id="scheduleModal" class="modal">
-        <div class="modal-header">
-            <h2>Schedule Details</h2>
-            <button class="close-btn" onclick="closeScheduleModal()">&times;</button>
-        </div>
-        <div class="modal-content">
-            <div class="schedule-details" id="scheduleDetailsContent"></div>
-            <div class="seats-section">
-                <h3>🪑 Seat Details</h3>
-                <div class="seats-table-wrapper">
-                    <table class="seats-table">
-                        <thead>
-                            <tr>
-                                <th>Seat Number</th>
-                                <th>Seat Status</th>
-                                <th>Buyer Name</th>
-                                <th>Phone Number</th>
-                                <th>Email</th>
-                                <th>Passenger Name</th>
-                                <th>Gender</th>
-                            </tr>
-                        </thead>
-                        <tbody id="seatsTableBody"></tbody>
-                    </table>
+    <!-- Modal Overlay and Content -->
+    <div id="scheduleModalOverlay" class="modal-overlay" onclick="closeScheduleModal()">
+        <div id="scheduleModal" class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header" style="cursor: default;">
+                <h2>Schedule Details</h2>
+                <button class="close-btn" onclick="closeScheduleModal()">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="schedule-details" id="scheduleDetailsContent"></div>
+                <div class="seats-section">
+                    <h3>🪑 Seat Details</h3>
+                    <div class="seats-table-wrapper">
+                        <table class="seats-table">
+                            <thead>
+                                <tr>
+                                    <th>Seat Number</th>
+                                    <th>Seat Status</th>
+                                    <th>Buyer Name</th>
+                                    <th>Phone Number</th>
+                                    <th>Email</th>
+                                    <th>Passenger Name</th>
+                                    <th>Gender</th>
+                                </tr>
+                            </thead>
+                            <tbody id="seatsTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Modal Overlay -->
-    <div id="scheduleModalOverlay" class="modal-overlay" onclick="closeScheduleModal()"></div>
 
     <script src="../js/alerts.js"></script>
     <script src="../js/adminDashboard.js"></script>

@@ -39,70 +39,6 @@ function setupEventListeners() {
             e.preventDefault();
         }
     });
-
-    // Setup modal dragging
-    initModalDrag();
-}
-
-let modalPos = { x: 0, y: 0 };
-let modalOffset = { x: 0, y: 0 };
-let isDragging = false;
-
-function initModalDrag() {
-    const modal = document.getElementById('scheduleModal');
-    const header = document.querySelector('.modal-header');
-
-    if (!modal || !header) return;
-
-    // Remove previous listeners by cloning
-    const newHeader = header.cloneNode(true);
-    header.parentNode.replaceChild(newHeader, header);
-
-    const updatedHeader = document.querySelector('.modal-header');
-
-    updatedHeader.addEventListener('mousedown', function (e) {
-        isDragging = true;
-        const rect = modal.getBoundingClientRect();
-
-        // Store the initial position
-        modalPos.x = rect.left;
-        modalPos.y = rect.top;
-
-        // Store the offset between click position and modal position
-        modalOffset.x = e.clientX - rect.left;
-        modalOffset.y = e.clientY - rect.top;
-
-        updatedHeader.style.cursor = 'grabbing';
-
-        document.body.style.userSelect = 'none';
-    });
-
-    document.addEventListener('mousemove', function (e) {
-        if (!isDragging) return;
-        e.preventDefault();
-
-        const newX = e.clientX - modalOffset.x;
-        const newY = e.clientY - modalOffset.y;
-
-        // Apply boundaries to keep modal within viewport
-        const maxX = window.innerWidth - modal.offsetWidth;
-        const maxY = window.innerHeight - modal.offsetHeight;
-
-        const constrainedX = Math.max(10, Math.min(newX, maxX - 10));
-        const constrainedY = Math.max(10, Math.min(newY, maxY - 10));
-
-        modal.style.left = constrainedX + 'px';
-        modal.style.top = constrainedY + 'px';
-        modal.style.transform = 'none'; // Remove center transform when dragging
-    });
-
-    document.addEventListener('mouseup', function () {
-        if (isDragging) {
-            isDragging = false;
-            updatedHeader.style.cursor = 'move';
-            document.body.style.userSelect = 'auto';
-        }
-    });
 }
 
 function toggleProfile() {
@@ -122,6 +58,33 @@ function goToProfile() {
 function logout() {
     localStorage.clear();
     window.location.href = '../index.html';
+}
+
+/* Helper function to format booking time */
+function formatBookingTime(dateString) {
+    if (!dateString) return 'N/A';
+    
+    // If it's already formatted as DD-MM-YYYY HH24:MI:SS, return as-is
+    if (typeof dateString === 'string' && dateString.match(/^\d{2}-\d{2}-\d{4}\s\d{2}:\d{2}:\d{2}$/)) {
+        return dateString;
+    }
+    
+    // Parse the date if it's a timestamp
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        
+        return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    } catch (e) {
+        return dateString;
+    }
 }
 
 async function init() {
@@ -471,12 +434,116 @@ async function loadUsers() {
 
 /* User history */
 async function loadUserHistory() {
-    const id = userList.value;
-    const res = await fetch(`${API}/user-history/${id}`);
-    const data = await res.json();
+    const userSelect = document.getElementById('userList');
+    const id = userSelect ? userSelect.value : null;
+    if (!id) {
+        showError('Selection Required', 'Please select a user from the list.');
+        return;
+    }
 
-    document.getElementById('userHistory')
-        .innerHTML = JSON.stringify(data, null, 2);
+    try {
+        const res = await fetch(`${API}/user-history/${id}`);
+        const data = await res.json();
+
+        const container = document.getElementById('userHistory');
+        container.innerHTML = '';
+
+        if (!data.length) {
+            container.innerHTML = '<div class="empty-message">No booking history found for this user.</div>';
+            return;
+        }
+
+        data.forEach(booking => {
+            const card = document.createElement('div');
+            card.className = 'schedule-card';
+            card.style.cursor = 'default'; // Disable pointer cursor as per requirement
+
+            // Determine status badge class and time label
+            let statusClass = '';
+            let timeLabel = 'Booking Time';
+
+            const status = (booking.booking_status || '').toLowerCase();
+            if (status === 'confirmed') {
+                statusClass = 'card-status-completed';
+            } else if (status === 'cancelled') {
+                statusClass = 'card-status-cancelled';
+                timeLabel = 'Cancellation Time';
+            } else if (status === 'pending') {
+                statusClass = 'card-status-pending';
+            }
+
+            // Format booking time to DD/MM/YYYY HH:MM:SS format
+            let formattedBookingTime = formatBookingTime(booking.booking_time);
+
+            // Parse passenger info
+            let passengers = [];
+            if (booking.passenger_info) {
+                if (typeof booking.passenger_info === 'string') {
+                    try {
+                        passengers = JSON.parse(booking.passenger_info);
+                    } catch (e) {
+                        passengers = [];
+                    }
+                } else if (Array.isArray(booking.passenger_info)) {
+                    passengers = booking.passenger_info;
+                }
+            }
+
+            // Format passenger info list
+            let passengerHtml = '';
+            if (Array.isArray(passengers) && passengers.length > 0) {
+                passengerHtml = passengers.map(p => `
+                    <div style="font-size: 13px; margin-top: 4px; padding: 6px 10px; background: rgba(82, 121, 111, 0.05); border-radius: 6px; border-left: 3px solid var(--forest); display: flex; justify-content: space-between;">
+                        <span><strong>${p.seat_number || 'N/A'}</strong></span>
+                        <span><strong>${p.name || 'N/A'}</strong></span>
+                        <span style="font-size: 11px; opacity: 0.7; text-transform: uppercase;">${p.gender || '-'}</span>
+                    </div>
+                `).join('');
+            } else {
+                passengerHtml = '<p style="font-size: 13px; color: #999; font-style: italic; padding: 4px;">No passenger details available</p>';
+            }
+
+            // Safely extract and display all fields
+            const userName = booking.user_name || 'N/A';
+            const operatorName = booking.operator_name || 'N/A';
+            const busNumber = booking.bus_number || 'N/A';
+            const seatsBooked = booking.total_seats_booked || 0;
+            const totalFare = (booking.total_fare !== null && booking.total_fare !== undefined) ? booking.total_fare : 'N/A';
+            const paymentMethod = booking.payment_method || 'N/A';
+            const source = booking.source || 'Unknown';
+            const destination = booking.destination || 'Unknown';
+            const journeyDate = booking.journey_date || 'N/A';
+            const departureTime = booking.departure_time || 'N/A';
+
+            card.innerHTML = `
+                <h4 style="border-bottom: 1px solid rgba(82, 121, 111, 0.1); padding-bottom: 8px; margin-bottom: 12px;">
+                    ${source} → ${destination}
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <p><span class="label">User:</span> ${userName}</p>
+                    <p><span class="label">Status:</span> <span class="${statusClass}">${booking.booking_status || 'N/A'}</span></p>
+                    <p><span class="label">${timeLabel}:</span> ${formattedBookingTime}</p>
+                    <p><span class="label">Journey Date:</span> ${journeyDate}</p>
+                    <p><span class="label">Departure:</span> ${departureTime}</p>
+                    <p><span class="label">Operator:</span> ${operatorName}</p>
+                    <p><span class="label">Bus Number:</span> ${busNumber}</p>
+                    <p><span class="label">Seats Booked:</span> ${seatsBooked}</p>
+                    <p><span class="label">Total Fare:</span> ৳${totalFare}</p>
+                    <p><span class="label">Payment Method:</span> ${paymentMethod}</p>
+                </div>
+                
+                <div style="margin-top: 16px; border-top: 1px dashed rgba(82, 121, 111, 0.2); padding-top: 12px;">
+                    <span class="label" style="display: block; margin-bottom: 6px; font-size: 12px; color: var(--forest);">👥 Passenger Details:</span>
+                    ${passengerHtml}
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    } catch (err) {
+        console.error('Error loading user history:', err);
+        showError('Fetch Error', 'Could not load user booking history.');
+    }
 }
 
 
@@ -531,20 +598,9 @@ async function openScheduleModal(scheduleId) {
 
         displayScheduleDetails(data);
 
-        // Reset modal position to center - clear all pixel values
-        const modal = document.getElementById('scheduleModal');
-        modal.style.top = '50vh';
-        modal.style.left = '50vw';
-        modal.style.transform = 'translate(-50%, -50%)';
-        modal.style.position = 'fixed';
-
-        modal.classList.add('show');
+        // Show modal and overlay
         document.getElementById('scheduleModalOverlay').classList.add('show');
-
-        // Reinitialize dragging after modal is shown
-        setTimeout(() => {
-            initModalDrag();
-        }, 50);
+        document.body.style.overflow = 'hidden'; // Prevent scrolling background
     } catch (err) {
         console.error('Error fetching schedule details:', err);
         showError('Error!', 'Could not load schedule details. Please try again.');
@@ -644,6 +700,6 @@ function displaySeatsTable(seats) {
 
 /* Close Modal */
 function closeScheduleModal() {
-    document.getElementById('scheduleModal').classList.remove('show');
     document.getElementById('scheduleModalOverlay').classList.remove('show');
+    document.body.style.overflow = ''; // Restore scrolling
 }

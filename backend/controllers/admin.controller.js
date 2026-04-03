@@ -200,10 +200,10 @@ exports.getActiveSchedules = async (req, res) => {
             WHERE s.schedule_status = 'active'
             ORDER BY s.journey_date, s.departure_time
         `);
-        
+
         // console.log(result.rows[0].journey_date);
         // console.log(typeof result.rows[0].journey_date);
-        
+
         res.json(result.rows);
 
     } catch (err) {
@@ -262,20 +262,45 @@ exports.getPastSchedules = async (req, res) => {
    Get User Booking History
 ========================= */
 exports.getUserHistory = async (req, res) => {
-    const result = await pool.query(`
-        SELECT b.booking_id, b.booking_status, s.journey_date, s.departure_time,
-               r.source_city_id, r.destination_city_id,
-               c1.city_name AS source, c2.city_name AS destination,
-               b.booking_time
-        FROM BOOKING b
-        JOIN SCHEDULE s ON b.schedule_id=s.schedule_id
-        JOIN ROUTE r ON s.route_id=r.route_id
-        JOIN CITY c1 ON r.source_city_id=c1.city_id
-        JOIN CITY c2 ON r.destination_city_id=c2.city_id
-        WHERE b.user_id=$1
-        ORDER BY b.booking_time DESC
-    `, [req.params.id]);
-    res.json(result.rows);
+    try {
+        const result = await pool.query(`
+            SELECT 
+                b.booking_id, 
+                b.booking_status, 
+                to_char(b.booking_time, 'DD-MM-YYYY HH24:MI:SS') AS booking_time,
+                u.name AS user_name,
+                to_char(s.journey_date, 'DD-MM-YYYY') AS journey_date,
+                s.departure_time,
+                bo.operator_name,
+                bus.bus_number,
+                c1.city_name AS source, 
+                c2.city_name AS destination,
+                p.payment_amount AS total_fare,
+                p.payment_type AS payment_method,
+                (SELECT COUNT(*)::int FROM BOOKED_SEAT bs WHERE bs.booking_id = b.booking_id) AS total_seats_booked,
+                COALESCE((
+                    SELECT JSON_AGG(JSON_BUILD_OBJECT('seat_number', bs.seat_number, 'name', bs.passenger_name, 'gender', bs.passenger_gender))
+                    FROM BOOKED_SEAT bs
+                    WHERE bs.booking_id = b.booking_id
+                ), '[]'::json) AS passenger_info
+            FROM BOOKING b
+            JOIN USERS u ON b.user_id = u.user_id
+            JOIN SCHEDULE s ON b.schedule_id = s.schedule_id
+            JOIN BUS bus ON s.bus_id = bus.bus_id
+            JOIN BUS_OPERATOR bo ON bus.operator_id = bo.operator_id
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
+            LEFT JOIN PAYMENT p ON b.booking_id = p.booking_id
+            WHERE b.user_id = $1
+            ORDER BY b.booking_time DESC
+        `, [req.params.id]);
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching user history" });
+    }
 };
 
 /* =========================
@@ -304,7 +329,7 @@ exports.getOperatorHistory = async (req, res) => {
             WHERE bo.operator_id = $1
             ORDER BY s.journey_date DESC, s.departure_time DESC
         `, [req.params.id]);
-        
+
         res.json(result.rows);
     } catch (err) {
         console.error(err);
