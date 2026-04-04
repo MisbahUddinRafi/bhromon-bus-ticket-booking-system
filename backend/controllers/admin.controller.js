@@ -139,8 +139,14 @@ exports.createSchedule = async (req, res) => {
    Cancel Schedule
 ========================= */
 exports.cancelSchedule = async (req, res) => {
+
+    // transaction management is necessary here 
+    const client = await pool.connect();
+
     try {
-        const result = await pool.query(
+        await client.query('BEGIN');
+
+        const result = await client.query(
             `UPDATE SCHEDULE
              SET schedule_status='cancelled'            -- calls trigger to cancel related bookings, and mark all schedule seats as cancelled
              WHERE schedule_id=$1 
@@ -150,14 +156,21 @@ exports.cancelSchedule = async (req, res) => {
         );
 
         if (result.rows.length === 0) {
+            await client.query('ROLLBACK');
             return res.status(404).json({ message: "Schedule not found" });
         }
 
+        await client.query('COMMIT');
+
         res.json({ message: "Schedule Cancelled Successfully" });
 
+
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ message: "Error cancelling schedule" });
+    } finally {
+        client.release();
     }
 };
 

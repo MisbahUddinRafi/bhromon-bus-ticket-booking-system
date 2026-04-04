@@ -221,7 +221,7 @@ function renderOperatorDropdown() {
         dropdown.innerHTML += `
             <label class="operator-option">
                 <input type="checkbox" value="${id}" onchange="addOperator(this)"> 
-                <span>${name}</span>
+                <span>${name}</span><br>
             </label>`;
     });
 }
