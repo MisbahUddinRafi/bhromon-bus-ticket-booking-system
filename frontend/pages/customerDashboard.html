@@ -553,7 +553,7 @@
     }
 
     .view-schedule-modal {
-      background: #fff;
+      background: #CAD2C5;
       border-radius: var(--radius-md);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       max-width: 800px;
@@ -641,12 +641,13 @@
     }
 
     .view-schedule-seat-legend {
-      padding: 12px 22px;
+      padding: 18px 22px;
       display: flex;
-      gap: 20px;
-      background: rgba(82, 121, 111, 0.04);
-      border-bottom: 1px solid rgba(82, 121, 111, 0.08);
+      gap: 30px;
+      background: rgba(47, 62, 70, 0.1);
+      border-bottom: 1px solid rgba(82, 121, 111, 0.15);
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .legend-item {
@@ -667,15 +668,18 @@
     }
 
     .seat-box.available {
-      background: var(--sage);
+      background: #fff;
+      border: 1px solid rgba(53, 79, 82, 0.3);
     }
 
     .seat-box.booked {
-      background: var(--dark-teal);
+      background: #e63946;
+      border: 1px solid #d62828;
     }
 
     .seat-box.user-booked {
-      background: var(--forest);
+      background: #354F52;
+      border: 1px solid #2f3e46;
     }
 
     .view-schedule-seat-grid {
@@ -694,10 +698,10 @@
     .view-seat-btn {
       width: 45px;
       height: 45px;
-      border: 1.5px solid rgba(82, 121, 111, 0.3);
+      border: 1.5px solid rgba(53, 79, 82, 0.25);
       border-radius: 6px;
-      background: var(--sage);
-      color: #fff;
+      background: #fff;
+      color: #354F52;
       font-family: var(--font-display);
       font-weight: 600;
       font-size: 13px;
@@ -706,19 +710,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
     .view-seat-btn.booked {
-      background: var(--dark-teal);
-      color: var(--pale-sage);
-      border-color: var(--dark-teal);
+      background: #e63946;
+      color: #fff;
+      border-color: #d62828;
+      opacity: 0.9;
     }
 
     .view-seat-btn.user-selected {
-      background: var(--forest);
-      border-color: var(--forest);
-      box-shadow: 0 0 0 2px rgba(82, 121, 111, 0.2);
+      background: #354F52;
+      color: #CAD2C5;
+      border-color: #2F3E46;
+      box-shadow: 0 0 12px rgba(53, 79, 82, 0.4);
       transform: scale(1.08);
+      z-index: 2;
     }
 
     @media (max-width: 768px) {
@@ -1095,15 +1103,15 @@
         <div class="policy-section">
           <div class="section-title">🎫 Cancellation Policy</div>
           <ul class="policy-list">
-            <li>72+   hours before departure: <strong>95% Refund</strong></li>
+            <li> 72+ hours before departure: <strong>95% Refund</strong></li>
             <li>48-72 hours before departure: <strong>90% Refund</strong></li>
             <li>36-48 hours before departure: <strong>75% Refund</strong></li>
             <li>24-36 hours before departure: <strong>70% Refund</strong></li>
             <li>18-24 hours before departure: <strong>65% Refund</strong></li>
             <li>12-18 hours before departure: <strong>60% Refund</strong></li>
-            <li> 6-12 hours before departure:  <strong>50% Refund</strong></li>
-            <li>  2-6 hours before departure:  <strong>10% Refund</strong></li>
-            <li>Less than 2 hours:            <strong> No Refund</strong></li>
+            <li> 6-12 hours before departure: <strong>50% Refund</strong></li>
+            <li> 2-6 hours before departure: <strong>10% Refund</strong></li>
+            <li>Less than 2 hours: <strong> No Refund</strong></li>
           </ul>
         </div>
 

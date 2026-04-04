@@ -1,4 +1,5 @@
 const API = 'http://localhost:3000/api/customer';
+const BOOKING_API = API;
 const user = JSON.parse(localStorage.getItem('user'));
 
 if (!user || user.role !== 'customer') {
@@ -289,7 +290,7 @@ async function loadUpcomingTrips() {
                     </div>
                 </div>
                 <div class="trip-card-footer">
-                    <button class="btn-trip" onclick="openViewScheduleModal(${trip.schedule_id}, '${trip.seats_booked}')">
+                    <button class="btn-trip" onclick="openViewScheduleModal(${trip.schedule_id}, '${seatList}')">
                         Watch Schedule
                     </button>
                     <button class="btn-trip" onclick="downloadTripTicket(${trip.booking_id})">
@@ -312,6 +313,8 @@ async function loadUpcomingTrips() {
         document.getElementById('upcomingTrips').innerHTML = '<div class="empty-message">Error loading trips</div>';
     }
 }
+
+
 
 // ============================================================
 // CANCEL BOOKING LOGIC
@@ -505,103 +508,118 @@ async function loadPastTrips() {
     }
 }
 
+// ============================================================
+// VIEW-ONLY SCHEDULE MODAL (CUSTOMER DASHBOARD)
+// ============================================================
+
+const bookingState = {
+    scheduleId: null,
+    scheduleDetails: null,
+    seatStatuses: {},
+    selectedSeats: [],
+    userSeats: [],
+    isViewOnly: false
+};
 
 // ============================================================
-// VIEW-ONLY SCHEDULE MODAL
+// OPEN MODAL
 // ============================================================
 
 async function openViewScheduleModal(scheduleId, userSeatsString) {
+    const user = JSON.parse(localStorage.getItem('user'));
+
     try {
-        // Fetch schedule details
-        const detailsRes = await fetch(`${API}/schedule-details/${scheduleId}`, {
-            headers: { 'x-user': JSON.stringify(user) }
-        });
+        bookingState.scheduleId = scheduleId;
+        bookingState.selectedSeats = [];
+        bookingState.isViewOnly = true;
 
-        if (!detailsRes.ok) throw new Error('Failed to fetch schedule details');
-        const detailsData = await detailsRes.json();
-        const scheduleDetails = detailsData.schedule;
-
-        // Fetch seat statuses
-        const seatsRes = await fetch(`${API}/schedule-seats/${scheduleId}`, {
-            headers: { 'x-user': JSON.stringify(user) }
-        });
-
-        if (!seatsRes.ok) throw new Error('Failed to fetch seats');
-        const seatsData = await seatsRes.json();
-
-        // Build seat status map
-        const seatStatuses = {};
-        seatsData.seats.forEach(seat => {
-            seatStatuses[seat.seat_number] = seat.schedule_seat_status;
-        });
-
-        // Parse user's seats
-        const userSeats = userSeatsString
-            ? userSeatsString.split(',').map(s => `S${s.trim()}`)
+        // Parse user's seats - expect comma separated list like "S1, S2" or "1, 2"
+        bookingState.userSeats = userSeatsString && userSeatsString !== 'N/A'
+            ? userSeatsString.split(',').map(s => {
+                const trimmed = s.trim();
+                return trimmed.startsWith('S') ? trimmed : `S${trimmed}`;
+            })
             : [];
 
-        // Populate modal content
-        populateViewScheduleModal(scheduleDetails, seatStatuses, userSeats);
+        // Fetch schedule details
+        const detailsRes = await fetch(`${BOOKING_API}/schedule-details/${scheduleId}`, {
+            headers: { 'x-user': JSON.stringify(user) }
+        });
 
-        // Show modal
-        const overlay = document.getElementById('viewScheduleOverlay');
-        overlay.classList.add('show');
-        document.body.style.overflow = 'hidden';
+        const detailsData = await detailsRes.json();
+        if (!detailsData.success) throw new Error(detailsData.message);
+        bookingState.scheduleDetails = detailsData.schedule;
+
+        // Fetch seats
+        const seatsRes = await fetch(`${BOOKING_API}/schedule-seats/${scheduleId}`, {
+            headers: { 'x-user': JSON.stringify(user) }
+        });
+
+        const seatsData = await seatsRes.json();
+        if (!seatsData.success) throw new Error(seatsData.message);
+
+        bookingState.seatStatuses = {};
+        seatsData.seats.forEach(seat => {
+            bookingState.seatStatuses[seat.seat_number] = seat.schedule_seat_status;
+        });
+
+        populateViewScheduleModal();
+        showViewScheduleModal();
+        renderSeatGrid();
 
     } catch (err) {
-        console.error('Error opening view schedule modal:', err);
-        showError('Error', 'Failed to load schedule details. Please try again.');
+        console.error(err);
+        showError('Failed to load schedule', err.message);
     }
 }
 
-function populateViewScheduleModal(scheduleDetails, seatStatuses, userSeats) {
-    // Populate header with operator details
+// ============================================================
+// POPULATE MODAL (Uses existing HTML structure)
+// ============================================================
+
+function populateViewScheduleModal() {
+    const s = bookingState.scheduleDetails;
     const operatorDiv = document.querySelector('.view-schedule-operator');
+
     operatorDiv.innerHTML = `
-        <h3>${scheduleDetails.operator_name || 'Bus Operator'}</h3>
+        <h3>${s.operator_name}</h3>
         <div class="operator-details">
-            <div class="operator-detail-item">
-                <strong>From</strong>
-                <span>${scheduleDetails.from_city || 'Departure City'}</span>
-            </div>
-            <div class="operator-detail-item">
-                <strong>To</strong>
-                <span>${scheduleDetails.to_city || 'Arrival City'}</span>
-            </div>
-            <div class="operator-detail-item">
-                <strong>Journey Date</strong>
-                <span>${scheduleDetails.journey_date || 'Date'}</span>
-            </div>
-            <div class="operator-detail-item">
-                <strong>Departure Time</strong>
-                <span>${scheduleDetails.departure_time || 'Time'}</span>
-            </div>
-            <div class="operator-detail-item">
-                <strong>Bus Number</strong>
-                <span>${scheduleDetails.bus_number || scheduleDetails.registration_number || 'N/A'}</span>
-            </div>
-            <div class="operator-detail-item">
-                <strong>Bus Type</strong>
-                <span>${(scheduleDetails.bus_type || 'Standard').toUpperCase()}</span>
-            </div>
-            <div class="operator-detail-item">
-                <strong>Price per Seat</strong>
-                <span>৳${parseFloat(scheduleDetails.price || 0).toFixed(2)}</span>
-            </div>
-            <div class="operator-detail-item">
-                <strong>Available Seats</strong>
-                <span>${scheduleDetails.available_seats || 0}</span>
-            </div>
+            <div class="operator-detail-item"><strong>Route</strong><span>${s.from_city} → ${s.to_city}</span></div>
+            <div class="operator-detail-item"><strong>Journey Date</strong><span>${s.journey_date}</span></div>
+            <div class="operator-detail-item"><strong>Departure</strong><span>${s.departure_time}</span></div>
+            <div class="operator-detail-item"><strong>Bus No</strong><span>${s.bus_number}</span></div>
+            <div class="operator-detail-item"><strong>Bus Type</strong><span>${(s.bus_type || '').toUpperCase()}</span></div>
+            <div class="operator-detail-item"><strong>Fare</strong><span>৳${parseFloat(s.price || 0).toFixed(2)}</span></div>
         </div>
     `;
-
-    // Render seat grid
-    renderViewSeatGrid(seatStatuses, userSeats);
 }
 
-function renderViewSeatGrid(seatStatuses, userSeats) {
+// ============================================================
+// SHOW / CLOSE
+// ============================================================
+
+function showViewScheduleModal() {
+    const overlay = document.getElementById('viewScheduleOverlay');
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeViewScheduleModal() {
+    const overlay = document.getElementById('viewScheduleOverlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+// ============================================================
+// SEAT GRID
+// ============================================================
+
+function renderSeatGrid() {
     const SEAT_ROWS = 8;
     const SEATS_PER_ROW = 4;
+
     const grid = document.getElementById('viewSeatGrid');
     grid.innerHTML = '';
 
@@ -610,42 +628,41 @@ function renderViewSeatGrid(seatStatuses, userSeats) {
         rowDiv.className = 'view-seat-row';
 
         for (let col = 1; col <= SEATS_PER_ROW; col++) {
-            const seatNum = row * SEATS_PER_ROW - (SEATS_PER_ROW - col);
+            const seatNum = (row - 1) * SEATS_PER_ROW + col;
             const seatId = `S${seatNum}`;
-            const status = seatStatuses[seatId];
-            const isUserSeat = userSeats.includes(seatId);
+
+            const status = bookingState.seatStatuses[seatId];
+            const isUserSeat = bookingState.userSeats.includes(seatId);
 
             const seatBtn = document.createElement('button');
             seatBtn.className = 'view-seat-btn';
             seatBtn.textContent = seatId;
+
+            // Always disabled (view only)
             seatBtn.disabled = true;
 
-            if (status === 'booked' && !isUserSeat) {
-                seatBtn.classList.add('booked');
-            } else if (isUserSeat) {
-                seatBtn.classList.add('user-selected');
+            // Priority
+            if (isUserSeat) {
+                seatBtn.classList.add('user-selected'); // GREEN/FOREST
+            } else if (status === 'booked') {
+                seatBtn.classList.add('booked'); // RED/TEAL
+            } else {
+                seatBtn.classList.add('available');
             }
 
             rowDiv.appendChild(seatBtn);
+
+            // Add gap for aisle
+            if (col === 2) {
+                const aisle = document.createElement('div');
+                aisle.style.width = '30px';
+                rowDiv.appendChild(aisle);
+            }
         }
 
         grid.appendChild(rowDiv);
     }
 }
-
-function closeViewScheduleModal() {
-    const overlay = document.getElementById('viewScheduleOverlay');
-    overlay.classList.remove('show');
-    document.body.style.overflow = '';
-}
-
-// Close modal when clicking outside
-document.addEventListener('click', (e) => {
-    const overlay = document.getElementById('viewScheduleOverlay');
-    if (e.target === overlay) {
-        closeViewScheduleModal();
-    }
-});
 
 
 // ============================================================

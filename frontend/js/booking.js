@@ -516,66 +516,145 @@ function getPoliciesHTML() {
     return `
         <div class="policies-content">
             <div class="policy-section">
-                <h4>Ticket Cancellation Policy</h4>
+                <h4>1. Ticket Cancellation Policy</h4>
                 <ul>
-                    <li><strong>Before 24 Hours:</strong> Full refund minus 5% administrative fee</li>
-                    <li><strong>12-24 Hours Before Departure:</strong> 75% refund of ticket price</li>
-                    <li><strong>6-12 Hours Before Departure:</strong> 50% refund of ticket price</li>
-                    <li><strong>Less Than 6 Hours:</strong> No refund allowed</li>
-                    <li><strong>After Departure:</strong> No refund allowed</li>
+                    <li><strong>More Than 72 Hours Before Departure:</strong> 95% refund (5% cancellation fee)</li>
+                    <li><strong>More Than 48 Hours Before Departure:</strong> 90% refund (10% cancellation fee)</li>
+                    <li><strong>36-48 Hours Before Departure:</strong> 75% refund (25% cancellation fee)</li>
+                    <li><strong>24-36 Hours Before Departure:</strong> 70% refund (30% cancellation fee)</li>
+                    <li><strong>18-24 Hours Before Departure:</strong> 65% refund (35% cancellation fee)</li>
+                    <li><strong>12-18 Hours Before Departure:</strong> 60% refund (40% cancellation fee)</li>
+                    <li><strong>6-12 Hours Before Departure:</strong> 50% refund (50% cancellation fee)</li>
+                    <li><strong>2-6 Hours Before Departure:</strong> 10% refund (90% cancellation fee)</li>
+                    <li><strong>Less Than 2 Hours Before Departure:</strong> No refund allowed</li>
+                    <li><strong>After Journey Completion:</strong> No refund allowed</li>
+                    <li><strong>No-Show (not boarding without cancellation):</strong> No refund allowed</li>
+                    <li><strong>Schedule Cancelled by Operator:</strong> Full refund or rescheduling on alternative bus at no additional cost</li>
                 </ul>
             </div>
 
             <div class="policy-section">
-                <h4>Ticket Modification Policy</h4>
+                <h4>2. Ticket Modification Policy</h4>
                 <ul>
-                    <li>Tickets can be modified up to 24 hours before departure</li>
-                    <li>A modification fee of ৳100 will be applicable for date or time changes</li>
-                    <li>Seat changes are free if available on the selected route and time</li>
-                    <li>Modified tickets cannot be cancelled; standard cancellation policy applies</li>
+                    <li>Tickets can be modified for dates, times, or seats up to 48 hours before departure</li>
+                    <li>Modifications made 24-48 hours before departure: ৳50 modification fee applies</li>
+                    <li>Modifications made less than 24 hours before departure: ৳100 modification fee applies</li>
+                    <li>Seat changes on the same bus and departure are free of charge (subject to availability)</li>
+                    <li>If modification results in a price difference, additional payment or refund will be processed accordingly</li>
+                    <li>Modifications cannot be made within 6 hours of departure</li>
+                    <li>All modifications must be done through the website; no phone or counter modifications</li>
                 </ul>
             </div>
 
             <div class="policy-section">
-                <h4>Passenger Conduct Policy</h4>
+                <h4>3. Booking & Reservation Policy</h4>
                 <ul>
-                    <li>Passengers must report 30 minutes before scheduled departure</li>
-                    <li>Valid ID proof is mandatory for all passengers</li>
-                    <li>Passengers arriving after boarding will not be permitted</li>
-                    <li>Smoking, alcohol, and disruptive behavior are strictly prohibited</li>
-                    <li>Baggage allowance: 1 checked bag (25 kg) and 1 carry-on (7 kg) per passenger</li>
+                    <li>Bookings are confirmed only after successful payment</li>
+                    <li>A confirmation email will be sent with booking reference and ticket details</li>
+                    <li>Seats are automatically released if payment is not completed within 15 minutes</li>
+                    <li>Each passenger must provide accurate name matching government-issued ID</li>
+                    <li>Name changes after booking are not permitted due to identity verification requirements</li>
+                    <li>Maximum 4 seats per booking per customer per schedule</li>
+                    <li>Customers can make multiple bookings for the same journey if needed</li>
                 </ul>
             </div>
 
             <div class="policy-section">
-                <h4>Health & Safety Policy</h4>
+                <h4>4. Passenger Conduct & Boarding Policy</h4>
                 <ul>
-                    <li>Passengers with serious medical conditions must inform the operator</li>
-                    <li>Disabled passengers will be accommodated with assistance</li>
-                    <li>Children below 5 years must be accompanied by an adult (seats not compulsory)</li>
-                    <li>Pregnant women are advised to consult their physician before traveling</li>
-                    <li>The operator reserves the right to refuse boarding if health guidelines are violated</li>
+                    <li>Passengers must arrive at the terminal at least 30 minutes before scheduled departure</li>
+                    <li>Valid government-issued ID proof is mandatory (Passport, National ID, Student ID, or Driving License)</li>
+                    <li>No boarding allowed if passenger arrives after departure time</li>
+                    <li>Smoking, drinking alcohol, and consumption of non-vegetarian food (pork/beef) inside the bus are prohibited</li>
+                    <li>Disruptive, abusive, or threatening behavior will result in immediate removal without refund</li>
+                    <li>Gambling, illegal activities, and indecent behavior are strictly forbidden</li>
+                    <li>Playing loud music or disturbing other passengers is not permitted</li>
+                    <li>Photography and videography inside the bus require permission from the operator</li>
                 </ul>
             </div>
 
             <div class="policy-section">
-                <h4>Payment & Refund Policy</h4>
+                <h4>5. Baggage & Belongings Policy</h4>
                 <ul>
-                    <li>Accepted payment methods: Bkash, Nagad, Credit/Debit Cards, Cash at terminal</li>
+                    <li><strong>Baggage Allowance:</strong> 1 checked bag (maximum 25 kg) and 1 carry-on (maximum 7 kg) per passenger</li>
+                    <li>Additional baggage will incur charges at ৳50 per 5 kg</li>
+                    <li>Oversized items may not be accommodated due to bus capacity constraints</li>
+                    <li>The operator is not responsible for lost, stolen, or damaged baggage</li>
+                    <li>Passengers are responsible for safeguarding their valuables and personal items</li>
+                    <li>Fragile items should be properly packed; damage due to improper packing is not covered</li>
+                    <li>Prohibited items: weapons, explosives, flammable materials, hazardous goods, and illegal substances</li>
+                    <li>Live animals are not permitted except certified service animals</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h4>6. Health & Safety Policy</h4>
+                <ul>
+                    <li>Passengers with serious medical conditions must inform the operator at booking</li>
+                    <li>Passengers with contagious diseases are not permitted to travel for public health reasons</li>
+                    <li>Disabled passengers and those with mobility issues will be provided reasonable accommodation</li>
+                    <li>Children below 5 years may travel without a separate seat if accompanied by an adult</li>
+                    <li>Pregnant women are advised to consult their physician before traveling long distances</li>
+                    <li>Elderly and infirm passengers should request aisle seats for accessibility</li>
+                    <li>The operator reserves the right to refuse boarding if health guidelines are not met</li>
+                    <li>First aid kit is available on all buses; operators are trained in basic first aid</li>
+                    <li>All buses comply with COVID-19 safety protocols and are regularly sanitized</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h4>7. Payment & Refund Policy</h4>
+                <ul>
+                    <li><strong>Accepted Payment Methods:</strong> Bkash, Nagad, Rocket, Credit/Debit Cards (Visa, Mastercard), and Cash at terminal counters</li>
+                    <li>All online payments are processed through secure, encrypted payment gateways</li>
+                    <li>Payment confirmation is instant; customers receive SMS and email after successful transaction</li>
                     <li>Refunds will be processed within 5-7 working days to the original payment method</li>
-                    <li>In case of schedule cancellation, 100% refund or rescheduling is offered</li>
-                    <li>Partial refunds are not available; cancellation is for the full ticket</li>
+                    <li>Mobile banking refunds may take 2-3 working days due to provider processing time</li>
+                    <li>Refund amount will be as per the applicable cancellation policy</li>
+                    <li>No partial refunds are provided; cancellation refunds are calculated for entire booking</li>
+                    <li>Refund requests must be submitted online; no refunds at terminal counters except for schedule cancellations</li>
+                    <li>Failed or duplicate payment transactions: Full amount will be refunded within 24 hours</li>
                 </ul>
             </div>
 
             <div class="policy-section">
-                <h4>Terms & Conditions</h4>
+                <h4>8. Liability & Disclaimer</h4>
                 <ul>
-                    <li>The bus operator is not liable for delays due to traffic or weather conditions</li>
-                    <li>The operator is not responsible for lost or damaged personal belongings</li>
-                    <li>By purchasing a ticket, passengers agree to all terms and conditions</li>
-                    <li>The operator reserves the right to change schedules with prior notification</li>
-                    <li>Complaints must be filed within 7 days of journey completion</li>
+                    <li>The bus operator is not liable for delays caused by traffic congestion, weather conditions, or natural disasters</li>
+                    <li>The operator is not responsible for lost, stolen, or damaged personal belongings during the journey</li>
+                    <li>Passengers travel at their own risk; the operator is not liable for personal injuries except in cases of gross negligence</li>
+                    <li>The operator is not responsible for missed connections or onward travel due to delays</li>
+                    <li>Medical emergencies on the bus will be handled by trained staff; patient care at the nearest hospital is the responsibility of the passenger</li>
+                    <li>The operator reserves the right to change routes, times, or cancel services with 24-hour notice</li>
+                    <li>In case of emergency, the operator may request passengers to exit the bus for safety reasons</li>
+                    <li>The operator is not liable for data privacy breaches beyond industry-standard security measures</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h4>9. General Terms & Conditions</h4>
+                <ul>
+                    <li>By purchasing a ticket, passengers acknowledge and accept all terms and conditions</li>
+                    <li>The booking confirmation email serves as the ticket proof; carry it printed or in digital format</li>
+                    <li>The operator reserves the right to update terms and conditions with 7 days' notice</li>
+                    <li>Complaints or disputes must be filed within 7 days of journey completion via email or website</li>
+                    <li>Community Service Charge (if applicable) will be clearly mentioned at checkout</li>
+                    <li>Children below 12 years traveling alone will not be permitted without guardian consent</li>
+                    <li>The operator has the right to refuse service to customers engaging in abusive behavior toward staff</li>
+                    <li>This policy is governed by the laws of Bangladesh and subject to jurisdiction of Bangladesh courts</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h4>10. Special Conditions</h4>
+                <ul>
+                    <li>Long-distance journeys (more than 8 hours) include 1 mandatory rest stop of 20 minutes</li>
+                    <li>AC buses maintain temperature at 18-22°C; passengers are advised to carry light clothing</li>
+                    <li>Washrooms on board are provided for emergency use only; please use terminal facilities</li>
+                    <li>Free Wi-Fi is available on select buses; connection stability is not guaranteed</li>
+                    <li>Charging ports may have limited availability; bring your own power bank if needed</li>
+                    <li>Seat recline feature should not be used excessively to avoid inconvenience to rear passengers</li>
+                    <li>Window blinds should be kept open during daytime for safety visibility</li>
                 </ul>
             </div>
         </div>

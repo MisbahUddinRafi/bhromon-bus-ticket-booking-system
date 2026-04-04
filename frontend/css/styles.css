@@ -913,9 +913,8 @@ a:hover {
 /* ── Modal Panel ── */
 .booking-modal-panel {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 2.5vh;
+  left: 25vw;
   background: #fff;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
@@ -1396,6 +1395,8 @@ a:hover {
   .booking-modal-panel {
     width: 70vw;
     height: 95vh;
+    left: 15vw;
+    top: 2.5vh;
   }
 
   .booking-modal-header {
@@ -1434,6 +1435,8 @@ a:hover {
   .booking-modal-panel {
     width: 95vw;
     height: 95vh;
+    left: 2.5vw;
+    top: 2.5vh;
   }
 
   .booking-modal-header {

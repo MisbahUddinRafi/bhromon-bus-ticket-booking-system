@@ -219,6 +219,7 @@ exports.getUpcomingTrips = async (req, res) => {
                 b.booking_status, 
                 to_char(b.booking_time, 'DD-MM-YYYY HH24:MI:SS') AS booking_time,
                 u.name AS user_name,
+                s.schedule_id,
                 to_char(s.journey_date, 'DD-MM-YYYY') AS journey_date,
                 s.departure_time,
                 bo.operator_name,
@@ -245,7 +246,7 @@ exports.getUpcomingTrips = async (req, res) => {
             LEFT JOIN PAYMENT p ON b.booking_id = p.booking_id
             WHERE b.user_id = $1 
             AND (s.journey_date + s.departure_time) >= NOW()
-            AND b.booking_status IN ('pending', 'confirmed') 
+            AND b.booking_status = 'confirmed' 
             ORDER BY b.booking_time DESC
         `,
             [userId]
@@ -374,25 +375,17 @@ exports.cancelBooking = async (req, res) => {
         }
 
         // 3. Update booking status
-        // The trigger (trg_booking_cancel) will handle seat availability
+        // The user's trigger (trg_booking_cancel) will handle seat availability
+        // And the other trigger will handle the refund logic (according to policy)
         await client.query(
             `UPDATE BOOKING 
              SET booking_status = 'cancelled' 
-             WHERE booking_id = $1
-             AND booking_status != 'cancelled'`,
+             WHERE booking_id = $1`,
             [bookingId]
         );
 
-        // 4. Process refund using function 
-        const refundResult = await client.query(
-            `SELECT refund_booking_cancellation($1, $2)`,
-            [bookingId, refundMethod]
-        );
-
         // Commit transaction
-        if (refundResult.rows[0].refund_booking_cancellation === true) {            // refund result is true if refund was successful, false if there was an issue
-            await client.query('COMMIT');
-        }
+        await client.query('COMMIT');
 
         res.json({ success: true, message: 'Booking cancelled successfully' });
 
