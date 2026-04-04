@@ -2062,6 +2062,201 @@ select.form-input option {
 .modal-close-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-header .logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.dashboard-header .logo:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.dashboard-nav-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ── Dashboard Layout ── */
+.dashboard-main {
+  padding: 24px;
+  padding-top: 100px;
+  min-height: 100vh;
+  background: var(--pale-sage);
+  background-image: radial-gradient(ellipse at 20% 50%, rgba(82, 121, 111, 0.06) 0%, transparent 50%);
+}
+
+.dashboard-section {
+  background: var(--dark-teal); /* #354F52 */
+  padding: 28px;
+  margin-bottom: 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(82, 121, 111, 0.2);
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.5s var(--ease-out) both;
+  scroll-margin-top: 100px;
+}
+
+.dashboard-section-title {
+  font-family: var(--font-display);
+  color: var(--pale-sage); /* #CAD2C5 */
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--sage);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Form Layout */
+.form-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+
+.form-grid > * {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* ── Modern Table Wrapper ── */
+.data-table-wrapper {
+  margin-top: 16px;
+  border-radius: var(--radius-sm);
+  background: #fafafa;
+  max-height: 600px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+  border: 1px solid rgba(82,121,111,0.1);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  padding: 8px;
+  font-size: 13px;
+  font-family: var(--font-body);
+}
+
+.data-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fafafa;
+}
+
+.data-table th {
+  background: var(--forest);
+  color: var(--pale-sage);
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: var(--font-display);
+  border-radius: var(--radius-sm);
+}
+
+.data-table tbody tr {
+  background: #fff;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s var(--ease-out);
+  cursor: pointer;
+}
+
+.data-table tbody tr:hover {
+  box-shadow: 0 4px 12px rgba(82, 121, 111, 0.15);
+  transform: translateY(-2px);
+  background: rgba(132, 169, 140, 0.03);
+}
+
+.data-table td {
+  padding: 12px 10px;
+  color: var(--charcoal);
+  border: none;
+}
+
+.data-table td:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.data-table td:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* ── Generic Schedule Cards ── */
+.cards-grid {
+  display: grid;
+  transition: all 0.3s var(--ease-out);
+  width: 100%;
+}
+.form-input:focus {
+  border-color: var(--pale-sage);
+  box-shadow: 0 0 0 4px rgba(202, 210, 197, 0.25);
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(47, 62, 70, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 9991;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show {
+  display: flex !important;
+  animation: fadeIn 0.25s var(--ease-out) both;
+}
+.modal-panel {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 90vw;
+  max-width: 1000px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 10000;
+  animation: fadeInUp 0.35s var(--ease-out) both;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 28px;
+  border-bottom: 1px solid rgba(82, 121, 111, 0.1);
+  background: linear-gradient(135deg, var(--dark-teal), var(--charcoal));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.modal-body {
+  padding: 28px;
+}
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 22px;
   cursor: pointer;
   color: var(--pale-sage);
@@ -2075,4 +2270,153 @@ select.form-input option {
 }
 .modal-close-btn:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Primary Button (Glassmorphism) ── */
+.btn-primary {
+  background: rgba(202, 210, 197, 0.2) !important; /* Glassy light */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(202, 210, 197, 0.6) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+.btn-primary:hover {
+  background: rgba(202, 210, 197, 0.35) !important;
+  border-color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Number Input Overrides ── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* ── Form Controls (Glassmorphism Overrides) ── */
+.form-input {
+  background: rgba(255, 255, 255, 0.08) !important; /* Glassy transparent */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(202, 210, 197, 0.3) !important;
+  color: #fff !important; /* Bright text */
+  padding: 11px 14px;
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  outline: none;
+  transition: all 0.3s var(--ease-out);
+  width: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+.form-input::placeholder {
+  color: rgba(202, 210, 197, 0.6) !important;
+}
+.form-input:focus {
+  border-color: var(--pale-sage) !important;
+  box-shadow: 0 0 0 4px rgba(202, 210, 197, 0.15), 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.form-input::-webkit-calendar-picker-indicator {
+  filter: invert(80%) sepia(10%) saturate(200%) hue-rotate(80deg) brightness(1.2);
+  cursor: pointer;
+}
+
+select.form-input option {
+  background-color: var(--dark-teal); /* Since dropdown list itself can't be glassy easily, make it dark */
+  color: #fff;
+}
+
+/* ── Custom Glassy Dropdown (Combobox) ── */
+.custom-combobox {
+  position: relative;
+}
+/* Elevate the container when focused so it overlaps everything below */
+.dashboard-section:focus-within,
+.form-grid:focus-within,
+.custom-combobox:focus-within {
+  z-index: 9999 !important;
+  position: relative;
+}
+
+.glassy-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 4px;
+  background: rgba(53, 79, 82, 0.4); /* dark teal but transparentish */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(202, 210, 197, 0.25);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+}
+.glassy-dropdown.show {
+  display: block;
+  animation: fadeIn 0.15s ease-out;
+}
+.dropdown-item {
+  padding: 12px 14px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: var(--font-body);
+  transition: background 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+.dropdown-item:hover {
+  background: rgba(202, 210, 197, 0.25);
+  color: #fff;
+}
+
+/* ── Flatpickr Glassy Overrides ── */
+.flatpickr-calendar {
+  background: rgba(53, 79, 82, 0.6) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(202, 210, 197, 0.25) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4) !important;
+  border-radius: var(--radius-md) !important;
+  color: #fff !important;
+  font-family: var(--font-body) !important;
+}
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month .numInputWrapper,
+.flatpickr-weekday {
+  color: var(--pale-sage) !important;
+  fill: var(--pale-sage) !important;
+}
+.flatpickr-day {
+  color: #fff !important;
+  border-radius: var(--radius-sm) !important; /* Square with rounded borders */
+  transition: all 0.2s ease !important;
+}
+.flatpickr-day:hover {
+  background: rgba(202, 210, 197, 0.2) !important;
+  border-color: rgba(202, 210, 197, 0.2) !important;
+}
+.flatpickr-day.selected {
+  background: var(--pale-sage) !important;
+  color: var(--dark-teal) !important;
+  border-color: var(--pale-sage) !important;
+  font-weight: bold;
+}
+.flatpickr-day.flatpickr-disabled {
+  color: rgba(255, 255, 255, 0.2) !important;
 }

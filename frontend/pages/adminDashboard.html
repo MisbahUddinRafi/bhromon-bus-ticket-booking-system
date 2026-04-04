@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard — Bhromon</title>
+    <title>Admin Dashboard - Bhromon</title>
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="../css/styles.css" />
 </head>
 
@@ -57,15 +59,27 @@
         <h2 class="dashboard-section-title">📝 Create Schedule</h2>
 
         <div class="form-grid">
-            <select id="sourceCity" class="form-input" placeholder="Source City"></select>
-            <select id="destinationCity" class="form-input" placeholder="Destination City"></select>
-            <input type="date" id="journeyDate" class="form-input">
+            <div style="position:relative; flex:1;" class="custom-combobox">
+                <input type="text" id="sourceCitySearch" class="form-input" placeholder="Search Source City..." autocomplete="off">
+                <div id="sourceCitiesList" class="glassy-dropdown"></div>
+                <input type="hidden" id="sourceCity" value="">
+            </div>
+            <div style="position:relative; flex:1;" class="custom-combobox">
+                <input type="text" id="destinationCitySearch" class="form-input" placeholder="Search Destination City..." autocomplete="off">
+                <div id="destinationCitiesList" class="glassy-dropdown"></div>
+                <input type="hidden" id="destinationCity" value="">
+            </div>
+            <input type="text" id="journeyDate" class="form-input" style="flex:1;" placeholder="Select Journey Date">
         </div>
 
         <div class="form-grid">
             <input type="time" id="departureTime" class="form-input" placeholder="Departure Time">
             <input type="number" id="price" class="form-input" placeholder="Ticket Price">
-            <select id="operatorSelect" class="form-input"></select>
+            <div style="position:relative; flex:1;" class="custom-combobox">
+                <input type="text" id="operatorSearch" class="form-input" placeholder="Search Operator..." autocomplete="off">
+                <div id="operatorsList" class="glassy-dropdown"></div>
+                <input type="hidden" id="operatorSelect" value="">
+            </div>
         </div>
 
         <div class="form-grid">
@@ -136,6 +150,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="../js/alerts.js"></script>
     <script src="../js/adminDashboard.js"></script>
 </body>

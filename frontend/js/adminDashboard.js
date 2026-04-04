@@ -93,6 +93,16 @@ async function init() {
     loadOperators();
     loadUsers();
     loadActiveSchedules();
+    
+    // Initialize Flatpickr
+    const dateInput = document.getElementById('journeyDate');
+    if (dateInput) {
+        flatpickr(dateInput, {
+            minDate: "today",
+            dateFormat: "Y-m-d"
+        });
+    }
+    resetScheduleForm();
 }
 
 /* Dashboard */
@@ -109,21 +119,61 @@ async function loadDashboard() {
 async function loadCities() {
     const res = await fetch(`${API}/cities`);
     const cities = await res.json();
+    const cityOptions = cities.map(c => ({ id: c.city_id, name: c.city_name }));
 
-    const source = document.getElementById('sourceCity');
-    const dest = document.getElementById('destinationCity');
+    setupCustomCombobox('sourceCitySearch', 'sourceCitiesList', 'sourceCity', cityOptions);
+    setupCustomCombobox('destinationCitySearch', 'destinationCitiesList', 'destinationCity', cityOptions);
+}
 
-    // Clear existing options
-    source.innerHTML = '';
-    dest.innerHTML = '';
+function setupCustomCombobox(searchId, listId, hiddenId, optionsData) {
+    const searchInput = document.getElementById(searchId);
+    const dropdown = document.getElementById(listId);
+    const hiddenInput = document.getElementById(hiddenId);
+    if (!searchInput || !dropdown || searchInput.dataset.initialized) return;
+    searchInput.dataset.initialized = 'true';
 
-    // Add placeholder options
-    source.innerHTML = `<option value="" disabled selected>Select starting city</option>`;
-    dest.innerHTML = `<option value="" disabled selected>Select destination city</option>`;
+    function renderDropdown(filterText = '') {
+        dropdown.innerHTML = '';
+        const filtered = optionsData.filter(o => o.name.toLowerCase().includes(filterText.toLowerCase()));
+        if (filtered.length === 0) {
+            dropdown.innerHTML = `<div class="dropdown-item" style="color: #ccc; cursor: default;">No matches found</div>`;
+        } else {
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = item.name;
+                div.onclick = function() {
+                    searchInput.value = item.name;
+                    hiddenInput.value = item.id;
+                    dropdown.classList.remove('show');
+                    hiddenInput.dispatchEvent(new Event('change'));
+                };
+                dropdown.appendChild(div);
+            });
+        }
+    }
 
-    cities.forEach(c => {
-        source.innerHTML += `<option value="${c.city_id}">${c.city_name}</option>`;
-        dest.innerHTML += `<option value="${c.city_id}">${c.city_name}</option>`;
+    searchInput.addEventListener('focus', () => {
+        renderDropdown(searchInput.value);
+        dropdown.classList.add('show');
+    });
+
+    searchInput.addEventListener('input', (e) => {
+        renderDropdown(e.target.value);
+        hiddenInput.value = ''; // Reset ID
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+            const match = optionsData.find(o => o.name.toLowerCase() === searchInput.value.toLowerCase());
+            if (match) {
+                searchInput.value = match.name;
+                hiddenInput.value = match.id;
+            } else if (!hiddenInput.value) {
+                searchInput.value = '';
+            }
+        }
     });
 }
 
@@ -131,23 +181,17 @@ async function loadCities() {
 async function loadOperators() {
     const res = await fetch(`${API}/operators`);
     const operators = await res.json();
+    const opsData = operators.map(o => ({ id: o.operator_id, name: o.operator_name }));
 
-    const select = document.getElementById('operatorSelect');
+    setupCustomCombobox('operatorSearch', 'operatorsList', 'operatorSelect', opsData);
+
     const historySelect = document.getElementById('operatorHistoryList');
-
-    // Clear existing options
-    select.innerHTML = '';
-    historySelect.innerHTML = '';
-
-    // Add placeholder options
-    select.innerHTML = `<option value="" disabled selected>Select operator</option>`;
-    historySelect.innerHTML = `<option value="" disabled selected>Select operator</option>`;
-
-
-    operators.forEach(o => {
-        select.innerHTML += `<option value="${o.operator_id}">${o.operator_name}</option>`;
-        historySelect.innerHTML += `<option value="${o.operator_id}">${o.operator_name}</option>`;
-    });
+    if (historySelect) {
+        historySelect.innerHTML = `<option value="" disabled selected>Select operator</option>`;
+        operators.forEach(o => {
+            historySelect.innerHTML += `<option value="${o.operator_id}">${o.operator_name}</option>`;
+        });
+    }
 }
 
 /* Load buses when operator changes */
@@ -216,9 +260,17 @@ async function createSchedule() {
 
 /* Reset Schedule Form to Default Values */
 function resetScheduleForm() {
-    // document.getElementById('sourceCity').value = '';
-    // document.getElementById('destinationCity').value = '';
-    // document.getElementById('journeyDate').value = '';
+    document.getElementById('sourceCitySearch').value = '';
+    document.getElementById('sourceCity').value = '';
+    document.getElementById('destinationCitySearch').value = '';
+    document.getElementById('destinationCity').value = '';
+    document.getElementById('operatorSearch').value = '';
+    document.getElementById('operatorSelect').value = '';
+    
+    const dateInput = document.getElementById('journeyDate');
+    if (dateInput && dateInput._flatpickr) {
+        dateInput._flatpickr.clear();
+    }
     document.getElementById('departureTime').value = '';
     document.getElementById('price').value = '';
     document.getElementById('operatorSelect').value = '';
