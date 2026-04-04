@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="../css/styles.css" />
     <style>
         body {
-            padding: 24px;
-            padding-top: 80px;
-            background: var(--pale-sage);
-            background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(82, 121, 111, 0.06) 0%, transparent 50%);
+            padding: 0;
+            margin: 0;
+            background: #f8faf9;
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(132, 169, 140, 0.05) 0%, transparent 70%);
             min-height: 100vh;
             color: var(--charcoal);
+            font-family: var(--font-body);
         }
 
         /* ── Header ── */
@@ -26,97 +26,60 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-            animation: slideInDown 0.5s var(--ease-out) both;
-            position: fixed;
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1001;
+            z-index: 1100;
         }
 
         header div:first-child {
-            font-family: var(--font-display);
-            font-size: 22px;
-            font-weight: 700;
-            cursor: pointer;
+            height: 45px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: opacity 0.3s;
-            height: 50px;
-            max-width: 180px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        header div:first-child:hover {
+            transform: scale(1.05);
         }
 
         header div:first-child img {
             height: 100%;
             width: auto;
-            max-width: 150px;
             object-fit: contain;
-            display: block;
-        }
-
-        header div:first-child:hover {
-            opacity: 0.8;
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
-            header div:first-child {
-                height: 40px;
-                max-width: 140px;
-                gap: 8px;
-            }
-
-            header div:first-child img {
-                max-width: 120px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header div:first-child {
-                height: 35px;
-                max-width: 110px;
-                gap: 6px;
-            }
-
-            header div:first-child img {
-                max-width: 90px;
-            }
         }
 
         .header-buttons {
             position: relative;
-            z-index: 1000;
         }
 
-        header button {
+        .profile-btn {
             background: rgba(255, 255, 255, 0.1);
             color: var(--pale-sage);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.3s var(--ease-out);
+            transition: all 0.3s;
             font-family: var(--font-display);
             font-weight: 600;
             font-size: 14px;
         }
 
-        header button:hover {
-            background: rgba(255, 255, 255, 0.18);
-            border-color: rgba(255, 255, 255, 0.3);
+        .profile-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         #profileMenu {
             position: absolute;
-            top: calc(100% + 8px);
+            top: calc(100% + 10px);
             right: 0;
             background: #fff;
             border-radius: var(--radius-sm);
             box-shadow: var(--shadow-md);
             z-index: 10000;
             overflow: hidden;
-            min-width: 190px;
+            min-width: 180px;
             border: 1px solid rgba(82, 121, 111, 0.1);
             animation: slideInDown 0.25s var(--ease-out) both;
         }
@@ -127,334 +90,474 @@
             color: var(--charcoal);
             border: none;
             border-bottom: 1px solid rgba(82, 121, 111, 0.08);
-            border-radius: 0;
-            padding: 13px 20px;
+            padding: 12px 20px;
             text-align: left;
             font-family: var(--font-body);
             font-size: 14px;
-            font-weight: 500;
-        }
-
-        #profileMenu button:last-child {
-            border-bottom: none;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
         #profileMenu button:hover {
-            background: rgba(132, 169, 140, 0.08);
+            background: rgba(132, 169, 140, 0.1);
             color: var(--forest);
         }
 
-
-        .profile-btn {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--pale-sage);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 10px 20px;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        transition: all 0.3s var(--ease-out);
-        font-family: var(--font-display);
-        font-weight: 600;
-        font-size: 14px;
+        /* ── Main Container ── */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        .profile-btn:hover {
-        background: rgba(255, 255, 255, 0.18);
-        }
-
-
-        /* ── Sections ── */
-        section {
+        /* ── Search Bar Section ── */
+        .search-bar-section {
             background: #fff;
-            padding: 28px;
-            margin-bottom: 24px;
             border-radius: var(--radius-md);
-            border: 1px solid rgba(82, 121, 111, 0.08);
+            padding: 24px;
+            margin-bottom: 30px;
             box-shadow: var(--shadow-sm);
-            animation: fadeInUp 0.5s var(--ease-out) both;
+            border: 1px solid rgba(82, 121, 111, 0.1);
+            animation: fadeInDown 0.5s var(--ease-out);
         }
 
-        section:first-of-type {
-            margin-top: 20px;
-            scroll-margin-top: 100px;
-        }
-
-        section {
-            scroll-margin-top: 100px;
-        }
-
-        section:nth-of-type(2) {
-            animation-delay: 0.08s;
-        }
-
-        section:nth-of-type(3) {
-            animation-delay: 0.16s;
-        }
-
-        h3 {
-            font-family: var(--font-display);
-            color: var(--charcoal);
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--sage);
+        .search-bar-wrapper {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-group {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
             gap: 8px;
         }
 
-        /* ── Form Elements ── */
-        select,
-        input[type="date"],
-        input[type="time"],
-        input[type="number"] {
-            padding: 12px 14px;
-            margin: 5px;
-            border: 1.5px solid rgba(82, 121, 111, 0.2);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            font-family: var(--font-body);
-            transition: all 0.3s var(--ease-out);
-            background: #fff;
-            color: var(--charcoal);
-            outline: none;
+        .search-input-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--forest);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        select:focus,
-        input:focus {
+        .search-input-group select,
+        .search-input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid rgba(82, 121, 111, 0.1);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: #fbfbfb;
+            transition: all 0.3s;
+        }
+
+        .search-input-group select:focus,
+        .search-input-group input:focus {
             border-color: var(--forest);
-            box-shadow: 0 0 0 4px rgba(82, 121, 111, 0.1);
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(82, 121, 111, 0.08);
         }
 
-        /* ── Buttons ── */
-        button {
-            padding: 11px 22px;
-            margin: 5px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.35s var(--ease-out);
-            font-family: var(--font-display);
-            font-weight: 600;
-        }
-
-        button:not(.filter-btn):not(.operator-dropdown-btn) {
+        .search-btn {
+            height: 46px;
+            padding: 0 30px;
             background: linear-gradient(135deg, var(--forest), var(--dark-teal));
-            color: var(--pale-sage);
-        }
-
-        button:not(.filter-btn):not(.operator-dropdown-btn):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(82, 121, 111, 0.35);
-        }
-
-        /* ── Operator Filter ── */
-        .operator-section {
-            margin: 15px 0;
-            padding: 18px;
-            background: rgba(202, 210, 197, 0.25);
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(82, 121, 111, 0.1);
-        }
-
-        .operator-dropdown-btn {
-            padding: 9px 16px;
-            background: var(--forest) !important;
-            color: var(--pale-sage) !important;
+            color: #fff;
             border: none;
             border-radius: var(--radius-sm);
+            font-weight: 700;
             cursor: pointer;
-            font-size: 14px;
-            font-family: var(--font-display);
-            font-weight: 600;
-            transition: all 0.3s var(--ease-out);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .operator-dropdown-btn:hover {
-            background: var(--dark-teal) !important;
-            transform: translateY(-1px);
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(82, 121, 111, 0.3);
+        }
+
+        /* ── Content Layout ── */
+        .content-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* ── Sidebar Filters ── */
+        .filters-sidebar {
+            background: #fff;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(82, 121, 111, 0.1);
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            animation: slideInLeft 0.5s var(--ease-out);
+        }
+
+        .filters-sidebar h3 {
+            font-size: 18px;
+            margin: 0 0 24px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--pale-sage);
+            color: var(--dark-teal);
+        }
+
+        .filter-group {
+            margin-bottom: 30px;
+        }
+
+        .filter-group h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--forest);
+            text-transform: uppercase;
+            margin: 0 0 15px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 6px 0;
+        }
+
+        .filter-option input {
+            accent-color: var(--forest);
+            width: 17px;
+            height: 17px;
+        }
+
+        .filter-option span {
+            font-size: 14px;
+            color: var(--charcoal);
+        }
+
+        .operator-select-btn {
+            width: 100%;
+            text-align: left;
+            padding: 10px 15px;
+            background: #f8f9f8;
+            border: 1px solid rgba(82, 121, 111, 0.15);
+            border-radius: var(--radius-sm);
+            color: var(--charcoal);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
         }
 
         #operatorDropdown {
+            margin-top: 8px;
             background: #fff;
-            border: 1px solid rgba(82, 121, 111, 0.15);
+            border: 1px solid rgba(82, 121, 111, 0.1);
             border-radius: var(--radius-sm);
-            padding: 12px;
-            margin-top: 10px;
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
+            padding: 8px;
             box-shadow: var(--shadow-sm);
         }
 
-        #operatorDropdown label {
-            display: block;
-            margin: 8px 0;
-            cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 6px;
-            transition: background-color 0.2s;
-            font-family: var(--font-body);
-            font-size: 14px;
-            color: var(--charcoal);
-        }
-
-        #operatorDropdown label:hover {
-            background: rgba(132, 169, 140, 0.1);
-        }
-
-        #operatorDropdown input[type="checkbox"] {
-            margin-right: 8px;
-            cursor: pointer;
-            accent-color: var(--forest);
-        }
-
-        .selected-operators-container {
+        .selected-operators-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 6px;
             margin-top: 12px;
-            min-height: 30px;
         }
 
-        .selected-operator-badge {
+        .operator-chip {
             background: var(--forest);
-            color: var(--pale-sage);
-            padding: 7px 14px;
+            color: #fff;
+            padding: 5px 12px;
             border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-family: var(--font-body);
+            font-size: 11px;
             font-weight: 600;
-            animation: fadeIn 0.3s var(--ease-out) both;
-        }
-
-        .selected-operator-badge input[type="checkbox"] {
-            margin: 0;
-            cursor: pointer;
-            accent-color: var(--pale-sage);
-        }
-
-        .selected-operator-badge label {
             display: flex;
             align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            margin: 0;
-            color: var(--pale-sage);
-            font-size: 13px;
+            gap: 6px;
         }
 
-        .no-operators-message {
-            color: #999;
-            font-style: italic;
+        .reset-filters-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1.5px solid var(--forest);
+            color: var(--forest);
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
             margin-top: 10px;
-            font-size: 14px;
         }
 
-        /* Sort / Filter Labels */
-        section label {
-            font-family: var(--font-body);
-            font-size: 14px;
+        .reset-filters-btn:hover {
+            background: var(--forest);
+            color: #fff;
+        }
+
+        /* ── Schedules Area ── */
+        .schedules-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .schedules-header h3 {
+            margin: 0;
+            font-size: 22px;
             color: var(--charcoal);
-            cursor: pointer;
-            padding: 4px 0;
         }
 
-        section input[type="radio"],
-        section input[type="checkbox"] {
-            accent-color: var(--forest);
-            margin-right: 6px;
+        .results-count {
+            font-size: 13px;
+            color: var(--forest);
+            font-weight: 700;
+            background: rgba(132, 169, 140, 0.12);
+            padding: 5px 15px;
+            border-radius: 30px;
         }
 
-        section strong {
-            font-family: var(--font-display);
-            color: var(--dark-teal);
-        }
-
-        /* ── Schedule Cards ── */
         #scheduleContainer {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 18px;
-            margin-top: 16px;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        #scheduleContainer>div {
-            border: 1.5px solid rgba(82, 121, 111, 0.15);
-            padding: 20px;
-            margin: 0;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.35s var(--ease-out);
+        /* ── Cards ── */
+        .schedule-card {
             background: #fff;
-            animation: fadeInUp 0.4s var(--ease-out) both;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(82, 121, 111, 0.1);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
         }
 
-        #scheduleContainer>div:hover {
-            border-color: var(--forest);
-            box-shadow: 0 6px 24px rgba(82, 121, 111, 0.2);
+        .schedule-card:hover {
             transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--sage);
         }
 
-        #scheduleContainer h4 {
-            color: var(--dark-teal);
-            margin-bottom: 10px;
-            font-family: var(--font-display);
+        .card-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            gap: 20px;
+        }
+
+        .operator-meta {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .operator-branding {
+            min-width: 180px;
+        }
+
+        .operator-name {
             font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-teal);
+            margin: 0 0 5px 0;
+        }
+
+        .bus-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--pale-sage);
+            color: var(--dark-teal);
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .route-path {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--forest);
+            letter-spacing: 0.3px;
+            opacity: 0.85;
+            white-space: nowrap;
+        }
+
+        .journey-info {
+            display: flex;
+            gap: 40px;
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .info-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--sage);
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-size: 15px;
             font-weight: 600;
+            color: var(--charcoal);
         }
 
-        #scheduleContainer p {
-            color: #5a6c70;
+        .low-seats {
+            color: #e74c3c;
+        }
+
+        .card-action {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            padding-left: 30px;
+            border-left: 1px solid rgba(82, 121, 111, 0.1);
+            min-width: 160px;
+        }
+
+        .price-tag {
+            display: flex;
+            align-items: baseline;
+            gap: 2px;
+        }
+
+        .currency {
             font-size: 14px;
-            margin: 5px 0;
+            font-weight: 700;
+            color: var(--forest);
         }
 
-        #scheduleContainer button {
-            margin-top: 15px;
-            display: block;
+        .amount {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--dark-teal);
+            font-family: var(--font-display);
+        }
+
+        .book-now-btn {
             width: 100%;
-            padding: 11px;
+            padding: 12px 0;
+            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        #noSchedulesMsg {
-            grid-column: 1 / -1;
-            text-align: center;
-            color: #999;
-            padding: 40px 20px;
-            font-size: 16px;
-            font-style: italic;
+        .book-now-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(82, 121, 111, 0.3);
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 16px;
-                padding-top: 120px;
+        /* ── Animation & Utilities ── */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
             }
 
-            header {
-                flex-direction: column;
-                gap: 14px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
             }
 
-            #scheduleContainer {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s var(--ease-out) both;
+        }
+
+        @media (max-width: 992px) {
+            .content-layout {
                 grid-template-columns: 1fr;
             }
 
-            select,
-            input {
-                width: 100%;
+            .filters-sidebar {
+                position: relative;
+                top: 0;
+                max-height: none;
+                margin-bottom: 30px;
             }
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 12px;
-                padding-top: 140px;
+        @media (max-width: 768px) {
+            .card-main {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .operator-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .card-action {
+                border-left: none;
+                border-top: 1px solid #eee;
+                padding: 20px 0 0 0;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .book-now-btn {
+                width: auto;
+                padding: 10px 30px;
             }
         }
     </style>
@@ -463,7 +566,7 @@
 <body>
 
     <header>
-        <div onclick="goDashboard()" style="cursor:pointer;">
+        <div onclick="goDashboard()">
             <img src="../../docs/bhromon_logo.png" alt="bhromon">
         </div>
 
@@ -476,85 +579,101 @@
         </div>
     </header>
 
-    <section>
-        <h3>🔍 Search Again</h3>
+    <div class="page-container">
+        <!-- SEARCH AGAIN SECTION -->
+        <section class="search-bar-section">
+            <div class="search-bar-wrapper">
+                <div class="search-input-group">
+                    <label>From</label>
+                    <select id="fromCity"></select>
+                </div>
+                <div class="search-input-group">
+                    <label>To</label>
+                    <select id="toCity"></select>
+                </div>
+                <div class="search-input-group">
+                    <label>Journey Date</label>
+                    <input type="date" id="journeyDate">
+                </div>
+                <button class="search-btn" onclick="searchAgain()">
+                    Modify Search
+                </button>
+            </div>
+        </section>
 
-        <select id="fromCity"></select>
-        <select id="toCity"></select>
-        <input type="date" id="journeyDate">
+        <div class="content-layout">
+            <!-- LEFT SIDEBAR: FILTERS -->
+            <aside class="filters-sidebar">
+                <h3>⚙️ Filtering</h3>
 
-        <button onclick="searchAgain()">Search</button>
-    </section>
+                <div class="filter-group">
+                    <h4>Sort By</h4>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="radio" name="sortOption" id="sortPriceLow" value="price-low" checked>
+                            <span>Price: Low to High</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="sortOption" id="sortPriceHigh" value="price-high">
+                            <span>Price: High to Low</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="sortOption" id="sortTimeEarly" value="time-early">
+                            <span>Departure: Early-Late</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="sortOption" id="sortTimeLate" value="time-late">
+                            <span>Departure: Late-Early</span>
+                        </label>
+                    </div>
+                </div>
 
-    <!-- FILTER SECTION -->
-    <section>
-        <h3>⚙️ Filters</h3>
+                <div class="filter-group">
+                    <h4>Bus Type</h4>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="checkbox" name="busType" value="ac">
+                            <span>AC Services</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="busType" value="non-ac">
+                            <span>Non-AC Services</span>
+                        </label>
+                    </div>
+                </div>
 
-        <!-- Sorting Options -->
-        <div>
-            <strong>Sort By:</strong><br>
-            <label>
-                <input type="radio" name="sortOption" id="sortPriceLow" value="price-low" checked>
-                 Price: Low to High
-            </label>
+                <div class="filter-group">
+                    <h4>Operators</h4>
+                    <button class="operator-select-btn" onclick="toggleOperatorDropdown()">
+                        Select Operators <span>▼</span>
+                    </button>
+                    <div id="operatorDropdown" style="display:none;"></div>
+                    <div id="selectedOperators" class="selected-operators-list"></div>
+                    <div id="noOperatorsMsg" style="display:none; font-size: 11px; color: #999; margin-top: 8px;">
+                        Showing all operators
+                    </div>
+                </div>
 
-            <label>
-                <input type="radio" name="sortOption" id="sortPriceHigh" value="price-high">
-                 Price: High to Low
-            </label>
+                <button class="reset-filters-btn" onclick="resetFilters()">🔄 Reset Filters</button>
+            </aside>
 
-            <label>
-                <input type="radio" name="sortOption" id="sortTimeEarly" value="time-early">
-                 Departure: Early to Late
-            </label>
+            <!-- RIGHT SIDE: SCHEDULE CARDS -->
+            <main class="schedules-main">
+                <div class="schedules-header">
+                    <h3>🚌 Schedules <span id="resultsCount" class="results-count"></span></h3>
+                </div>
 
-            <label>
-                <input type="radio" name="sortOption" id="sortTimeLate" value="time-late">
-                 Departure: Late to Early
-            </label>
+                <div id="scheduleContainer"></div>
+
+                <div id="noSchedulesMsg" style="display:none; text-align: center; padding: 60px; color: #999;">
+                    <div style="font-size: 40px; margin-bottom: 20px;">🎫</div>
+                    <p>No results found for your filters.</p>
+                    <button class="btn btn-secondary" onclick="resetFilters()" style="margin-top: 15px;">Clear
+                        Filters</button>
+                </div>
+            </main>
         </div>
-
-        <br>
-
-        <!-- Bus Type -->
-        <div>
-            <strong>Bus Type:</strong><br>
-            <label>
-                <input type="checkbox" name="busType" value="ac">
-                AC
-            </label>
-
-            <label>
-                <input type="checkbox" name="busType" value="non-ac">
-                Non-AC
-            </label>
-        </div>
-
-        <br>
-
-        <!-- Operators -->
-        <div class="operator-section">
-            <strong>Bus Operators:</strong><br>
-            <button class="operator-dropdown-btn" onclick="toggleOperatorDropdown()">📋 Select Operators ▼</button>
-
-            <div id="operatorDropdown" style="display:none;"></div>
-        </div>
-
-        <div class="operator-section">
-            <strong>Selected Operators:</strong>
-            <div id="selectedOperators" class="selected-operators-container"></div>
-            <div id="noOperatorsMsg" class="no-operators-message" style="display:none;">No operators selected - showing
-                all schedules</div>
-        </div>
-
-        <br>
-        <button onclick="resetFilters()">🔄 Reset Filters</button>
-    </section>
-
-    <section>
-        <h3>🚌 Available Schedules</h3>
-        <div id="scheduleContainer"></div>
-    </section>
+    </div>
 
     <script src="../js/alerts.js"></script>
     <script src="../js/schedules.js"></script>

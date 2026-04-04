@@ -142,7 +142,7 @@ exports.cancelSchedule = async (req, res) => {
     try {
         const result = await pool.query(
             `UPDATE SCHEDULE
-             SET schedule_status='cancelled'
+             SET schedule_status='cancelled'            -- calls trigger to cancel related bookings, and mark all schedule seats as cancelled
              WHERE schedule_id=$1 
              AND schedule_status='active'
              RETURNING schedule_id`,

@@ -101,10 +101,15 @@ exports.getSchedules = async (req, res) => {
                 b.bus_type,
                 bo.operator_id,
                 bo.operator_name, 
+                c1.city_name AS from_city,
+                c2.city_name AS to_city,
                 (SELECT count(*) FROM SCHEDULE_SEAT ss WHERE ss.schedule_id = s.schedule_id AND ss.schedule_seat_status = 'available') as available_seats    
             FROM SCHEDULE s
             JOIN BUS b ON s.bus_id = b.bus_id
             JOIN BUS_OPERATOR bo ON b.operator_id = bo.operator_id
+            JOIN ROUTE r ON s.route_id = r.route_id
+            JOIN CITY c1 ON r.source_city_id = c1.city_id
+            JOIN CITY c2 ON r.destination_city_id = c2.city_id
             WHERE s.route_id = $1
               AND s.journey_date = $2
               AND s.schedule_status = 'active'

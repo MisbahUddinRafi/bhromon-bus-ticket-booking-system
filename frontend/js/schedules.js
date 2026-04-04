@@ -117,18 +117,58 @@ async function loadSchedules() {
 // ================= RENDER SCHEDULES =================
 function renderSchedules(data) {
     const container = document.getElementById('scheduleContainer');
+    const countDisplay = document.getElementById('resultsCount');
+    const noMsg = document.getElementById('noSchedulesMsg');
+
     container.innerHTML = '';
-    if (!data.length) { container.innerHTML = `<p>No schedules found.</p>`; return; }
+    countDisplay.textContent = `${data.length} buses found`;
+
+    if (!data.length) {
+        noMsg.style.display = 'block';
+        container.style.display = 'none';
+        return;
+    }
+
+    noMsg.style.display = 'none';
+    container.style.display = 'grid';
 
     data.forEach(s => {
         container.innerHTML += `
-            <div style="border:1px solid black; padding:10px; margin:10px;">
-                <h4>${s.operator_name}</h4>
-                <p>Departure: ${s.departure_time}</p>
-                <p>Bus Type: ${s.bus_type}</p>
-                <p>Price: ৳${s.price}</p>
-                <p>Available Seats: ${s.available_seats}</p>
-                <button onclick="openBookingModal(${s.schedule_id})" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Book Seat</button>
+            <div class="schedule-card animate-fade-in-up">
+                <div class="card-main">
+                    <div class="operator-meta">
+                        <div class="operator-branding">
+                            <div>
+                                <h4 class="operator-name">${s.operator_name}</h4>
+                                <div style="display:flex; gap: 10px; align-items: center; margin-top: 5px;">
+                                    <div class="bus-type-badge">${s.bus_type}</div>
+                                    <span class="route-path">${s.from_city} → ${s.to_city}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="journey-info">
+                            <div class="info-block">
+                                <span class="info-label">DEPARTURE</span>
+                                <span class="info-value">${s.departure_time}</span>
+                            </div>
+                            <div class="info-block">
+                                <span class="info-label">SEATS</span>
+                                <span class="info-value ${s.available_seats <= 10 ? 'low-seats' : ''}">
+                                    ${s.available_seats} Left
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <div class="price-tag">
+                            <span class="currency">৳</span>
+                            <span class="amount">${s.price}</span>
+                        </div>
+                        <button class="book-now-btn" onclick="openBookingModal(${s.schedule_id})">
+                            Select Seats
+                        </button>
+                    </div>
+                </div>
             </div>
         `;
     });
@@ -136,7 +176,6 @@ function renderSchedules(data) {
 
 // ================= FILTER EVENTS =================
 function attachFilterEvents() {
-    // Handle sort option selection (sort criteria and order combined)
     document.querySelectorAll('input[name="sortOption"]').forEach(r => r.onchange = () => {
         const [sortBy, sortOrder] = r.value.split('-');
         filters.sortBy = sortBy;
@@ -162,7 +201,6 @@ function toggleOperatorDropdown() {
     const isVisible = dropdown.style.display !== 'none';
     dropdown.style.display = isVisible ? 'none' : 'block';
 
-    // Reset checkbox states when opening dropdown
     if (!isVisible) {
         document.querySelectorAll('#operatorDropdown input[type="checkbox"]').forEach(cb => cb.checked = false);
     }
@@ -172,18 +210,19 @@ function renderOperatorDropdown() {
     const dropdown = document.getElementById('operatorDropdown');
     dropdown.innerHTML = '';
 
-    // Only show operators that are not yet selected in filters
     const availableOperators = allOperators.filter(([id, name]) => !filters.operators.includes(String(id)));
 
     if (!availableOperators.length) {
-        dropdown.innerHTML = `<p class="no-operators-message">All operators are selected</p>`;
+        dropdown.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 10px;">All selected</p>`;
         return;
     }
 
     availableOperators.forEach(([id, name]) => {
-        dropdown.innerHTML += `<label>
-            <input type="checkbox" value="${id}" onchange="addOperator(this)"> ${name}
-        </label>`;
+        dropdown.innerHTML += `
+            <label class="operator-option">
+                <input type="checkbox" value="${id}" onchange="addOperator(this)"> 
+                <span>${name}</span>
+            </label>`;
     });
 }
 
@@ -214,12 +253,12 @@ function renderSelectedOperators() {
         const operator = allOperators.find(op => op[0] == id);
         if (!operator) return;
 
-        container.innerHTML += `<div class="selected-operator-badge">
-            <label>
-                <input type="checkbox" checked value="${id}" onchange="removeOperator(this)">
-                ${operator[1]}
-            </label>
-        </div>`;
+        container.innerHTML += `
+            <div class="operator-chip">
+                <span>${operator[1]}</span>
+                <input type="checkbox" checked value="${id}" onchange="removeOperator(this)" style="display:none">
+                <span style="cursor:pointer; margin-left: 5px;" onclick="this.previousElementSibling.click()">✕</span>
+            </div>`;
     });
 }
 
@@ -236,10 +275,10 @@ function resetFilters() {
     document.getElementById('sortPriceLow').checked = true;
     document.querySelectorAll('input[name="busType"]').forEach(r => r.checked = false);
 
-    // Restore operators cache when filters are reset
     allOperators = [...allOperatorsCache];
     renderSelectedOperators();
     renderOperatorDropdown();
     loadSchedules();
 }
+
 
