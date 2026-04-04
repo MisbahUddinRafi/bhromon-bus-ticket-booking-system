@@ -241,10 +241,10 @@ async function loadActiveSchedules() {
 
     // Create table structure
     const tableWrapper = document.createElement('div');
-    tableWrapper.className = 'schedules-table-wrapper';
+    tableWrapper.className = 'data-table-wrapper';
 
     const table = document.createElement('table');
-    table.className = 'schedules-table';
+    table.className = 'data-table';
 
     // Create header
     const thead = document.createElement('thead');
@@ -268,14 +268,14 @@ async function loadActiveSchedules() {
         const row = document.createElement('tr');
         row.style.cursor = 'pointer';
         row.innerHTML = `
-            <td class="schedule-route">${s.source} → ${s.destination}</td>
+            <td class="schedule-route" style="font-weight: 600; color: var(--dark-teal);">${s.source} → ${s.destination}</td>
             <td>${s.operator_name || '-'}</td>
             <td>${s.bus_number || '-'}</td>
             <td>${s.bus_type || '-'}</td>
             <td>${new Date(s.journey_date).toLocaleDateString('en-BD')}</td>
             <td>${s.departure_time}</td>
             <td>৳${s.price || '0'}</td>
-            <td><button class="schedule-action-btn" onclick="event.stopPropagation(); cancelSchedule(${s.schedule_id})">Cancel</button></td>
+            <td><button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); cancelSchedule(${s.schedule_id})">Cancel</button></td>
         `;
         row.onclick = () => openScheduleModal(s.schedule_id);
         tbody.appendChild(row);
@@ -331,10 +331,10 @@ async function loadPastSchedules() {
 
     // Create table structure
     const tableWrapper = document.createElement('div');
-    tableWrapper.className = 'schedules-table-wrapper';
+    tableWrapper.className = 'data-table-wrapper';
 
     const table = document.createElement('table');
-    table.className = 'schedules-table';
+    table.className = 'data-table';
 
     // Create header
     const thead = document.createElement('thead');
@@ -361,13 +361,15 @@ async function loadPastSchedules() {
         // Determine status class
         let statusClass = '';
         if (s.schedule_status === 'completed') {
-            statusClass = 'schedule-status-completed';
+            statusClass = 'status-badge status-completed';
         } else if (s.schedule_status === 'cancelled') {
-            statusClass = 'schedule-status-cancelled';
+            statusClass = 'status-badge status-cancelled';
+        } else {
+            statusClass = 'status-badge status-active';
         }
 
         row.innerHTML = `
-            <td class="schedule-route">${s.source} → ${s.destination}</td>
+            <td class="schedule-route" style="font-weight: 600; color: var(--dark-teal);">${s.source} → ${s.destination}</td>
             <td>${s.operator_name || '-'}</td>
             <td>${s.bus_number || '-'}</td>
             <td>${s.bus_type || '-'}</td>
@@ -455,7 +457,7 @@ async function loadUserHistory() {
 
         data.forEach(booking => {
             const card = document.createElement('div');
-            card.className = 'schedule-card';
+            card.className = 'info-card';
             card.style.cursor = 'default'; // Disable pointer cursor as per requirement
 
             // Determine status badge class and time label
@@ -465,22 +467,22 @@ async function loadUserHistory() {
 
             const bookingStatus = (booking.booking_status || '').toLowerCase();
             if (bookingStatus === 'confirmed') {
-                bookingStatusClass = 'card-status-completed';
+                bookingStatusClass = 'status-badge status-completed';
             } else if (bookingStatus === 'cancelled') {
-                bookingStatusClass = 'card-status-cancelled';
+                bookingStatusClass = 'status-badge status-cancelled';
                 timeLabel = 'Cancellation Time';
             } else if (bookingStatus === 'pending') {
-                bookingStatusClass = 'card-status-pending';
+                bookingStatusClass = 'status-badge status-pending';
             }
 
             const scheduleStatus = (booking.schedule_status || '').toLowerCase();
             console.log('schedule status: ', scheduleStatus);
             if (scheduleStatus === 'completed') {
-                scheduleStatusClass = 'card-status-completed';
+                scheduleStatusClass = 'status-badge status-completed';
             } else if (scheduleStatus === 'cancelled') {
-                scheduleStatusClass = 'card-status-cancelled';
-            } else if (scheduleStatus === 'active' && scheduleStatusClass !== 'card-status-cancelled') {
-                scheduleStatusClass = 'card-status-pending';
+                scheduleStatusClass = 'status-badge status-cancelled';
+            } else if (scheduleStatus === 'active') {
+                scheduleStatusClass = 'status-badge status-active';
             }
 
             // Format booking time to DD/MM/YYYY HH:MM:SS format
@@ -578,25 +580,25 @@ async function loadOperatorHistory() {
 
     data.forEach(schedule => {
         const card = document.createElement('div');
-        card.className = 'schedule-card';
+        card.className = 'info-card';
 
         // Determine status badge class for operator history cards
-        let cardStatusClass = 'card-status-active';
+        let cardStatusClass = 'status-badge status-active';
         if (schedule.schedule_status === 'completed') {
-            cardStatusClass = 'card-status-completed';
+            cardStatusClass = 'status-badge status-completed';
         } else if (schedule.schedule_status === 'cancelled') {
-            cardStatusClass = 'card-status-cancelled';
+            cardStatusClass = 'status-badge status-cancelled';
         }
 
         card.innerHTML = `
             <h4>${schedule.source_city} → ${schedule.destination_city}</h4>
-            <p><span class="label">Bus Number:</span> ${schedule.bus_number}</p>
-            <p><span class="label">Bus Type:</span> ${schedule.bus_type}</p>
-            <p><span class="label">Operator:</span> ${schedule.operator_name}</p>
-            <p><span class="label">Date:</span> ${schedule.journey_date}</p>
-            <p><span class="label">Departure:</span> ${schedule.departure_time}</p>
-            <p><span class="label">Price:</span> ৳${schedule.price}</p>
-            <p><span class="label">Status:</span> <span class="${cardStatusClass}">${schedule.schedule_status}</span></p>
+            <div class="info-row"><span class="label">Bus Number:</span> <span class="value">${schedule.bus_number}</span></div>
+            <div class="info-row"><span class="label">Bus Type:</span> <span class="value">${schedule.bus_type}</span></div>
+            <div class="info-row"><span class="label">Operator:</span> <span class="value">${schedule.operator_name}</span></div>
+            <div class="info-row"><span class="label">Date:</span> <span class="value">${schedule.journey_date}</span></div>
+            <div class="info-row"><span class="label">Departure:</span> <span class="value">${schedule.departure_time}</span></div>
+            <div class="info-row"><span class="label">Price:</span> <span class="value">৳${schedule.price}</span></div>
+            <div class="info-row" style="margin-top:10px;"><span class="label">Status:</span> <span class="${cardStatusClass}">${schedule.schedule_status}</span></div>
         `;
         card.onclick = () => openScheduleModal(schedule.schedule_id);
         container.appendChild(card);
@@ -626,50 +628,50 @@ function displayScheduleDetails(data) {
     const seats = data.seats;
 
     // Determine status class for schedule details modal
-    let detailStatusClass = 'detail-status-active';
+    let detailStatusClass = 'status-badge status-active';
     if (schedule.schedule_status === 'completed') {
-        detailStatusClass = 'detail-status-completed';
+        detailStatusClass = 'status-badge status-completed';
     } else if (schedule.schedule_status === 'cancelled') {
-        detailStatusClass = 'detail-status-cancelled';
+        detailStatusClass = 'status-badge status-cancelled';
     }
 
     // Display schedule details
     const detailsHTML = `
-        <div class="detail-item">
-            <label>Operator Name</label>
-            <value>${schedule.operator_name}</value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Operator Name</label>
+            <span style="font-size: 15px; font-weight: 500;">${schedule.operator_name}</span>
         </div>
-        <div class="detail-item">
-            <label>Bus Number</label>
-            <value>${schedule.bus_number}</value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Bus Number</label>
+            <span style="font-size: 15px; font-weight: 500;">${schedule.bus_number}</span>
         </div>
-        <div class="detail-item">
-            <label>Bus Type</label>
-            <value>${schedule.bus_type}</value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Bus Type</label>
+            <span style="font-size: 15px; font-weight: 500;">${schedule.bus_type}</span>
         </div>
-        <div class="detail-item">
-            <label>From City</label>
-            <value>${schedule.source_city}</value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">From City</label>
+            <span style="font-size: 15px; font-weight: 500;">${schedule.source_city}</span>
         </div>
-        <div class="detail-item">
-            <label>To City</label>
-            <value>${schedule.destination_city}</value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">To City</label>
+            <span style="font-size: 15px; font-weight: 500;">${schedule.destination_city}</span>
         </div>
-        <div class="detail-item">
-            <label>Journey Date</label>
-            <value>${schedule.journey_date}</value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Journey Date</label>
+            <span style="font-size: 15px; font-weight: 500;">${schedule.journey_date}</span>
         </div>
-        <div class="detail-item">
-            <label>Departure Time</label>
-            <value>${schedule.departure_time}</value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Departure Time</label>
+            <span style="font-size: 15px; font-weight: 500;">${schedule.departure_time}</span>
         </div>
-        <div class="detail-item">
-            <label>Schedule Status</label>
-            <value><span class="${detailStatusClass}">${schedule.schedule_status}</span></value>
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Schedule Status</label>
+            <span style="font-size: 15px; font-weight: 500;"><span class="${detailStatusClass}">${schedule.schedule_status}</span></span>
         </div>
-        <div class="detail-item">
-            <label>Ticket Price</label>
-            <value>৳${schedule.price}</value>
+        <div style="display: flex; flex-direction: column; grid-column: 1 / -1;">
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Ticket Price</label>
+            <span style="font-size: 15px; font-weight: 500;">৳${schedule.price}</span>
         </div>
     `;
 
@@ -690,11 +692,11 @@ function displaySeatsTable(seats) {
         // Status badge class
         let statusClass = '';
         if (seat.schedule_seat_status === 'available') {
-            statusClass = 'seat-available';
+            statusClass = 'status-badge status-active';
         } else if (seat.schedule_seat_status === 'booked') {
-            statusClass = 'seat-booked';
+            statusClass = 'status-badge status-cancelled';
         } else if (seat.schedule_seat_status === 'cancelled') {
-            statusClass = 'seat-cancelled';
+            statusClass = 'status-badge status-default';
         }
 
         row.innerHTML = `

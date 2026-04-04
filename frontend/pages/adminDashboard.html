@@ -6,987 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard — Bhromon</title>
     <link rel="stylesheet" href="../css/styles.css" />
-    <style>
-        body {
-            padding: 24px;
-            padding-top: 80px;
-            background: var(--pale-sage);
-            background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(82, 121, 111, 0.06) 0%, transparent 50%);
-            min-height: 100vh;
-            color: var(--charcoal);
-        }
-
-        /* ── Header ── */
-        header {
-            background: linear-gradient(135deg, var(--charcoal), var(--dark-teal));
-            color: var(--pale-sage);
-            padding: 20px 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-            animation: slideInDown 0.5s var(--ease-out) both;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-        }
-
-        header .logo {
-            font-family: var(--font-display);
-            font-size: 24px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s var(--ease-out);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            height: 50px;
-            max-width: 180px;
-        }
-
-        header .logo img {
-            height: 100%;
-            width: auto;
-            max-width: 160px;
-            object-fit: contain;
-            display: block;
-        }
-
-        header .logo:hover {
-            opacity: 0.8;
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
-            header .logo {
-                height: 45px;
-                max-width: 160px;
-                gap: 8px;
-            }
-
-            header .logo img {
-                max-width: 140px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header .logo {
-                height: 40px;
-                max-width: 140px;
-                gap: 6px;
-            }
-
-            header .logo img {
-                max-width: 120px;
-            }
-        }
-
-        .header-nav {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .nav-btn-group {
-            position: relative;
-            display: inline-block;
-        }
-
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--pale-sage);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all 0.3s var(--ease-out);
-            font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 40px;
-            min-height: 40px;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.18);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .tooltip {
-            position: absolute;
-            bottom: -35px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(47, 62, 70, 0.95);
-            color: var(--pale-sage);
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            font-family: var(--font-body);
-            font-weight: 500;
-            white-space: nowrap;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s var(--ease-out);
-            z-index: 2000;
-        }
-
-        .nav-btn-group:hover .tooltip {
-            opacity: 1;
-        }
-
-        .header-buttons {
-            position: relative;
-            z-index: 150;
-        }
-
-        #profileMenu {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            background: #fff;
-            border-radius: var(--radius-sm);
-            box-shadow: var(--shadow-md);
-            z-index: 2000;
-            overflow: visible;
-            min-width: 200px;
-            border: 1px solid rgba(82, 121, 111, 0.1);
-            animation: slideInDown 0.25s var(--ease-out) both;
-        }
-
-        #profileMenu button {
-            width: 100%;
-            background: #fff;
-            color: var(--charcoal);
-            border: none;
-            border-bottom: 1px solid rgba(82, 121, 111, 0.08);
-            border-radius: 0;
-            padding: 13px 20px;
-            text-align: left;
-            font-family: var(--font-body);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        #profileMenu button:last-child {
-            border-bottom: none;
-        }
-
-        #profileMenu button:hover {
-            background: rgba(132, 169, 140, 0.08);
-            color: var(--forest);
-        }
-
-        .profile-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--pale-sage);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 10px 20px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all 0.3s var(--ease-out);
-            font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .profile-btn:hover {
-            background: rgba(255, 255, 255, 0.18);
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid rgba(82, 121, 111, 0.12);
-            margin: 8px 0 24px 0;
-        }
-
-        /* ── Sections ── */
-        section {
-            background: #fff;
-            padding: 28px;
-            margin-bottom: 24px;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(82, 121, 111, 0.08);
-            box-shadow: var(--shadow-sm);
-            animation: fadeInUp 0.5s var(--ease-out) both;
-        }
-
-        section:first-of-type {
-            margin-top: 20px;
-            scroll-margin-top: 100px;
-        }
-
-        section {
-            scroll-margin-top: 100px;
-        }
-
-        section:nth-of-type(2) {
-            animation-delay: 0.06s;
-        }
-
-        section:nth-of-type(3) {
-            animation-delay: 0.12s;
-        }
-
-        section:nth-of-type(4) {
-            animation-delay: 0.18s;
-        }
-
-        section:nth-of-type(5) {
-            animation-delay: 0.24s;
-        }
-
-        h2 {
-            font-family: var(--font-display);
-            color: var(--charcoal);
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--sage);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* ── Form Controls ── */
-        select,
-        input,
-        button {
-            padding: 11px 14px;
-            margin: 6px;
-            font-size: 14px;
-            border: 1.5px solid rgba(82, 121, 111, 0.2);
-            border-radius: var(--radius-sm);
-            font-family: var(--font-body);
-            outline: none;
-            transition: all 0.3s var(--ease-out);
-            flex: 1;
-            min-width: 160px;
-        }
-
-        select:focus,
-        input:focus {
-            border-color: var(--forest);
-            box-shadow: 0 0 0 4px rgba(82, 121, 111, 0.1);
-        }
-
-        button {
-            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
-            color: var(--pale-sage);
-            border: none;
-            cursor: pointer;
-            font-family: var(--font-display);
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            flex: 0 1 auto;
-            min-width: 140px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(82, 121, 111, 0.35);
-        }
-
-        select {
-            background-color: #fff;
-            color: var(--charcoal);
-        }
-
-        /* ── Form Groups ── */
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: flex-end;
-            margin-bottom: 16px;
-        }
-
-        .form-row select,
-        .form-row input {
-            flex: 1;
-            min-width: 140px;
-        }
-
-        /* ── Schedule Cards ── */
-        .schedule-cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .schedule-card {
-            background: #fff;
-            border: 1.5px solid rgba(82, 121, 111, 0.12);
-            border-radius: var(--radius-md);
-            padding: 18px;
-            cursor: pointer;
-            transition: all 0.35s var(--ease-out);
-            box-shadow: var(--shadow-sm);
-            animation: fadeInUp 0.4s var(--ease-out) both;
-        }
-
-        .schedule-card:hover {
-            border-color: var(--forest);
-            box-shadow: 0 6px 24px rgba(82, 121, 111, 0.2);
-            transform: translateY(-3px);
-        }
-
-        .schedule-card h4 {
-            color: var(--dark-teal);
-            margin-bottom: 10px;
-            font-family: var(--font-display);
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .schedule-card p {
-            font-size: 14px;
-            color: #5a6c70;
-            margin: 5px 0;
-        }
-
-        .schedule-card .label {
-            font-weight: 700;
-            color: var(--charcoal);
-        }
-
-        /* ── Modal ── */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(47, 62, 70, 0.75);
-            backdrop-filter: blur(4px);
-            z-index: 9991;
-            /* Higher than header etc */
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-            animation: fadeIn 0.25s var(--ease-out) both;
-        }
-
-        .modal {
-            display: block;
-            /* Overridden by parent flex */
-            background: #fff;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            width: 90vw;
-            max-width: 1000px;
-            max-height: 85vh;
-            overflow-y: auto;
-            position: relative;
-            /* Not fixed anymore */
-            z-index: 10000;
-        }
-
-        .modal {
-            animation: fadeInUp 0.35s var(--ease-out) both;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 22px 28px;
-            border-bottom: 1px solid rgba(82, 121, 111, 0.1);
-            background: linear-gradient(135deg, var(--dark-teal), var(--charcoal));
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            cursor: move;
-            user-select: none;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            padding: 0;
-            border: none;
-            font-size: 22px;
-            color: var(--pale-sage);
-        }
-
-        .close-btn {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            font-size: 22px;
-            cursor: pointer;
-            color: var(--pale-sage);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            padding: 0 !important;
-            margin: 0 !important;
-            transition: all 0.25s;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        .modal-content {
-            padding: 28px;
-        }
-
-        .schedule-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-bottom: 28px;
-            padding: 20px;
-            background: rgba(202, 210, 197, 0.2);
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(82, 121, 111, 0.08);
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .detail-item label {
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--forest);
-            margin-bottom: 4px;
-            font-family: var(--font-display);
-        }
-
-        .detail-item value {
-            font-size: 15px;
-            color: var(--charcoal);
-            word-break: break-word;
-            font-weight: 500;
-        }
-
-        /* ── Seats Table ── */
-        .seats-section h3 {
-            margin: 20px 0 15px 0;
-            color: var(--charcoal);
-            font-size: 18px;
-        }
-
-        .seats-table-wrapper {
-            overflow-x: auto;
-            margin-top: 15px;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(82, 121, 111, 0.1);
-        }
-
-        .seats-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            font-family: var(--font-body);
-        }
-
-        .seats-table th {
-            background: var(--forest);
-            color: var(--pale-sage);
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-family: var(--font-display);
-        }
-
-        .seats-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid rgba(82, 121, 111, 0.08);
-            color: var(--charcoal);
-        }
-
-        .seats-table tr:hover td {
-            background: rgba(132, 169, 140, 0.06);
-        }
-
-        .seat-available {
-            background: rgba(82, 121, 111, 0.15);
-            color: var(--forest);
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid var(--forest);
-        }
-
-        .seat-booked {
-            background: rgba(192, 57, 43, 0.12);
-            color: #c0392b;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid #c0392b;
-        }
-
-        .seat-cancelled {
-            background: rgba(231, 76, 60, 0.12);
-            color: #e74c3c;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid #e74c3c;
-        }
-
-        /* ── Glowing Completed Status ── */
-        .schedule-status-completed {
-            background: rgba(46, 204, 113, 0.12);
-            color: #27ae60;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid rgba(46, 204, 113, 0.5);
-            box-shadow: 0 0 8px rgba(46, 204, 113, 0.3), 0 0 20px rgba(46, 204, 113, 0.15);
-            animation: glowGreen 2s ease-in-out infinite alternate;
-            text-shadow: 0 0 6px rgba(46, 204, 113, 0.3);
-        }
-
-        @keyframes glowGreen {
-            from {
-                box-shadow: 0 0 6px rgba(46, 204, 113, 0.25), 0 0 14px rgba(46, 204, 113, 0.1);
-            }
-
-            to {
-                box-shadow: 0 0 12px rgba(46, 204, 113, 0.45), 0 0 28px rgba(46, 204, 113, 0.2);
-            }
-        }
-
-        /* ── Glowing Cancelled Status ── */
-        .schedule-status-cancelled {
-            background: rgba(231, 76, 60, 0.12);
-            color: #e74c3c;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid rgba(231, 76, 60, 0.5);
-            box-shadow: 0 0 8px rgba(231, 76, 60, 0.3), 0 0 20px rgba(231, 76, 60, 0.15);
-            animation: glowRed 2s ease-in-out infinite alternate;
-            text-shadow: 0 0 6px rgba(231, 76, 60, 0.3);
-        }
-
-        @keyframes glowRed {
-            from {
-                box-shadow: 0 0 6px rgba(231, 76, 60, 0.25), 0 0 14px rgba(231, 76, 60, 0.1);
-            }
-
-            to {
-                box-shadow: 0 0 12px rgba(231, 76, 60, 0.45), 0 0 28px rgba(231, 76, 60, 0.2);
-            }
-        }
-
-        @keyframes glowBlue {
-            from {
-                box-shadow: 0 0 6px rgba(52, 152, 219, 0.25), 0 0 14px rgba(52, 152, 219, 0.1);
-            }
-
-            to {
-                box-shadow: 0 0 12px rgba(52, 152, 219, 0.45), 0 0 28px rgba(52, 152, 219, 0.2);
-            }
-        }
-
-        /* ── Status badge in modal detail ── */
-        .detail-status-completed {
-            background: rgba(46, 204, 113, 0.12);
-            color: #27ae60;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            display: inline-block;
-            border: 1px solid rgba(46, 204, 113, 0.4);
-            box-shadow: 0 0 8px rgba(46, 204, 113, 0.25);
-            animation: glowGreen 2s ease-in-out infinite alternate;
-        }
-
-        .detail-status-cancelled {
-            background: rgba(231, 76, 60, 0.12);
-            color: #e74c3c;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            display: inline-block;
-            border: 1px solid rgba(231, 76, 60, 0.4);
-            box-shadow: 0 0 8px rgba(231, 76, 60, 0.25);
-            animation: glowRed 2s ease-in-out infinite alternate;
-        }
-
-        .detail-status-active {
-            background: rgba(52, 152, 219, 0.12);
-            color: #2980b9;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            display: inline-block;
-            border: 1px solid rgba(52, 152, 219, 0.4);
-            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
-        }
-
-        /* ── Operator history card status badges ── */
-        .card-status-completed {
-            background: rgba(46, 204, 113, 0.12);
-            color: #27ae60;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid rgba(46, 204, 113, 0.4);
-            box-shadow: 0 0 8px rgba(46, 204, 113, 0.25);
-            animation: glowGreen 2s ease-in-out infinite alternate;
-        }
-
-        .card-status-cancelled {
-            background: rgba(231, 76, 60, 0.12);
-            color: #e74c3c;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid rgba(231, 76, 60, 0.4);
-            box-shadow: 0 0 8px rgba(231, 76, 60, 0.25);
-            animation: glowRed 2s ease-in-out infinite alternate;
-        }
-
-        .card-status-active {
-            background: rgba(52, 152, 219, 0.12);
-            color: #2980b9;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid rgba(52, 152, 219, 0.4);
-        }
-
-        .card-status-pending {
-            background: rgba(52, 152, 219, 0.12);
-            color: #2980b9;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            display: inline-block;
-            border: 1px solid rgba(52, 152, 219, 0.5);
-            box-shadow: 0 0 8px rgba(52, 152, 219, 0.3), 0 0 20px rgba(52, 152, 219, 0.15);
-            animation: glowBlue 2s ease-in-out infinite alternate;
-            text-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
-        }
-
-        /* ── Past Schedule Toggle Button ── */
-        .past-schedule-toggle {
-            background: linear-gradient(135deg, var(--forest), var(--dark-teal)) !important;
-            color: var(--pale-sage) !important;
-            border: none !important;
-            padding: 14px 32px !important;
-            border-radius: var(--radius-sm) !important;
-            font-size: 15px !important;
-            font-weight: 600 !important;
-            font-family: var(--font-display) !important;
-            cursor: pointer !important;
-            transition: all 0.35s var(--ease-out) !important;
-            letter-spacing: 0.3px;
-            box-shadow: 0 4px 16px rgba(82, 121, 111, 0.3) !important;
-            width: 100% !important;
-            /* Fixed: Fill the row */
-            position: relative;
-            overflow: hidden;
-            display: flex !important;
-            /* Changed from inline-flex */
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .past-schedule-toggle::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.5s;
-        }
-
-        .past-schedule-toggle:hover::after {
-            transform: translateX(100%);
-        }
-
-        .past-schedule-toggle:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 8px 24px rgba(82, 121, 111, 0.4) !important;
-        }
-
-        .past-schedule-toggle.minimize {
-            background: linear-gradient(135deg, #c0392b, #96281b) !important;
-            box-shadow: 0 4px 16px rgba(192, 57, 43, 0.3) !important;
-        }
-
-        .past-schedule-toggle.minimize:hover {
-            box-shadow: 0 8px 24px rgba(192, 57, 43, 0.4) !important;
-        }
-
-        /* ── Schedule card enhanced ── */
-        .schedule-card {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .schedule-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--forest), var(--sage), var(--forest));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .schedule-card:hover::before {
-            opacity: 1;
-        }
-
-        .empty-cell {
-            color: #bbb;
-            font-style: italic;
-        }
-
-        /* ── Schedule Table Container ── */
-        .schedules-table-wrapper {
-            margin-top: 16px;
-            border-radius: var(--radius-sm);
-            background: #fafafa;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .schedules-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px;
-            padding: 8px;
-            font-size: 13px;
-            font-family: var(--font-body);
-            background: #fafafa;
-            table-layout: auto;
-        }
-
-        .schedules-table thead {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #fafafa;
-        }
-
-        .schedules-table th {
-            background: var(--forest);
-            color: var(--pale-sage);
-            padding: 12px 10px;
-            text-align: left;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-family: var(--font-display);
-            border-radius: var(--radius-sm);
-            word-break: break-word;
-        }
-
-        .schedules-table tbody tr {
-            background: #fff;
-            border-radius: var(--radius-sm);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s var(--ease-out);
-            cursor: pointer;
-        }
-
-        .schedules-table tbody tr:hover {
-            box-shadow: 0 4px 12px rgba(82, 121, 111, 0.15);
-            transform: translateY(-2px);
-            background: rgba(132, 169, 140, 0.03);
-        }
-
-        .schedules-table td {
-            padding: 12px 10px;
-            color: var(--charcoal);
-            border: none;
-            font-size: 13px;
-        }
-
-        .schedules-table td:first-child {
-            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-        }
-
-        .schedules-table td:last-child {
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-        }
-
-        .schedule-route {
-            font-weight: 600;
-            color: var(--dark-teal);
-            min-width: 110px;
-        }
-
-        .schedule-action-btn {
-            background: linear-gradient(135deg, #c0392b, #96281b);
-            color: #fff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.3s var(--ease-out);
-            white-space: nowrap;
-        }
-
-        .schedule-action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
-        }
-
-        /* Responsive table scrolling */
-        @media (max-width: 1200px) {
-            .schedules-table-wrapper {
-                overflow-x: auto;
-            }
-        }
-
-        @media (max-width: 768px) {
-
-            .schedules-table th,
-            .schedules-table td {
-                padding: 10px 8px;
-                font-size: 12px;
-            }
-
-            .schedules-table th {
-                font-size: 10px;
-            }
-
-            .form-row {
-                flex-direction: column;
-            }
-
-            .form-row select,
-            .form-row input,
-            .form-row button {
-                width: 100%;
-                min-width: auto;
-            }
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-            font-style: italic;
-            font-size: 15px;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 16px;
-                padding-top: 120px;
-            }
-
-            header {
-                flex-direction: column;
-                gap: 14px;
-            }
-
-            .schedule-cards-container {
-                grid-template-columns: 1fr;
-            }
-
-            .schedule-details {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 12px;
-                padding-top: 140px;
-            }
-        }
-    </style>
 </head>
 
-<body>
+<body class="dashboard-main">
 
-    <header>
+    <header class="dashboard-header">
         <div class="logo" onclick="window.location.reload()">
             <img src="../../docs/bhromon_logo.png" alt="bhromon">
         </div>
 
-        <div class="header-nav">
-            <div class="nav-btn-group">
-                <button class="nav-btn"
-                    onclick="document.getElementById('sectionCreate').scrollIntoView({ behavior: 'smooth' })">📝</button>
-                <div class="tooltip">Create Schedule</div>
+        <div class="dashboard-nav-group">
+            <div class="tooltip-wrapper">
+                <button class="btn btn-ghost" onclick="document.getElementById('sectionCreate').scrollIntoView({ behavior: 'smooth' })">📝</button>
+                <div class="tooltip-text">Create Schedule</div>
             </div>
 
-            <div class="nav-btn-group">
-                <button class="nav-btn"
-                    onclick="document.getElementById('sectionActive').scrollIntoView({ behavior: 'smooth' })">📅</button>
-                <div class="tooltip">Active Schedules</div>
+            <div class="tooltip-wrapper">
+                <button class="btn btn-ghost" onclick="document.getElementById('sectionActive').scrollIntoView({ behavior: 'smooth' })">📅</button>
+                <div class="tooltip-text">Active Schedules</div>
             </div>
 
-            <div class="nav-btn-group">
-                <button class="nav-btn"
-                    onclick="document.getElementById('sectionPast').scrollIntoView({ behavior: 'smooth' })">📜</button>
-                <div class="tooltip">Past Schedules</div>
+            <div class="tooltip-wrapper">
+                <button class="btn btn-ghost" onclick="document.getElementById('sectionPast').scrollIntoView({ behavior: 'smooth' })">📜</button>
+                <div class="tooltip-text">Past Schedules</div>
             </div>
 
-            <div class="nav-btn-group">
-                <button class="nav-btn"
-                    onclick="document.getElementById('sectionUserHistory').scrollIntoView({ behavior: 'smooth' })">🧾</button>
-                <div class="tooltip">User Booking History</div>
+            <div class="tooltip-wrapper">
+                <button class="btn btn-ghost" onclick="document.getElementById('sectionUserHistory').scrollIntoView({ behavior: 'smooth' })">🧾</button>
+                <div class="tooltip-text">User Booking History</div>
             </div>
 
-            <div class="nav-btn-group">
-                <button class="nav-btn"
-                    onclick="document.getElementById('sectionOperatorHistory').scrollIntoView({ behavior: 'smooth' })">🏢</button>
-                <div class="tooltip">Operator Schedule History</div>
+            <div class="tooltip-wrapper">
+                <button class="btn btn-ghost" onclick="document.getElementById('sectionOperatorHistory').scrollIntoView({ behavior: 'smooth' })">🏢</button>
+                <div class="tooltip-text">Operator Schedule History</div>
             </div>
 
-            <div class="header-buttons">
-                <button class="profile-btn" onclick="toggleProfile()">👤</button>
-                <div id="profileMenu" style="display:none;">
+            <div style="position: relative; z-index: 150;">
+                <button class="btn btn-ghost" onclick="toggleProfile()">👤</button>
+                <div id="profileMenu" class="profile-dropdown-menu" style="display:none; top: calc(100% + 10px);">
                     <button onclick="goToProfile()">My Profile</button>
                     <button onclick="logout()">Logout</button>
                 </div>
@@ -994,88 +51,86 @@
         </div>
     </header>
 
-    <hr>
+    <hr style="border: none; border-top: 1px solid rgba(82, 121, 111, 0.12); margin: 8px 0 24px 0; opacity: 0;">
 
-    <section id="sectionCreate">
-        <h2>📝 Create Schedule</h2>
+    <section id="sectionCreate" class="dashboard-section">
+        <h2 class="dashboard-section-title">📝 Create Schedule</h2>
 
-        <div class="form-row">
-            <select id="sourceCity" placeholder="Source City"></select>
-            <select id="destinationCity" placeholder="Destination City"></select>
-            <input type="date" id="journeyDate">
+        <div class="form-grid">
+            <select id="sourceCity" class="form-input" placeholder="Source City"></select>
+            <select id="destinationCity" class="form-input" placeholder="Destination City"></select>
+            <input type="date" id="journeyDate" class="form-input">
         </div>
 
-        <div class="form-row">
-            <input type="time" id="departureTime" placeholder="Departure Time">
-            <input type="number" id="price" placeholder="Ticket Price">
-            <select id="operatorSelect"></select>
+        <div class="form-grid">
+            <input type="time" id="departureTime" class="form-input" placeholder="Departure Time">
+            <input type="number" id="price" class="form-input" placeholder="Ticket Price">
+            <select id="operatorSelect" class="form-input"></select>
         </div>
 
-        <div class="form-row">
-            <select id="busSelect"></select>
-            <button onclick="createSchedule()">Create Schedule</button>
+        <div class="form-grid">
+            <select id="busSelect" class="form-input"></select>
+            <button class="btn btn-primary" onclick="createSchedule()">Create Schedule</button>
         </div>
     </section>
 
-    <section id="sectionActive">
-        <h2>📅 Active Schedules</h2>
+    <section id="sectionActive" class="dashboard-section">
+        <h2 class="dashboard-section-title">📅 Active Schedules</h2>
         <div id="activeSchedules"></div>
     </section>
 
-    <section id="sectionPast">
-        <h2>📜 Past Schedules</h2>
-        <div class="form-row" style="justify-content: flex-start;">
-            <button id="pastScheduleToggleBtn" class="past-schedule-toggle" onclick="togglePastSchedules()">📋 View Past
-                Schedules</button>
+    <section id="sectionPast" class="dashboard-section">
+        <h2 class="dashboard-section-title">📜 Past Schedules</h2>
+        <div class="form-grid" style="justify-content: flex-start; margin-bottom: 0;">
+            <button id="pastScheduleToggleBtn" class="btn-toggle-past" onclick="togglePastSchedules()">📋 View Past Schedules</button>
         </div>
         <div id="pastSchedules"></div>
     </section>
 
-    <section id="sectionUserHistory">
-        <h2>🧾 User Booking History</h2>
-        <div class="form-row">
-            <select id="userList"></select>
-            <button onclick="loadUserHistory()" style="flex: 0 1 auto; min-width: 100px;">Search</button>
+    <section id="sectionUserHistory" class="dashboard-section">
+        <h2 class="dashboard-section-title">🧾 User Booking History</h2>
+        <div class="form-grid">
+            <select id="userList" class="form-input"></select>
+            <button class="btn btn-primary" onclick="loadUserHistory()" style="flex: 0 1 auto; min-width: 100px;">Search</button>
         </div>
-        <div id="userHistory" class="schedule-cards-container"></div>
+        <div id="userHistory" class="cards-grid"></div>
     </section>
 
-    <section id="sectionOperatorHistory">
-        <h2>🏢 Operator Schedule History</h2>
-        <div class="form-row">
-            <select id="operatorHistoryList"></select>
-            <button onclick="loadOperatorHistory()" style="flex: 0 1 auto; min-width: 100px;">Search</button>
+    <section id="sectionOperatorHistory" class="dashboard-section">
+        <h2 class="dashboard-section-title">🏢 Operator Schedule History</h2>
+        <div class="form-grid">
+            <select id="operatorHistoryList" class="form-input"></select>
+            <button class="btn btn-primary" onclick="loadOperatorHistory()" style="flex: 0 1 auto; min-width: 100px;">Search</button>
         </div>
-        <div id="operatorHistory" class="schedule-cards-container"></div>
+        <div id="operatorHistory" class="cards-grid"></div>
     </section>
 
     <!-- Modal Overlay and Content -->
     <div id="scheduleModalOverlay" class="modal-overlay" onclick="closeScheduleModal()">
-        <div id="scheduleModal" class="modal" onclick="event.stopPropagation()">
+        <div id="scheduleModal" class="modal-panel" onclick="event.stopPropagation()">
             <div class="modal-header" style="cursor: default;">
-                <h2>Schedule Details</h2>
-                <button class="close-btn" onclick="closeScheduleModal()">&times;</button>
+                <h2 style="margin: 0; font-size: 22px; color: var(--pale-sage); font-family: var(--font-display);">Schedule Details</h2>
+                <button class="modal-close-btn" onclick="closeScheduleModal()">&times;</button>
             </div>
-            <div class="modal-content">
-                <div class="schedule-details" id="scheduleDetailsContent"></div>
-                <div class="seats-section">
-                    <h3>🪑 Seat Details</h3>
-                    <div class="seats-table-wrapper">
-                        <table class="seats-table">
-                            <thead>
-                                <tr>
-                                    <th>Seat Number</th>
-                                    <th>Seat Status</th>
-                                    <th>Buyer Name</th>
-                                    <th>Phone Number</th>
-                                    <th>Email</th>
-                                    <th>Passenger Name</th>
-                                    <th>Gender</th>
-                                </tr>
-                            </thead>
-                            <tbody id="seatsTableBody"></tbody>
-                        </table>
-                    </div>
+            <div class="modal-body">
+                <div class="detail-grid" id="scheduleDetailsContent"></div>
+                
+                <h3 style="margin: 20px 0 15px 0; color: var(--charcoal); font-size: 18px; font-family: var(--font-display);">🪑 Seat Details</h3>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Seat Number</th>
+                                <th>Seat Status</th>
+                                <th>Buyer Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Passenger Name</th>
+                                <th>Gender</th>
+                            </tr>
+                        </thead>
+                        <tbody id="seatsTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
