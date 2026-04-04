@@ -123,7 +123,7 @@ BEGIN
   
     -- update booking status 
     UPDATE BOOKING
-    SET booking_status = 'cancelled'
+    SET booking_status = 'cancelled'      -- calls trg_free_seats_on_cancel to release the booked seats
     WHERE booking_id = p_booking_id;
                   
 

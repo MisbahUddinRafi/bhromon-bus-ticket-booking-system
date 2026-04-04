@@ -175,23 +175,20 @@ $$ LANGUAGE plpgsql;
 
 
 -- ============================================================
--- 3. TRIGGER - Cancel all bookings when schedule cancelled
+-- 3. TRIGGER - Cancel all schedule seats when schedule cancelled
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION trg_cancel_schedule_bookings()
+CREATE OR REPLACE FUNCTION trg_cancel_schedule_seats()
 RETURNS TRIGGER AS $$
 BEGIN
     IF OLD.schedule_status = 'active' 
        AND NEW.schedule_status = 'cancelled' THEN
        
-        UPDATE BOOKING
-        SET booking_status = 'cancelled'
-        WHERE schedule_id = NEW.schedule_id
-        AND booking_status = 'confirmed';
-
+        -- cancel all schedule seats
         UPDATE SCHEDULE_SEAT
         SET schedule_seat_status = 'cancelled'
         WHERE schedule_id = NEW.schedule_id;
+
     END IF;
 
     RETURN NEW;
@@ -202,4 +199,168 @@ DROP TRIGGER IF EXISTS trg_schedule_cancel ON SCHEDULE;
 CREATE TRIGGER trg_schedule_cancel
 AFTER UPDATE ON SCHEDULE
 FOR EACH ROW
-EXECUTE FUNCTION trg_cancel_schedule_bookings();
+EXECUTE FUNCTION trg_cancel_schedule_seats();
+
+
+
+
+
+
+
+-- ==============================================
+--              CANCEL SCHEDULE BY ADMIN  
+-- ==============================================
+
+CREATE OR REPLACE FUNCTION cancel_schedule(p_schedule_id INT)
+RETURNS BOOLEAN AS $$
+
+DECLARE
+    v_booking RECORD;
+    v_payment_type payment_type_enum;
+
+BEGIN
+
+    -- check schedule exists
+    IF NOT EXISTS (
+        SELECT 1 FROM SCHEDULE
+        WHERE schedule_id = p_schedule_id
+        AND schedule_status = 'active'
+    ) THEN
+        RETURN FALSE;
+    END IF;
+
+
+    -- loop bookings
+    FOR v_booking IN
+        SELECT booking_id
+        FROM BOOKING
+        WHERE schedule_id = p_schedule_id
+        AND booking_status = 'confirmed'
+    LOOP
+        
+        -- get payment type
+        SELECT payment_type
+        INTO v_payment_type
+        FROM payment
+        WHERE booking_id = v_booking.booking_id
+        AND payment_reason = 'ticket_purchase'; 
+        
+        -- no payment record found
+        IF v_payment_type IS NULL THEN
+            v_payment_type := 'cash';
+        END IF;
+
+        -- cancel booking (this triggers and releases booked seats)
+        UPDATE BOOKING
+        SET booking_status = 'cancelled'
+        WHERE booking_id = v_booking.booking_id
+        AND booking_status = 'confirmed';
+
+        -- refund
+        IF FOUND THEN 
+            PERFORM refund_schedule_cancellation(
+                v_booking.booking_id,
+                v_payment_type
+            );
+        END IF; 
+
+    END LOOP;
+
+    -- cancel schedule (this triggers and makes all schedule seat status = cancelled)
+    UPDATE SCHEDULE
+    SET schedule_status = 'cancelled'
+    WHERE schedule_id = p_schedule_id;
+
+    RETURN TRUE;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
+END;
+
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+
+
+-- ===========================================================
+--            100% REFUND ON SCHEDULE CANCELLATION BY ADMIN (excluding service charge)
+-- ===========================================================
+
+CREATE OR REPLACE FUNCTION refund_schedule_cancellation(
+    p_booking_id INT, 
+    p_payment_type payment_type_enum
+)
+RETURNS BOOLEAN AS $$
+DECLARE
+    v_booked_seats INT;
+    v_payment_amount NUMERIC(10,2);
+    v_service_charge NUMERIC(10,2) := 20;
+    v_refund_amount NUMERIC(10,2) := 0; 
+
+BEGIN
+    -- 1. prevent duplicate refund
+    IF EXISTS (
+        SELECT 1 FROM payment
+        WHERE booking_id = p_booking_id
+        AND payment_reason = 'refund'
+    ) THEN
+        RETURN FALSE;
+    END IF;
+
+     -- 2. Count booked seats
+    SELECT COUNT(*) INTO v_booked_seats
+    FROM booked_seat
+    WHERE booking_id = p_booking_id;
+
+
+    -- 3. Get total paid amount (IMPORTANT: sum)
+    SELECT COALESCE(SUM(payment_amount), 0)
+    INTO v_payment_amount
+    FROM payment
+    WHERE booking_id = p_booking_id
+      AND payment_reason = 'ticket_purchase';
+
+
+    -- 4. Remove service charge
+    v_refund_amount :=
+        v_payment_amount - (v_booked_seats * v_service_charge);
+
+    IF v_refund_amount < 0 THEN
+        RETURN FALSE; 
+    END IF;
+
+    -- 5. insert 100% refund (excluding service charge)
+    INSERT INTO payment (
+        booking_id,
+        payment_amount,
+        payment_type,
+        payment_reason
+    )
+    VALUES (
+        p_booking_id,
+        v_refund_amount,
+        p_payment_type, 
+        'refund'
+    );
+
+    RETURN TRUE;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
+END;
+
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+
+

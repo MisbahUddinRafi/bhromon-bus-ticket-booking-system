@@ -287,7 +287,12 @@ async function loadActiveSchedules() {
 }
 
 async function cancelSchedule(id) {
-    if (!confirm('Are you sure you want to cancel this schedule? This action may affect existing bookings.')) {
+    const confirmed = await showConfirm(
+        'Cancel Schedule?',
+        'Are you sure you want to cancel this schedule? This action may affect existing bookings.'
+    );
+    
+    if (!confirmed) {
         return;
     }
 

@@ -313,12 +313,17 @@ function closeBookingModal() {
 /**
  * Try to close modal - confirm if seats selected
  */
-function tryCloseBookingModal() {
+async function tryCloseBookingModal() {
     if (bookingState.selectedSeats.length > 0) {
-        const confirmCancel = confirm(
-            `You have selected ${bookingState.selectedSeats.length} seat(s). Are you sure you want to cancel booking these seats?`
+        const confirmCancel = await showConfirm(
+            'Discard Selected Seats?',
+            `You have selected ${bookingState.selectedSeats.length} seat(s). Are you sure you want to cancel booking these seats?`,
+            'Yes, Cancel',
+            'No, Keep Selecting'
         );
-        if (!confirmCancel) return;
+        if (!confirmCancel) {
+            return;
+        }
     }
 
     closeBookingModal();
