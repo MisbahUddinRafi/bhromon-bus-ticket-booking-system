@@ -461,6 +461,26 @@ async function loadPastTrips() {
             const seatList = trip.seats_booked ? trip.seats_booked.split(',').join(', ') : 'N/A';
             const totalFare = trip.total_fare ? parseFloat(trip.total_fare).toFixed(2) : '0.00';
 
+            // Determine status badge classes
+            const getBookingStatusClass = (status) => {
+                const statusLower = (status || '').toLowerCase();
+                if (statusLower === 'confirmed') return 'status-confirmed';
+                if (statusLower === 'cancelled') return 'status-cancelled';
+                if (statusLower === 'pending') return 'status-pending';
+                return 'status-default';
+            };
+
+            const getScheduleStatusClass = (status) => {
+                const statusLower = (status || '').toLowerCase();
+                if (statusLower === 'active') return 'status-active';
+                if (statusLower === 'completed') return 'status-completed';
+                if (statusLower === 'cancelled') return 'status-cancelled';
+                return 'status-default';
+            };
+
+            const bookingStatusClass = getBookingStatusClass(trip.booking_status);
+            const scheduleStatusClass = getScheduleStatusClass(trip.schedule_status);
+
             tripCard.innerHTML = `
                 <div class="trip-card-header">
                     <p class="trip-route">🚌 ${trip.from_city} → ${trip.to_city}</p>
@@ -490,6 +510,14 @@ async function loadPastTrips() {
                     <div class="trip-total-fare">
                         <span class="label">Total Fare</span>
                         <span class="value">৳${totalFare}</span>
+                    </div>
+                    <div class="trip-detail">
+                        <span class="label">Booking Status</span>
+                        <span class="status-badge ${bookingStatusClass}">${trip.booking_status || 'N/A'}</span>
+                    </div>
+                    <div class="trip-detail">
+                        <span class="label">Schedule Status</span>
+                        <span class="status-badge ${scheduleStatusClass}">${trip.schedule_status || 'N/A'}</span>
                     </div>
                 </div>
                 <div class="trip-card-footer">

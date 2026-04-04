@@ -301,14 +301,16 @@ async function cancelSchedule(id) {
             method: 'PUT'
         });
 
+        const result = await res.json();
+
         if (res.ok) {
             showSuccess('Schedule Cancelled!', 'The bus schedule has been cancelled.');
             loadActiveSchedules();
         } else {
-            showError('Cancellation Failed!', 'Could not cancel the schedule. Please try again.');
+            showError('Cancellation Failed!', result.message || 'Could not cancel the schedule. Please try again.');
         }
     } catch (err) {
-        showError('Server Error!', 'An error occurred while cancelling the schedule.');
+        showError('Server Error!', 'An error occurred while cancelling the schedule: ' + err.message);
         console.error(err);
     }
 }

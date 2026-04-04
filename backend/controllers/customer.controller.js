@@ -283,6 +283,7 @@ exports.getPastTrips = async (req, res) => {
                 u.name AS user_name,
                 to_char(s.journey_date, 'DD-MM-YYYY') AS journey_date,
                 s.departure_time,
+                s.schedule_status, 
                 bo.operator_name,
                 bo.contact_number,
                 bus.bus_number,
@@ -306,8 +307,8 @@ exports.getPastTrips = async (req, res) => {
             JOIN CITY c2 ON r.destination_city_id = c2.city_id
             LEFT JOIN PAYMENT p ON b.booking_id = p.booking_id
             WHERE b.user_id = $1 
-            AND (s.journey_date + s.departure_time) < NOW()
-            AND b.booking_status IN ('pending', 'confirmed')  
+            AND b.booking_status IN ('pending', 'confirmed', 'cancelled') 
+            AND s.schedule_status IN ('completed', 'cancelled') 
             ORDER BY b.booking_time DESC
         `,
             [userId]

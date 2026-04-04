@@ -139,7 +139,7 @@ exports.createSchedule = async (req, res) => {
    Cancel Schedule
 ========================= */
 exports.cancelSchedule = async (req, res) => {
-    const scheduleId = req.params.scheduleId;
+    const scheduleId = req.params.id;
 
     // transaction management is necessary here 
     const client = await pool.connect();
@@ -147,7 +147,7 @@ exports.cancelSchedule = async (req, res) => {
     try {
         await client.query('BEGIN');
 
-        await completeExpiredSchedules();   // ensure schedule statuses are up-to-date
+        await completeExpiredSchedules(client);   // ensure schedule statuses are up-to-date
 
         const lockResult = await client.query(
             `SELECT schedule_id FROM SCHEDULE
@@ -155,6 +155,7 @@ exports.cancelSchedule = async (req, res) => {
              FOR UPDATE`,
             [scheduleId]
         );
+
 
         if (lockResult.rows.length === 0) {
             await client.query('ROLLBACK');
@@ -170,9 +171,10 @@ exports.cancelSchedule = async (req, res) => {
             [scheduleId]
         );
 
-        if (result.rows[0].result !== 'true') {
+
+        if (result.rows[0].result !== true) {
             await client.query('ROLLBACK');
-            return res.status(404).json({ message: "Error cancelling schedule" });
+            return res.status(404).json({ message: "Schedule not found or already inactive" });
         }
 
         await client.query('COMMIT');
@@ -182,8 +184,8 @@ exports.cancelSchedule = async (req, res) => {
 
     } catch (err) {
         await client.query('ROLLBACK');
-        console.error(err);
-        res.status(500).json({ message: "Error cancelling schedule" });
+        console.error('Error cancelling schedule:', err.message, err.detail);
+        res.status(500).json({ message: "Error cancelling schedule", error: err.message });
     } finally {
         client.release();
     }
@@ -194,8 +196,9 @@ exports.cancelSchedule = async (req, res) => {
    Get Active Schedules
 ========================= */
 
-const completeExpiredSchedules = async () => {
-    await pool.query(`
+const completeExpiredSchedules = async (client = null) => {
+    const queryClient = client || pool;
+    await queryClient.query(`
         UPDATE SCHEDULE
         SET schedule_status = 'completed'
         WHERE schedule_status = 'active'
