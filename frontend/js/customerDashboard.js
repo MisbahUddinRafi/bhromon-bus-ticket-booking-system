@@ -458,7 +458,21 @@ async function loadPastTrips() {
             tripCard.className = 'trip-card';
             tripCard.style.animationDelay = `${index * 0.06}s`;
 
-            const seatList = trip.seats_booked ? trip.seats_booked.split(',').join(', ') : 'N/A';
+            // Parse passenger info consistently with upcoming trips
+            let passengers = [];
+            if (trip.passenger_info) {
+                if (typeof trip.passenger_info === 'string') {
+                    try {
+                        passengers = JSON.parse(trip.passenger_info);
+                    } catch (e) {
+                        passengers = [];
+                    }
+                } else if (Array.isArray(trip.passenger_info)) {
+                    passengers = trip.passenger_info;
+                }
+            }
+
+            const seatList = passengers.length > 0 ? passengers.map(p => p.seat_number).join(', ') : 'N/A';
             const totalFare = trip.total_fare ? parseFloat(trip.total_fare).toFixed(2) : '0.00';
 
             // Determine status badge classes
@@ -481,7 +495,8 @@ async function loadPastTrips() {
             const bookingStatusClass = getBookingStatusClass(trip.booking_status);
             const scheduleStatusClass = getScheduleStatusClass(trip.schedule_status);
 
-            tripCard.innerHTML = `
+            // Base trip card content
+            let tripHTML = `
                 <div class="trip-card-header">
                     <p class="trip-route">🚌 ${trip.from_city} → ${trip.to_city}</p>
                 </div>
@@ -506,11 +521,24 @@ async function loadPastTrips() {
                         <span class="trip-detail-label">Seats Booked</span>
                         <span class="trip-detail-value">${seatList}</span>
                     </div>
-                    <div class="trip-divider"></div>
+                    <div class="trip-divider"></div>`;
+
+            // Conditional content based on booking status
+            if (trip.booking_status === 'cancelled') {
+                tripHTML += `
+                    <div class="trip-total-fare">
+                        <span class="label">Refund Amount</span>
+                        <span class="value">৳${totalFare}</span>
+                    </div>`;
+            } else {
+                tripHTML += `
                     <div class="trip-total-fare">
                         <span class="label">Total Fare</span>
                         <span class="value">৳${totalFare}</span>
-                    </div>
+                    </div>`;
+            }
+
+            tripHTML += `
                     <div class="trip-detail">
                         <span class="label">Booking Status</span>
                         <span class="status-badge ${bookingStatusClass}">${trip.booking_status || 'N/A'}</span>
@@ -524,9 +552,9 @@ async function loadPastTrips() {
                     <button class="btn-trip" onclick="downloadTripTicket(${trip.booking_id})">
                         Download Ticket
                     </button>
-                </div>
-            `;
+                </div>`;
 
+            tripCard.innerHTML = tripHTML;
             container.appendChild(tripCard);
         });
 
