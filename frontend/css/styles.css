@@ -852,10 +852,12 @@ a:hover {
   grid-template-columns: 1fr 1fr;
   gap: 18px;
   margin-bottom: 28px;
-  padding: 20px;
-  background: rgba(202, 210, 197, 0.2);
+  padding: 24px;
+  background: rgba(202, 210, 197, 0.1);
+  backdrop-filter: blur(12px); /* Less blurry than the modal background */
+  -webkit-backdrop-filter: blur(12px);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(82, 121, 111, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @media (max-width: 768px) {
@@ -2306,8 +2308,11 @@ select.form-input option {
   animation: fadeIn 0.25s var(--ease-out) both;
 }
 .modal-panel {
-  background: #fff;
+  background: rgba(47, 62, 70, 0.85); /* Darker glassy background */
+  backdrop-filter: blur(40px); /* Very blurry to appear darker */
+  -webkit-backdrop-filter: blur(40px);
   border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: var(--shadow-lg);
   width: 90vw;
   max-width: 1000px;
@@ -2328,6 +2333,28 @@ select.form-input option {
 }
 .modal-body {
   padding: 28px;
+  background: transparent;
+}
+
+/* ── Seats Table Overrides for Modal (Glassy like Past Schedules) ── */
+#scheduleModal .data-table-wrapper {
+  background: rgba(202, 210, 197, 0.05);
+  border: 1px solid rgba(202, 210, 197, 0.15);
+}
+
+#scheduleModal .data-table tbody tr {
+  background: transparent;
+  box-shadow: none;
+}
+
+#scheduleModal .data-table tbody tr:hover {
+  background: rgba(202, 210, 197, 0.08);
+  box-shadow: none;
+}
+
+#scheduleModal .data-table td {
+  color: var(--pale-sage);
+  border-bottom: 1px solid rgba(202, 210, 197, 0.08);
 }
 .modal-close-btn {
   background: rgba(255, 255, 255, 0.1);

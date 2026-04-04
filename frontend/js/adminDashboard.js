@@ -675,40 +675,40 @@ function displayScheduleDetails(data) {
     // Display schedule details
     const detailsHTML = `
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Operator Name</label>
-            <span style="font-size: 15px; font-weight: 500;">${schedule.operator_name}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">Operator Name</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">${schedule.operator_name}</span>
         </div>
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Bus Number</label>
-            <span style="font-size: 15px; font-weight: 500;">${schedule.bus_number}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">Bus Number</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">${schedule.bus_number}</span>
         </div>
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Bus Type</label>
-            <span style="font-size: 15px; font-weight: 500;">${schedule.bus_type}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">Bus Type</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">${schedule.bus_type}</span>
         </div>
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">From City</label>
-            <span style="font-size: 15px; font-weight: 500;">${schedule.source_city}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">From City</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">${schedule.source_city}</span>
         </div>
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">To City</label>
-            <span style="font-size: 15px; font-weight: 500;">${schedule.destination_city}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">To City</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">${schedule.destination_city}</span>
         </div>
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Journey Date</label>
-            <span style="font-size: 15px; font-weight: 500;">${schedule.journey_date}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">Journey Date</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">${schedule.journey_date}</span>
         </div>
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Departure Time</label>
-            <span style="font-size: 15px; font-weight: 500;">${schedule.departure_time}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">Departure Time</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">${schedule.departure_time}</span>
         </div>
         <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Schedule Status</label>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">Schedule Status</label>
             <span style="font-size: 15px; font-weight: 500;"><span class="${detailStatusClass}">${schedule.schedule_status}</span></span>
         </div>
         <div style="display: flex; flex-direction: column; grid-column: 1 / -1;">
-            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--forest); margin-bottom: 4px;">Ticket Price</label>
-            <span style="font-size: 15px; font-weight: 500;">৳${schedule.price}</span>
+            <label style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--sage); margin-bottom: 4px;">Ticket Price</label>
+            <span style="font-size: 15px; font-weight: 500; color: #fff;">৳${schedule.price}</span>
         </div>
     `;
 
