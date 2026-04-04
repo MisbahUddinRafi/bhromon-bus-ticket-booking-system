@@ -184,14 +184,7 @@ async function loadOperators() {
     const opsData = operators.map(o => ({ id: o.operator_id, name: o.operator_name }));
 
     setupCustomCombobox('operatorSearch', 'operatorsList', 'operatorSelect', opsData);
-
-    const historySelect = document.getElementById('operatorHistoryList');
-    if (historySelect) {
-        historySelect.innerHTML = `<option value="" disabled selected>Select operator</option>`;
-        operators.forEach(o => {
-            historySelect.innerHTML += `<option value="${o.operator_id}">${o.operator_name}</option>`;
-        });
-    }
+    setupCustomCombobox('operatorHistorySearch', 'operatorHistoryList', 'operatorHistorySelect', opsData);
 }
 
 /* Load buses when operator changes */
@@ -471,25 +464,13 @@ function togglePastSchedules() {
 async function loadUsers() {
     const res = await fetch(`${API}/users`);
     const users = await res.json();
-
-    const select = document.getElementById('userList');
-
-    // Clear existing options
-    select.innerHTML = '';
-
-    // Add placeholder option
-    select.innerHTML = `<option value="" disabled selected>Select user</option>`;
-
-    users.forEach(u => {
-        select.innerHTML +=
-            `<option value="${u.user_id}">${u.name}</option>`;
-    });
+    const userData = users.map(u => ({ id: u.user_id, name: u.name }));
+    setupCustomCombobox('userSearch', 'userList', 'userSelect', userData);
 }
 
 /* User history */
 async function loadUserHistory() {
-    const userSelect = document.getElementById('userList');
-    const id = userSelect ? userSelect.value : null;
+    const id = document.getElementById('userSelect').value;
     if (!id) {
         showError('Selection Required', 'Please select a user from the list.');
         return;
@@ -558,10 +539,10 @@ async function loadUserHistory() {
             let passengerHtml = '';
             if (Array.isArray(passengers) && passengers.length > 0) {
                 passengerHtml = passengers.map(p => `
-                    <div style="font-size: 13px; margin-top: 4px; padding: 6px 10px; background: rgba(82, 121, 111, 0.05); border-radius: 6px; border-left: 3px solid var(--forest); display: flex; justify-content: space-between;">
-                        <span><strong>${p.seat_number || 'N/A'}</strong></span>
-                        <span><strong>${p.name || 'N/A'}</strong></span>
-                        <span style="font-size: 11px; opacity: 0.7; text-transform: uppercase;">${p.gender || '-'}</span>
+                    <div class="passenger-info-row">
+                        <span style="flex: 0 0 35px;"><strong>${p.seat_number || 'N/A'}</strong></span>
+                        <span style="flex: 1; padding: 0 10px;"><strong>${p.name || 'N/A'}</strong></span>
+                        <span style="font-size: 11px; opacity: 0.7; text-transform: uppercase; font-weight: 600;">${p.gender || '-'}</span>
                     </div>
                 `).join('');
             } else {
@@ -581,26 +562,22 @@ async function loadUserHistory() {
             const departureTime = booking.departure_time || 'N/A';
 
             card.innerHTML = `
-                <h4 style="border-bottom: 1px solid rgba(82, 121, 111, 0.1); padding-bottom: 8px; margin-bottom: 12px;">
-                    ${source} → ${destination}
-                </h4>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <p><span class="label">User:</span> ${userName}</p>
-                    <p><span class="label">Booking Status:</span> <span class="${bookingStatusClass}">${booking.booking_status || 'N/A'}</span></p>
-                    <p><span class="label">Schedule Status:</span> <span class="${scheduleStatusClass}">${booking.schedule_status || 'N/A'}</span></p>
-                    <p><span class="label">${timeLabel}:</span> ${formattedBookingTime}</p>
-                    <p><span class="label">Journey Date:</span> ${journeyDate}</p>
-                    <p><span class="label">Departure:</span> ${departureTime}</p>
-                    <p><span class="label">Operator:</span> ${operatorName}</p>
-                    <p><span class="label">Bus Number:</span> ${busNumber}</p>
-                    <p><span class="label">Seats Booked:</span> ${seatsBooked}</p>
-                    <p><span class="label">Total Fare:</span> ৳${totalFare}</p>
-                    <p><span class="label">Payment Method:</span> ${paymentMethod}</p>
-                    <p><span class="label">Payment Type:</span> ${booking.payment_reason || 'N/A'}</p>
-                </div>
+                <h4>${source} → ${destination}</h4>
+                <div class="info-row"><span class="label">User</span> <span class="value">${userName}</span></div>
+                <div class="info-row"><span class="label">Booking Status</span> <span class="value"><span class="${bookingStatusClass}">${booking.booking_status || 'N/A'}</span></span></div>
+                <div class="info-row"><span class="label">Schedule Status</span> <span class="value"><span class="${scheduleStatusClass}">${booking.schedule_status || 'N/A'}</span></span></div>
+                <div class="info-row"><span class="label">${timeLabel}</span> <span class="value" style="font-size: 13px;">${formattedBookingTime}</span></div>
+                <div class="info-row"><span class="label">Journey Date</span> <span class="value">${journeyDate}</span></div>
+                <div class="info-row"><span class="label">Departure</span> <span class="value">${departureTime}</span></div>
+                <div class="info-row"><span class="label">Operator</span> <span class="value">${operatorName}</span></div>
+                <div class="info-row"><span class="label">Bus Number</span> <span class="value">${busNumber}</span></div>
+                <div class="info-row"><span class="label">Seats Booked</span> <span class="value">${seatsBooked}</span></div>
+                <div class="info-row"><span class="label">Total Fare</span> <span class="value">৳${totalFare}</span></div>
+                <div class="info-row"><span class="label">Payment Method</span> <span class="value">${paymentMethod}</span></div>
+                <div class="info-row"><span class="label">Payment Type</span> <span class="value">${booking.payment_reason || 'N/A'}</span></div>
                 
-                <div style="margin-top: 16px; border-top: 1px dashed rgba(82, 121, 111, 0.2); padding-top: 12px;">
-                    <span class="label" style="display: block; margin-bottom: 6px; font-size: 12px; color: var(--forest);">👥 Passenger Details:</span>
+                <div class="passenger-list">
+                    <span class="label" style="display: block; margin-bottom: 2px;">👥 Passenger Details</span>
                     ${passengerHtml}
                 </div>
             `;
@@ -618,7 +595,7 @@ async function loadUserHistory() {
 
 /* Operator history */
 async function loadOperatorHistory() {
-    const id = operatorHistoryList.value;
+    const id = document.getElementById('operatorHistorySelect').value;
     const res = await fetch(`${API}/operator-history/${id}`);
     const data = await res.json();
 
@@ -644,13 +621,13 @@ async function loadOperatorHistory() {
 
         card.innerHTML = `
             <h4>${schedule.source_city} → ${schedule.destination_city}</h4>
-            <div class="info-row"><span class="label">Bus Number:</span> <span class="value">${schedule.bus_number}</span></div>
-            <div class="info-row"><span class="label">Bus Type:</span> <span class="value">${schedule.bus_type}</span></div>
-            <div class="info-row"><span class="label">Operator:</span> <span class="value">${schedule.operator_name}</span></div>
-            <div class="info-row"><span class="label">Date:</span> <span class="value">${schedule.journey_date}</span></div>
-            <div class="info-row"><span class="label">Departure:</span> <span class="value">${schedule.departure_time}</span></div>
-            <div class="info-row"><span class="label">Price:</span> <span class="value">৳${schedule.price}</span></div>
-            <div class="info-row" style="margin-top:10px;"><span class="label">Status:</span> <span class="${cardStatusClass}">${schedule.schedule_status}</span></div>
+            <div class="info-row"><span class="label">Bus Number</span> <span class="value">${schedule.bus_number}</span></div>
+            <div class="info-row"><span class="label">Bus Type</span> <span class="value">${schedule.bus_type}</span></div>
+            <div class="info-row"><span class="label">Operator</span> <span class="value">${schedule.operator_name}</span></div>
+            <div class="info-row"><span class="label">Date</span> <span class="value">${schedule.journey_date}</span></div>
+            <div class="info-row"><span class="label">Departure</span> <span class="value">${schedule.departure_time}</span></div>
+            <div class="info-row"><span class="label">Price</span> <span class="value">৳${schedule.price}</span></div>
+            <div class="info-row" style="margin-top:10px;"><span class="label">Status</span> <span class="value"><span class="${cardStatusClass}">${schedule.schedule_status}</span></span></div>
         `;
         card.onclick = () => openScheduleModal(schedule.schedule_id);
         container.appendChild(card);

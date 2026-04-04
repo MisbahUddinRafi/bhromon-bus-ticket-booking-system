@@ -19,27 +19,32 @@
 
         <div class="dashboard-nav-group">
             <div class="tooltip-wrapper">
-                <button class="btn btn-ghost" onclick="document.getElementById('sectionCreate').scrollIntoView({ behavior: 'smooth' })">📝</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('sectionCreate').scrollIntoView({ behavior: 'smooth' })">📝</button>
                 <div class="tooltip-text">Create Schedule</div>
             </div>
 
             <div class="tooltip-wrapper">
-                <button class="btn btn-ghost" onclick="document.getElementById('sectionActive').scrollIntoView({ behavior: 'smooth' })">📅</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('sectionActive').scrollIntoView({ behavior: 'smooth' })">📅</button>
                 <div class="tooltip-text">Active Schedules</div>
             </div>
 
             <div class="tooltip-wrapper">
-                <button class="btn btn-ghost" onclick="document.getElementById('sectionPast').scrollIntoView({ behavior: 'smooth' })">📜</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('sectionPast').scrollIntoView({ behavior: 'smooth' })">📜</button>
                 <div class="tooltip-text">Past Schedules</div>
             </div>
 
             <div class="tooltip-wrapper">
-                <button class="btn btn-ghost" onclick="document.getElementById('sectionUserHistory').scrollIntoView({ behavior: 'smooth' })">🧾</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('sectionUserHistory').scrollIntoView({ behavior: 'smooth' })">🧾</button>
                 <div class="tooltip-text">User Booking History</div>
             </div>
 
             <div class="tooltip-wrapper">
-                <button class="btn btn-ghost" onclick="document.getElementById('sectionOperatorHistory').scrollIntoView({ behavior: 'smooth' })">🏢</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('sectionOperatorHistory').scrollIntoView({ behavior: 'smooth' })">🏢</button>
                 <div class="tooltip-text">Operator Schedule History</div>
             </div>
 
@@ -60,12 +65,14 @@
 
         <div class="form-grid">
             <div style="position:relative; flex:1;" class="custom-combobox">
-                <input type="text" id="sourceCitySearch" class="form-input" placeholder="Search Source City..." autocomplete="off">
+                <input type="text" id="sourceCitySearch" class="form-input" placeholder="Search Source City..."
+                    autocomplete="off">
                 <div id="sourceCitiesList" class="glassy-dropdown"></div>
                 <input type="hidden" id="sourceCity" value="">
             </div>
             <div style="position:relative; flex:1;" class="custom-combobox">
-                <input type="text" id="destinationCitySearch" class="form-input" placeholder="Search Destination City..." autocomplete="off">
+                <input type="text" id="destinationCitySearch" class="form-input"
+                    placeholder="Search Destination City..." autocomplete="off">
                 <div id="destinationCitiesList" class="glassy-dropdown"></div>
                 <input type="hidden" id="destinationCity" value="">
             </div>
@@ -76,7 +83,8 @@
             <input type="time" id="departureTime" class="form-input" placeholder="Departure Time">
             <input type="number" id="price" class="form-input" placeholder="Ticket Price">
             <div style="position:relative; flex:1;" class="custom-combobox">
-                <input type="text" id="operatorSearch" class="form-input" placeholder="Search Operator..." autocomplete="off">
+                <input type="text" id="operatorSearch" class="form-input" placeholder="Search Operator..."
+                    autocomplete="off">
                 <div id="operatorsList" class="glassy-dropdown"></div>
                 <input type="hidden" id="operatorSelect" value="">
             </div>
@@ -96,7 +104,8 @@
     <section id="sectionPast" class="dashboard-section">
         <h2 class="dashboard-section-title">📜 Past Schedules</h2>
         <div class="form-grid" style="justify-content: flex-start; margin-bottom: 0;">
-            <button id="pastScheduleToggleBtn" class="btn-toggle-past" onclick="togglePastSchedules()">📋 View Past Schedules</button>
+            <button id="pastScheduleToggleBtn" class="btn-toggle-past" onclick="togglePastSchedules()">📋 View Past
+                Schedules</button>
         </div>
         <div id="pastSchedules"></div>
     </section>
@@ -104,8 +113,14 @@
     <section id="sectionUserHistory" class="dashboard-section">
         <h2 class="dashboard-section-title">🧾 User Booking History</h2>
         <div class="form-grid">
-            <select id="userList" class="form-input"></select>
-            <button class="btn btn-primary" onclick="loadUserHistory()" style="flex: 0 1 auto; min-width: 100px;">Search</button>
+            <div style="position:relative; flex:1;" class="custom-combobox">
+                <input type="text" id="userSearch" class="form-input" placeholder="Search User..."
+                    autocomplete="off">
+                <div id="userList" class="glassy-dropdown"></div>
+                <input type="hidden" id="userSelect" value="">
+            </div>
+            <button class="btn btn-primary" onclick="loadUserHistory()"
+                style="flex: 0 1 auto; min-width: 100px;">Search</button>
         </div>
         <div id="userHistory" class="cards-grid"></div>
     </section>
@@ -113,8 +128,14 @@
     <section id="sectionOperatorHistory" class="dashboard-section">
         <h2 class="dashboard-section-title">🏢 Operator Schedule History</h2>
         <div class="form-grid">
-            <select id="operatorHistoryList" class="form-input"></select>
-            <button class="btn btn-primary" onclick="loadOperatorHistory()" style="flex: 0 1 auto; min-width: 100px;">Search</button>
+            <div style="position:relative; flex:1;" class="custom-combobox">
+                <input type="text" id="operatorHistorySearch" class="form-input" placeholder="Search Operator..."
+                    autocomplete="off">
+                <div id="operatorHistoryList" class="glassy-dropdown"></div>
+                <input type="hidden" id="operatorHistorySelect" value="">
+            </div>
+            <button class="btn btn-primary" onclick="loadOperatorHistory()"
+                style="flex: 0 1 auto; min-width: 100px;">Search</button>
         </div>
         <div id="operatorHistory" class="cards-grid"></div>
     </section>
@@ -123,13 +144,16 @@
     <div id="scheduleModalOverlay" class="modal-overlay" onclick="closeScheduleModal()">
         <div id="scheduleModal" class="modal-panel" onclick="event.stopPropagation()">
             <div class="modal-header" style="cursor: default;">
-                <h2 style="margin: 0; font-size: 22px; color: var(--pale-sage); font-family: var(--font-display);">Schedule Details</h2>
+                <h2 style="margin: 0; font-size: 22px; color: var(--pale-sage); font-family: var(--font-display);">
+                    Schedule Details</h2>
                 <button class="modal-close-btn" onclick="closeScheduleModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="detail-grid" id="scheduleDetailsContent"></div>
-                
-                <h3 style="margin: 20px 0 15px 0; color: var(--charcoal); font-size: 18px; font-family: var(--font-display);">🪑 Seat Details</h3>
+
+                <h3
+                    style="margin: 20px 0 15px 0; color: var(--charcoal); font-size: 18px; font-family: var(--font-display);">
+                    🪑 Seat Details</h3>
                 <div class="data-table-wrapper">
                     <table class="data-table">
                         <thead>
