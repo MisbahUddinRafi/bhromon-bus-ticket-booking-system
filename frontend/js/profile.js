@@ -49,20 +49,48 @@ function goBack() {
     }
 }
 
+function toggleProfile() {
+    const menu = document.getElementById('profileMenu');
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+    } else {
+        menu.style.display = 'none';
+    }
+}
 
+function logout() {
+    localStorage.clear();
+    window.location.href = '../index.html';
+}
 
+// Close profile menu when clicking outside
+document.addEventListener('click', function (e) {
+    const profileBtn = document.querySelector('.btn-ghost');
+    const profileMenu = document.getElementById('profileMenu');
+
+    if (profileMenu && !e.target.closest('.btn-ghost') && !profileMenu.contains(e.target)) {
+        profileMenu.style.display = 'none';
+    }
+});
 
 /* ===============================
    Update Name
 ================================= */
 async function updateName() {
     const oldName = user.name;
-    const newName = document.getElementById("name").value;
+    const newName = document.getElementById("name").value.trim();
 
     if (!newName || newName === oldName) {
         showError('Invalid Input!', 'New name should be different and not empty.');
         return;
     }
+
+    const confirmed = await showConfirm(
+        'Update Profile Name?',
+        `Are you sure you want to change your name from "${oldName}" to "${newName}"?`
+    );
+
+    if (!confirmed) return;
 
     const res = await fetch(`${API}/update-name`, {
         method: 'PUT',
@@ -106,6 +134,13 @@ async function changePassword() {
         return;
     }
 
+    const confirmed = await showConfirm(
+        'Change Password?',
+        'Are you sure you want to change your password? You will need to use your new password for future logins.'
+    );
+
+    if (!confirmed) return;
+
     const res = await fetch(`${API}/change-password`, {
         method: 'PUT',
         headers: {
@@ -131,13 +166,67 @@ async function changePassword() {
 /* ===============================
    Delete Account
 ================================= */
+/**
+ * Custom styled prompt for password input
+ */
+function showPrompt(title, message, placeholder = '') {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-dialog-overlay';
+
+        overlay.innerHTML = `
+            <div class="confirm-dialog">
+                <div class="confirm-dialog-title">${title}</div>
+                <div class="confirm-dialog-message">${message}</div>
+                <input type="password" class="prompt-input" placeholder="${placeholder}" id="promptInput">
+                <div class="confirm-dialog-actions">
+                    <button class="confirm-btn-cancel" id="promptCancel">Cancel</button>
+                    <button class="confirm-btn-ok" id="promptOk">Confirm</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+        const input = document.getElementById('promptInput');
+        input.focus();
+
+        document.getElementById('promptCancel').onclick = () => {
+            overlay.remove();
+            resolve(null);
+        };
+
+        document.getElementById('promptOk').onclick = () => {
+            const val = input.value;
+            overlay.remove();
+            resolve(val);
+        };
+
+        // Handle Enter key
+        input.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                const val = input.value;
+                overlay.remove();
+                resolve(val);
+            }
+        };
+    });
+}
+
 async function deleteAccount() {
 
-    const oldPassword = prompt("Enter your password to confirm deletion:");
+    const oldPassword = await showPrompt(
+        'Verify Identity',
+        'Please enter your current password to proceed with account deletion.',
+        'Enter your password'
+    );
 
     if (!oldPassword) return;
 
-    const confirmDelete = confirm("Are you sure you want to delete your account?");
+    const confirmDelete = await showConfirm(
+        '⚠️ Permanent Deletion',
+        'Are you sure you want to delete your account? This action is irreversible and all your data will be cleared.'
+    );
+    
     if (!confirmDelete) return;
 
     const res = await fetch(`${API}/delete`, {
