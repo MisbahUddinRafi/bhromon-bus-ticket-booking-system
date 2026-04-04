@@ -100,16 +100,32 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION cancel_booking(p_booking_id INT)
 RETURNS BOOLEAN AS $$
 BEGIN
+    -- check if booking exists
+    IF NOT EXISTS (
+        SELECT 1 FROM BOOKING
+        WHERE booking_id = p_booking_id
+        AND booking_status = 'confirmed'
+    ) THEN
+        RETURN FALSE;
+    END IF;
+    
     -- check the departure time of the schedule associated with the booking
-    if (NOW() + INTERVAL '2 hours') > (SELECT departure_time FROM SCHEDULE WHERE schedule_id = (SELECT schedule_id FROM BOOKING WHERE booking_id = p_booking_id)) THEN
+    if (NOW() + INTERVAL '2 hours') > (
+        SELECT (journey_date + departure_time) 
+        FROM SCHEDULE 
+        WHERE schedule_id = (
+            SELECT schedule_id FROM BOOKING WHERE booking_id = p_booking_id
+        )
+    ) THEN
         RAISE EXCEPTION 'Cannot cancel booking less than 2 hours before departure';
     END IF;
 
-    -- update booking status to cancelled
+  
+    -- update booking status 
     UPDATE BOOKING
     SET booking_status = 'cancelled'
-    WHERE booking_id = p_booking_id 
-    AND booking_status = 'confirmed';                
+    WHERE booking_id = p_booking_id;
+                  
 
     RETURN TRUE;
 

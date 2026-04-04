@@ -11,15 +11,15 @@ router.get('/recent-searches', auth, controller.getRecentSearches);
 router.get('/schedules', auth, controller.getSchedules);
 router.get('/upcoming-trips', auth, controller.getUpcomingTrips);
 router.get('/past-trips', auth, controller.getPastTrips);
+router.post('/cancel-booking', auth, controller.cancelBooking);             // user cancels a booking
+
 
 // Booking Routes
 router.get('/schedule-seats/:scheduleId', auth, bookingController.getScheduleSeats);
 router.get('/schedule-details/:scheduleId', auth, bookingController.getScheduleDetails);
 router.get('/check-existing-bookings/:scheduleId', auth, bookingController.checkExistingBookings);
-router.post('/cancel-booking', auth, controller.cancelBooking);
 router.post('/create-booking', auth, bookingController.createPendingBooking);
 router.post('/confirm-payment', auth, bookingController.confirmPayment);
-
 
 module.exports = router;
 

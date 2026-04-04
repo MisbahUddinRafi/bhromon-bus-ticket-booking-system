@@ -328,18 +328,24 @@ exports.cancelBooking = async (req, res) => {
     const { bookingId, refundMethod } = req.body;
     const userId = req.user.user_id;
 
+    // check refund method validity
+    if (refundMethod !== 'cash' && refundMethod !== 'bkash' && refundMethod !== 'nagad') {
+        return res.status(400).json({ message: 'Invalid refund method' });
+    }
+
     // Acquire a client for transaction
     const client = await db.connect();
 
     try {
         await client.query('BEGIN');
-
+    
         // 1. Verify booking ownership and status
         const bookingResult = await client.query(
             `SELECT b.booking_id, b.booking_status, s.journey_date, s.departure_time
              FROM BOOKING b
              JOIN SCHEDULE s ON b.schedule_id = s.schedule_id
-             WHERE b.booking_id = $1 AND b.user_id = $2`,
+             WHERE b.booking_id = $1 AND b.user_id = $2
+             AND b.booking_status = 'confirmed'`,
             [bookingId, userId]
         );
 
@@ -348,46 +354,45 @@ exports.cancelBooking = async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        const booking = bookingResult.rows[0];
 
-        if (booking.booking_status === 'cancelled') {
-            await client.query('ROLLBACK');
-            return res.status(400).json({ message: 'Booking is already cancelled' });
-        }
 
-        // 2. Check time difference (Must be > 2 hours)
-        const now = new Date();
-
-        // Handle journey_date being a Date object or string
-        let departure;
-        if (booking.journey_date instanceof Date) {
-            // PG returns Date object for journey_date. 
-            // We strip time from Date object and add the departure_time.
-            const journeyDateOnly = booking.journey_date.toISOString().split('T')[0];
-            departure = new Date(`${journeyDateOnly}T${booking.departure_time}`);
-        } else {
-            // Assume journey_date is a string in YYYY-MM-DD or DD-MM-YYYY
-            // PG's default output might vary, but we'll try to parse it.
-            const dateStr = booking.journey_date;
-            departure = new Date(`${dateStr}T${booking.departure_time}`);
-        }
-
-        const timeDiffHours = (departure - now) / (1000 * 60 * 60);
-
-        if (timeDiffHours < 2) {
-            await client.query('ROLLBACK');
-            return res.status(400).json({ message: 'Cannot cancel booking less than 2 hours before departure' });
-        }
-
-        // 3. Update booking status
-        // The user's trigger (trg_booking_cancel) will handle seat availability
-        // And the other trigger will handle the refund logic (according to policy)
-        await client.query(
-            `UPDATE BOOKING 
-             SET booking_status = 'cancelled' 
-             WHERE booking_id = $1`,
+        // 2. lock the booking
+        const lockResult = await client.query(
+            `SELECT booking_id FROM BOOKING
+             WHERE booking_id = $1 AND booking_status = 'confirmed'
+             FOR UPDATE`,
             [bookingId]
         );
+
+        if (lockResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ message: 'Booking cannot be cancelled (may already be cancelled or not confirmed)' });
+        }
+
+ 
+        // 3. Update booking status
+        // The user's trigger (trg_booking_cancel) will handle seat availability
+        const cancelResult = await client.query(
+            `SELECT cancel_booking($1)`,
+            [bookingId]
+        );
+
+        if (cancelResult.rows[0].cancel_booking !== true) {
+            await client.query('ROLLBACK');
+            return res.status(500).json({ message: 'Error cancelling booking' });
+        }
+
+
+        // 4. Process refund
+        const refundResult = await client.query(
+            `SELECT refund_booking_cancellation($1, $2)`, 
+            [bookingId, refundMethod]
+        );
+
+        if (refundResult.rows[0].refund_booking_cancellation !== true) {
+            await client.query('ROLLBACK');
+            return res.status(500).json({ message: 'Error processing refund' });
+        }
 
         // Commit transaction
         await client.query('COMMIT');

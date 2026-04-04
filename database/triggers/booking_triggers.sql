@@ -70,7 +70,15 @@ BEGIN
     ) THEN
         RETURN FALSE;
     END IF;
-
+    
+    -- check the booking_status before refund
+    IF NOT EXISTS (
+        SELECT 1 FROM booking
+        WHERE booking_id = p_booking_id
+        AND booking_status = 'cancelled'
+    ) THEN
+        RETURN FALSE;
+    END IF;
 
     -- 1. Get departure timestamp
     SELECT (s.journey_date + s.departure_time)
@@ -159,7 +167,7 @@ BEGIN
 
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN FALSE;
+        RAISE;
 END;
 
 $$ LANGUAGE plpgsql;
@@ -195,5 +203,3 @@ CREATE TRIGGER trg_schedule_cancel
 AFTER UPDATE ON SCHEDULE
 FOR EACH ROW
 EXECUTE FUNCTION trg_cancel_schedule_bookings();
-
-
