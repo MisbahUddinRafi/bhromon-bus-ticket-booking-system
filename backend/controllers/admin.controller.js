@@ -302,7 +302,7 @@ exports.getUserHistory = async (req, res) => {
                 b.booking_id, 
                 b.booking_status, 
                 s.schedule_status, 
-                to_char(b.booking_time, 'DD-MM-YYYY HH24:MI:SS') AS booking_time,
+                to_char(p.payment_time, 'DD-MM-YYYY HH24:MI:SS') AS payment_time,
                 u.name AS user_name,
                 to_char(s.journey_date, 'DD-MM-YYYY') AS journey_date,
                 s.departure_time,
@@ -315,7 +315,10 @@ exports.getUserHistory = async (req, res) => {
                 p.payment_reason, 
                 (SELECT COUNT(*)::int FROM BOOKED_SEAT bs WHERE bs.booking_id = b.booking_id) AS total_seats_booked,
                 COALESCE((
-                    SELECT JSON_AGG(JSON_BUILD_OBJECT('seat_number', bs.seat_number, 'name', bs.passenger_name, 'gender', bs.passenger_gender))
+                    SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                        'seat_number', bs.seat_number, 
+                        'name', bs.passenger_name, 
+                        'gender', bs.passenger_gender))
                     FROM BOOKED_SEAT bs
                     WHERE bs.booking_id = b.booking_id 
                 ), '[]'::json) AS passenger_info

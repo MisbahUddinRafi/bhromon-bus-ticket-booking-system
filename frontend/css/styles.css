@@ -417,31 +417,34 @@ a:hover {
 
 .profile-dropdown-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   right: 0;
-  background: #fff;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
-  z-index: 100;
+  background: rgba(53, 79, 82, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-md);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+  z-index: 200;
   overflow: hidden;
-  min-width: 190px;
-  border: 1px solid rgba(82, 121, 111, 0.12);
-  animation: slideInDown 0.25s var(--ease-out) both;
+  min-width: 180px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  animation: slideInDown 0.3s var(--ease-out) both;
 }
 
 .profile-dropdown-menu button {
   width: 100%;
-  background: #fff;
-  color: var(--charcoal);
+  background: transparent;
+  color: #fff;
   border: none;
-  border-bottom: 1px solid rgba(82, 121, 111, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0;
-  padding: 13px 20px;
+  padding: 14px 22px;
   text-align: left;
   font-family: var(--font-body);
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
 }
 
 .profile-dropdown-menu button:last-child {
@@ -449,8 +452,9 @@ a:hover {
 }
 
 .profile-dropdown-menu button:hover {
-  background: rgba(132, 169, 140, 0.08);
-  color: var(--forest);
+  background: rgba(202, 210, 197, 0.22);
+  color: #fff;
+  padding-left: 26px; /* Subtle movement */
 }
 
 
@@ -2177,20 +2181,28 @@ select.form-input option {
 /* ── Modern Table Wrapper ── */
 .data-table-wrapper {
   margin-top: 16px;
-  border-radius: var(--radius-sm);
-  background: #fafafa;
+  border-radius: var(--radius-md);
+  background: rgba(202, 210, 197, 0.08); /* Glassy transparent pale sage */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(202, 210, 197, 0.25);
   max-height: 600px;
   overflow-y: auto;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
-  border: 1px solid rgba(82,121,111,0.1);
+  box-shadow: var(--shadow-md);
+}
+
+/* Specific styling for tables in dark dashboard sections */
+.dashboard-section .data-table-wrapper {
+  background: rgba(202, 210, 197, 0.05);
+  border: 1px solid rgba(202, 210, 197, 0.15);
 }
 
 .data-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 8px;
-  padding: 8px;
-  font-size: 13px;
+  border-spacing: 0 4px;
+  padding: 12px;
+  font-size: 13.5px;
   font-family: var(--font-body);
 }
 
@@ -2198,18 +2210,22 @@ select.form-input option {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: #fafafa;
+  background: var(--dark-teal); /* Solid background for sticky header */
+}
+
+.dashboard-section .data-table thead {
+  background: rgba(47, 62, 70, 0.9); /* Darker glass for header */
 }
 
 .data-table th {
   background: var(--forest);
   color: var(--pale-sage);
-  padding: 12px 10px;
+  padding: 14px 12px;
   text-align: left;
   font-weight: 700;
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   font-family: var(--font-display);
   border-radius: var(--radius-sm);
 }
@@ -2222,16 +2238,37 @@ select.form-input option {
   cursor: pointer;
 }
 
+.dashboard-section .data-table tbody tr {
+  background: transparent;
+  box-shadow: none;
+}
+
 .data-table tbody tr:hover {
   box-shadow: 0 4px 12px rgba(82, 121, 111, 0.15);
-  transform: translateY(-2px);
-  background: rgba(132, 169, 140, 0.03);
+  transform: translateY(-1px);
+  background: rgba(132, 169, 140, 0.05);
+}
+
+.dashboard-section .data-table tbody tr:hover {
+  background: rgba(202, 210, 197, 0.08);
+  box-shadow: none;
 }
 
 .data-table td {
-  padding: 12px 10px;
+  padding: 14px 12px;
   color: var(--charcoal);
-  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.dashboard-section .data-table td {
+  color: var(--pale-sage);
+  border-bottom: 1px solid rgba(202, 210, 197, 0.08);
+}
+
+/* Force bright route text in dark sections */
+.dashboard-section .data-table .schedule-route {
+  color: #fff !important;
+  font-weight: 700 !important;
 }
 
 .data-table td:first-child {

@@ -313,7 +313,7 @@ async function loadActiveSchedules() {
         const row = document.createElement('tr');
         row.style.cursor = 'pointer';
         row.innerHTML = `
-            <td class="schedule-route" style="font-weight: 600; color: var(--dark-teal);">${s.source} → ${s.destination}</td>
+            <td class="schedule-route">${s.source} → ${s.destination}</td>
             <td>${s.operator_name || '-'}</td>
             <td>${s.bus_number || '-'}</td>
             <td>${s.bus_type || '-'}</td>
@@ -414,7 +414,7 @@ async function loadPastSchedules() {
         }
 
         row.innerHTML = `
-            <td class="schedule-route" style="font-weight: 600; color: var(--dark-teal);">${s.source} → ${s.destination}</td>
+            <td class="schedule-route">${s.source} → ${s.destination}</td>
             <td>${s.operator_name || '-'}</td>
             <td>${s.bus_number || '-'}</td>
             <td>${s.bus_type || '-'}</td>
@@ -496,20 +496,25 @@ async function loadUserHistory() {
             // Determine status badge class and time label
             let bookingStatusClass = '';
             let scheduleStatusClass = '';
-            let timeLabel = 'Booking Time';
+            let timeLabel = 'Payment Time';
+
+            if (booking.payment_reason === 'ticket_purchase') {
+                timeLabel = 'Booking Time';
+            } else if (booking.payment_reason === 'refund') {
+                timeLabel = 'Cancellation Time';
+            }
 
             const bookingStatus = (booking.booking_status || '').toLowerCase();
             if (bookingStatus === 'confirmed') {
                 bookingStatusClass = 'status-badge status-completed';
             } else if (bookingStatus === 'cancelled') {
                 bookingStatusClass = 'status-badge status-cancelled';
-                timeLabel = 'Cancellation Time';
             } else if (bookingStatus === 'pending') {
                 bookingStatusClass = 'status-badge status-pending';
+                timeLabel = 'Booking Time';
             }
 
             const scheduleStatus = (booking.schedule_status || '').toLowerCase();
-            console.log('schedule status: ', scheduleStatus);
             if (scheduleStatus === 'completed') {
                 scheduleStatusClass = 'status-badge status-completed';
             } else if (scheduleStatus === 'cancelled') {
@@ -518,8 +523,8 @@ async function loadUserHistory() {
                 scheduleStatusClass = 'status-badge status-active';
             }
 
-            // Format booking time to DD/MM/YYYY HH:MM:SS format
-            let formattedBookingTime = formatBookingTime(booking.booking_time);
+            // Format payment time to DD/MM/YYYY HH:MM:SS format
+            let formattedBookingTime = formatBookingTime(booking.payment_time);
 
             // Parse passenger info
             let passengers = [];
@@ -566,12 +571,15 @@ async function loadUserHistory() {
                 <div class="info-row"><span class="label">User</span> <span class="value">${userName}</span></div>
                 <div class="info-row"><span class="label">Booking Status</span> <span class="value"><span class="${bookingStatusClass}">${booking.booking_status || 'N/A'}</span></span></div>
                 <div class="info-row"><span class="label">Schedule Status</span> <span class="value"><span class="${scheduleStatusClass}">${booking.schedule_status || 'N/A'}</span></span></div>
+                <br>
                 <div class="info-row"><span class="label">${timeLabel}</span> <span class="value" style="font-size: 13px;">${formattedBookingTime}</span></div>
                 <div class="info-row"><span class="label">Journey Date</span> <span class="value">${journeyDate}</span></div>
                 <div class="info-row"><span class="label">Departure</span> <span class="value">${departureTime}</span></div>
+                <br>
                 <div class="info-row"><span class="label">Operator</span> <span class="value">${operatorName}</span></div>
                 <div class="info-row"><span class="label">Bus Number</span> <span class="value">${busNumber}</span></div>
                 <div class="info-row"><span class="label">Seats Booked</span> <span class="value">${seatsBooked}</span></div>
+                <br>
                 <div class="info-row"><span class="label">Total Fare</span> <span class="value">৳${totalFare}</span></div>
                 <div class="info-row"><span class="label">Payment Method</span> <span class="value">${paymentMethod}</span></div>
                 <div class="info-row"><span class="label">Payment Type</span> <span class="value">${booking.payment_reason || 'N/A'}</span></div>
