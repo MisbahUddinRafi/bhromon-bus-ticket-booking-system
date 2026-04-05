@@ -12,7 +12,7 @@
  * - Booking validation and confirmation
  */
 
-const BOOKING_API = 'http://localhost:3000/api/customer';
+const BOOKING_API = `${BASE_URL}/api/customer`;
 const MAX_SEATS = 4;
 const SEAT_ROWS = 8;
 const SEATS_PER_ROW = 4;
@@ -51,11 +51,15 @@ async function openBookingModal(scheduleId) {
             headers: { 'x-user': JSON.stringify(user) }
         });
         
-        if (!detailsRes.ok) throw new Error('Failed to fetch schedule details');
+        console.log('Schedule details response:', { status: detailsRes.status, ok: detailsRes.ok });
+        
+        if (!detailsRes.ok) {
+            const errorData = await detailsRes.json().catch(() => ({}));
+            throw new Error(`Failed to fetch schedule details: ${detailsRes.status} - ${errorData.message || 'Unknown error'}`);
+        }
         const detailsData = await detailsRes.json();
         bookingState.scheduleDetails = detailsData.schedule;
         
-        // Debug: Log the actual data received from API
         console.log('Schedule Details Received:', bookingState.scheduleDetails);
 
         // Fetch seat statuses
@@ -63,7 +67,12 @@ async function openBookingModal(scheduleId) {
             headers: { 'x-user': JSON.stringify(user) }
         });
         
-        if (!seatsRes.ok) throw new Error('Failed to fetch seats');
+        console.log('Schedule seats response:', { status: seatsRes.status, ok: seatsRes.ok });
+        
+        if (!seatsRes.ok) {
+            const errorData = await seatsRes.json().catch(() => ({}));
+            throw new Error(`Failed to fetch seats: ${seatsRes.status} - ${errorData.message || 'Unknown error'}`);
+        }
         const seatsData = await seatsRes.json();
         
         // Build seat status map
@@ -71,6 +80,8 @@ async function openBookingModal(scheduleId) {
         seatsData.seats.forEach(seat => {
             bookingState.seatStatuses[seat.seat_number] = seat.schedule_seat_status;
         });
+        
+        console.log('Seat statuses loaded:', bookingState.seatStatuses);
 
         // Create and show modal
         createBookingModalDOM();
@@ -79,7 +90,13 @@ async function openBookingModal(scheduleId) {
 
     } catch (err) {
         console.error('Error opening booking modal:', err);
-        showError('Unable to open booking window. Please try again.');
+        console.error('Error details:', {
+            message: err.message,
+            stack: err.stack,
+            scheduleId: scheduleId,
+            user: JSON.parse(localStorage.getItem('user'))
+        });
+        showError('Unable to open booking window: ' + err.message);
     }
 }
 
@@ -91,6 +108,8 @@ async function openBookingModal(scheduleId) {
  * Create the complete booking modal DOM structure
  */
 function createBookingModalDOM() {
+    console.log('createBookingModalDOM called');
+    
     // Remove existing modal if any
     const existing = document.getElementById('bookingModal');
     if (existing) existing.remove();
@@ -249,6 +268,12 @@ function createBookingModalDOM() {
     // Add to page
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
+    
+    console.log('Modal appended to DOM', { 
+        overlay: document.getElementById('bookingModalOverlay'),
+        modal: document.getElementById('bookingModal'),
+        bodyChildren: document.body.children.length
+    });
 
     // Add click-outside-to-close functionality
     overlay.addEventListener('click', (e) => {
@@ -271,8 +296,12 @@ function createBookingModalDOM() {
  */
 function showBookingModal() {
     const overlay = document.getElementById('bookingModalOverlay');
+    console.log('showBookingModal called', { overlay: !!overlay, display: overlay?.style.display });
     if (overlay) {
         overlay.style.display = 'block';
+        console.log('Modal display set to block');
+    } else {
+        console.error('bookingModalOverlay element not found!');
     }
 }
 

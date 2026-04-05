@@ -1,3 +1,5 @@
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
+const API = `${BASE_URL}/api/auth/signup`;
 const form = document.getElementById("signupForm");
 
 form.addEventListener("submit", async (e) => {
@@ -11,7 +13,7 @@ form.addEventListener("submit", async (e) => {
     }; 
 
     try {
-        const res = await fetch("http://localhost:3000/api/auth/signup", {
+        const res = await fetch(API, {
             method: "POST", 
             headers: {
                 "Content-Type": "application/json",
@@ -38,6 +40,8 @@ form.addEventListener("submit", async (e) => {
         console.error(err);
     }
 });
+
+
 function backButtonClicked() {
     window.location.href = "../index.html";
 }

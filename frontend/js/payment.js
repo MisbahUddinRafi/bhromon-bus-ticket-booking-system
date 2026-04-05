@@ -5,7 +5,8 @@
  * Handles payment confirmation, T&C modal, and booking finalization.
  */
 
-const PAYMENT_API = 'http://localhost:3000/api/customer';
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
+const PAYMENT_API = `${BASE_URL}/api/customer`;
 const PROCESSING_FEE_PER_SEAT = 20;
 
 const user = JSON.parse(localStorage.getItem('user'));

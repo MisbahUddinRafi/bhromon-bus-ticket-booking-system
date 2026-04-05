@@ -5,7 +5,8 @@
  * Handles passenger details collection and validation
  */
 
-const BOOKING_API = 'http://localhost:3000/api/customer';
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
+const BOOKING_API = `${BASE_URL}/api/customer`;
 const user = JSON.parse(localStorage.getItem('user'));
 
 if (!user || user.role !== 'customer') {

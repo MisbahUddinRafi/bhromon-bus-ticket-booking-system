@@ -1,6 +1,7 @@
-const API = 'http://localhost:3000/api/customer';
-const BOOKING_API = API;
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
+const API = `${BASE_URL}/api/customer`;
 const user = JSON.parse(localStorage.getItem('user'));
+
 
 if (!user || user.role !== 'customer') {
     window.location.href = 'login.html';
@@ -598,7 +599,7 @@ async function openViewScheduleModal(scheduleId, userSeatsString) {
             : [];
 
         // Fetch schedule details
-        const detailsRes = await fetch(`${BOOKING_API}/schedule-details/${scheduleId}`, {
+        const detailsRes = await fetch(`${API}/schedule-details/${scheduleId}`, {
             headers: { 'x-user': JSON.stringify(user) }
         });
 
@@ -607,7 +608,7 @@ async function openViewScheduleModal(scheduleId, userSeatsString) {
         bookingState.scheduleDetails = detailsData.schedule;
 
         // Fetch seats
-        const seatsRes = await fetch(`${BOOKING_API}/schedule-seats/${scheduleId}`, {
+        const seatsRes = await fetch(`${API}/schedule-seats/${scheduleId}`, {
             headers: { 'x-user': JSON.stringify(user) }
         });
 

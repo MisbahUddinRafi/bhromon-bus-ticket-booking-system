@@ -1,4 +1,5 @@
-const API = 'http://localhost:3000/api/profile';
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
+const API = `${BASE_URL}/api/profile`;
 const user = JSON.parse(localStorage.getItem('user'));
 
 if (!user) {

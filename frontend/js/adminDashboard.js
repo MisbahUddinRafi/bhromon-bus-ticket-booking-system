@@ -1,4 +1,5 @@
-const API = 'http://localhost:3000/api/admin';
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
+const API = `${BASE_URL}/api/admin`;
 const user = JSON.parse(localStorage.getItem('user'));
 
 if (!user || user.role !== 'admin') {
