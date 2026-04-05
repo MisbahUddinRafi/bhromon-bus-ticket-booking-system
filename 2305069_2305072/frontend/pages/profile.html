@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile — Bhromon</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-section {
+            background: #354F52; /* Requested: 354F52 */
+            padding: 32px;
+            margin-bottom: 32px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.5s var(--ease-out) both;
+        }
+
+        .profile-section h2 {
+            color: var(--pale-sage);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(202, 210, 197, 0.15);
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--sage);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Glassy inputs matching adminDashboard create schedule section */
+        .glassy-input {
+            width: 100%;
+            padding: 13px 16px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08); /* Transparent glassy background */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(202, 210, 197, 0.3); /* Clearer border */
+            border-radius: var(--radius-sm);
+            transition: all 0.3s var(--ease-out);
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Floating effect */
+        }
+
+        .glassy-input::placeholder {
+            color: rgba(202, 210, 197, 0.5);
+        }
+
+        .glassy-input:hover {
+            border-color: rgba(202, 210, 197, 0.5);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .glassy-input:focus {
+            border-color: var(--pale-sage);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 15px rgba(202, 210, 197, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .glassy-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn-profile {
+            padding: 11px 28px;
+            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+            color: var(--pale-sage);
+            border: 1px solid rgba(202, 210, 197, 0.2);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.35s var(--ease-out);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: var(--pale-sage);
+        }
+
+        .danger-zone {
+            background: rgba(192, 57, 43, 0.08);
+            border: 1.5px solid rgba(192, 57, 43, 0.4);
+        }
+
+        .danger-zone h2 {
+            color: #c0392b;
+            border-bottom-color: rgba(192, 57, 43, 0.2);
+        }
+
+        .danger-text {
+            color: #2F3E46; /* Darker text for visibility */
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #c0392b, #96281b);
+            color: #fff;
+            border: none;
+            padding: 13px 20px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-delete:hover {
+            transform: scale(1.01) translateY(-2px);
+            box-shadow: 0 8px 30px rgba(192, 57, 43, 0.4);
+        }
+
+        /* ── Custom Dialog Styles (Overrides/Additions) ── */
+        .confirm-dialog-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(47, 62, 70, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .confirm-dialog {
+            background: #fff;
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .confirm-dialog-title {
+            color: var(--charcoal);
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .confirm-dialog-message {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .confirm-dialog-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .confirm-btn-cancel, .confirm-btn-ok {
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-family: var(--font-display);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .confirm-btn-cancel {
+            background: #eee;
+            border: 1px solid #ddd;
+            color: #444;
+        }
+
+        .confirm-btn-ok {
+            background: linear-gradient(135deg, var(--forest), var(--dark-teal));
+            border: none;
+            color: #fff;
+        }
+
+        .confirm-btn-cancel:hover { background: #e5e5e5; }
+        .confirm-btn-ok:hover { transform: translateY(-1px); opacity: 0.9; }
+
+        .prompt-input {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            border: 1.5px solid #ddd;
+            border-radius: var(--radius-sm);
+            outline: none;
+            font-family: var(--font-body);
+        }
+
+        .prompt-input:focus {
+            border-color: var(--forest);
+        }
+    </style>
+</head>
+
+<body class="dashboard-main">
+
+    <header class="dashboard-header">
+        <div class="logo" onclick="goBack()">
+            <img src="../../docs/bhromon_logo.png" alt="bhromon">
+        </div>
+
+        <div class="dashboard-nav-group">
+            <div class="tooltip-wrapper">
+                <button class="btn btn-ghost" onclick="goBack()">🏠</button>
+                <div class="tooltip-text">Back to Dashboard</div>
+            </div>
+
+            <div style="position: relative; z-index: 150;">
+                <button class="btn btn-ghost" onclick="toggleProfile()">👤</button>
+                <div id="profileMenu" class="profile-dropdown-menu" style="display:none;">
+                    <button onclick="window.location.reload()">My Profile</button>
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <hr style="border: none; border-top: 1px solid rgba(82, 121, 111, 0.12); margin: 8px 0 24px 0; opacity: 0;">
+
+    <div class="profile-container">
+        <!-- ================= PROFILE INFO ================= -->
+        <section class="profile-section">
+            <h2>👤 Profile Information</h2>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="name" class="glassy-input" placeholder="Your Name">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="text" id="email" class="glassy-input" disabled>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" id="phone" class="glassy-input" disabled>
+            </div>
+
+            <div class="form-group">
+                <label>Account Role</label>
+                <input type="text" id="role" class="glassy-input" disabled>
+            </div>
+
+            <div class="profile-actions">
+                <button class="btn-profile" onclick="updateName()">Update Name</button>
+            </div>
+        </section>
+
+        <!-- ================= CHANGE PASSWORD ================= -->
+        <section class="profile-section">
+            <h2>🔑 Change Password</h2>
+
+            <div class="form-group">
+                <label>Old Password</label>
+                <input type="password" id="oldPassword" class="glassy-input" placeholder="Enter current password">
+            </div>
+
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" class="glassy-input" placeholder="Enter new password">
+            </div>
+
+            <div class="profile-actions">
+                <button class="btn-profile" onclick="changePassword()">Change Password</button>
+            </div>
+        </section>
+
+        <!-- ================= DELETE ACCOUNT ================= -->
+        <section class="profile-section danger-zone">
+            <h2>⚠️ Danger Zone</h2>
+            <p class="danger-text">
+                Deleting your account is permanent and cannot be undone. All your booking history and data will be lost.
+            </p>
+            <button class="btn-delete" onclick="deleteAccount()">Delete Account Permanently</button>
+        </section>
+    </div>
+
+    <script src="../js/alerts.js"></script>
+    <script src="../js/profile.js"></script>
+
+</body>
+
+</html>
