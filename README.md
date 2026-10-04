@@ -1,7 +1,7 @@
 # 🚌 bhromon: Bus Ticket Booking System
 
-> **Revolutionizing the way people travel!**\
-> A full-stack bus ticket booking system built as a BUET database project, featuring PostgreSQL, REST APIs, authentication, booking management, and an admin dashboard.
+ **Revolutionizing the way people travel!**\
+ A full-stack bus ticket booking system built as a BUET database project, featuring PostgreSQL, REST APIs, authentication, booking management, and an admin dashboard.  
 
 ![Bhromon Landing Page](docs/1.index.png)
 
@@ -22,25 +22,42 @@
 
 ## ✨ Key Features
 
-- 🎫 Smart seat booking with 15-min holds, max 4 seats per booking
-- 💳 Multiple payment methods: Cash, Card, bKash, Nagad
-- 👤 Dual-role system: Customer & Admin with JWT authentication
-- 🗺️ Multi-city routes with real-time seat tracking
-- 🔐 Security: bcrypt, JWT tokens, transaction control
-- 📊 Admin dashboard for fleet & analytics management
-- 🎨 Responsive design with smooth animations
-- ⏱️ Smart notifications with auto-dismiss
+- User registration and login
+- JWT-based authentication
+- Customer and admin roles
+- Bus route and schedule management
+- Real-time seat availability
+- Seat reservation and booking
+- Booking cancellation
+- Payment workflow
+- PostgreSQL transactions
+- Database procedures and triggers
+- Admin dashboard
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| Frontend | HTML5, CSS3, JavaScript | ES6+ |
-| Backend | Node.js, Express.js | 5.2.1 |
-| Database | PostgreSQL | 8.0+ |
-| Auth | JWT & bcrypt | 9.0.3 / 6.0.0 |
+- HTML5
+- CSS3
+- JavaScript
+- Node.js
+- Express.js
+- PostgreSQL
+- JWT
+- bcrypt
+
+## 🏗️ Architecture
+
+```text
+Frontend
+   ↓
+REST API
+   ↓
+Express.js Backend
+   ↓
+PostgreSQL Database
+```
 
 ---
 
@@ -108,17 +125,24 @@ node src/app.js
 
 ```
 bhromon/
-├── backend/              # Express.js API
-│   ├── src/              # app.js, db.js
-│   ├── controllers/      # Auth, booking, customer, admin, profile
-│   ├── routes/           # API endpoints
-│   ├── middleware/       # JWT auth
-│   └── .env              # Config (create this)
-├── frontend/             # HTML, CSS, JS
-│   ├── pages/            # Login, signup, dashboard, schedules, etc.
-│   ├── js/               # Logic for all features
-│   └── css/              # Styles
-└── database/             # SQL schema, procedures, triggers, seeds
+├── backend/
+│   ├── src/
+│   ├── controllers/
+│   ├── routes/
+│   └── middleware/
+│
+├── frontend/
+│   ├── pages/
+│   ├── js/
+│   └── css/
+│
+├── database/
+│   ├── schema/
+│   ├── procedures/
+│   ├── triggers/
+│   └── seed/
+│
+└── docs/
 ```
 
 ![Seat Booking UI](docs/15.%20seat%20booking%20ui.png)
