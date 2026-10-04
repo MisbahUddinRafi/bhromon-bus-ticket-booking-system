@@ -1,7 +1,7 @@
 # 🚌 bhromon: Bus Ticket Booking System
 
 > **Revolutionizing the way people travel!**\
-> A production-ready bus ticket booking platform with real-time seat management, secure payments, and intuitive UI.
+> A full-stack bus ticket booking system built as a BUET database project, featuring PostgreSQL, REST APIs, authentication, booking management, and an admin dashboard.
 
 ![Bhromon Landing Page](docs/1.index.png)
 
@@ -53,7 +53,7 @@
 ### Setup
 ```bash
 # 1. Clone & navigate
-git clone https://github.com/yourusername/bhromon-bus-ticket-booking-system.git
+git clone https://github.com/MisbahUddinRafi/bhromon-bus-ticket-booking-system.git
 cd bhromon-bus-ticket-booking-system
 
 # 2. Install dependencies
